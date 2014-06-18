@@ -27,7 +27,7 @@ There is no build integration yet but with the following script you could upload
 ```bash
 #!/bin/bash
 owner=pussinboots
-project=unicover
+project=unitcover
 FILES=./target/test-reports/*
 #upload play junit reports
 for f in $FILES
