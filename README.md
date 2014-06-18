@@ -19,6 +19,7 @@ Feel free to fork this repo and hosted it self the heroku instance running is a 
 * sbt plugin to upload the unit reports (maybe the solution with curl seems very simple)
 * grouping of test suites to one build (need build number generation)
 * support badge images
+* link test reports with travis build
 
 ##Uasage
 
