@@ -4,6 +4,7 @@ unitcover
 [![Coverage Status](https://img.shields.io/coveralls/pussinboots/unitcover.svg)](https://coveralls.io/r/pussinboots/unitcover?branch=master)
 [![Dependencies](https://david-dm.org/pussinboots/unitcover.png)](https://david-dm.org/pussinboots/unitcover)
 [![Heroku](http://heroku-badge.heroku.com/?app=unitcover)](https://unitcover.herokuapp.com)
+[Unit Tests](http://unitcover.herokuapp.com/pussinboots/unitcover)
 
 
 Since  one or two weeks i search for a service like [coveralls]() but only for test results and i didn't found something for free and
@@ -17,6 +18,7 @@ Feel free to fork this repo and hosted it self the heroku instance running is a 
 * buildnumber generation is missing always 1
 * sbt plugin to upload the unit reports (maybe the solution with curl seems very simple)
 * grouping of test suites to one build (need build number generation)
+* support badge images
 
 ##Uasage
 
