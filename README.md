@@ -26,15 +26,16 @@ Feel free to fork this repo and hosted it self the heroku instance running is a 
 There is no build integration yet but with the following script you could upload your sbt and karma junit reports
 ```bash
 #!/bin/bash
-owenr=pussinboots
-project=bankapp
+owner=pussinboots
+project=unicover
 FILES=./target/test-reports/*
 #upload play junit reports
 for f in $FILES
 do
   echo "Processing $f file..."
-  curl -H "Content-Type:application/xml" -X POST --data-binary @$f http://unitcover.heroku.com/api/$owner/$project
+  curl -H "Content-Type:application/xml" -X POST -d @$f http://unitcover.herokuapp.com/api/$owner/$project
 done
 
-curl -H "Content-Type:application/xml" -X POST --data-binary @test-result.xml http://unitcover.heroku.com/api/$owner/$project
+curl -H "Content-Type:application/xml" -X POST -d @test-result.xml http://unitcover.herokuapp.com/api/$owner/$project
+
 ```
