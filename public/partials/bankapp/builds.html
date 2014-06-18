@@ -1,0 +1,28 @@
+<div class="table-responsive" ng-controller="TableCtrl">
+    <test-data>
+        <div class="header">
+            <li class="row">
+                <span class="span2 sortable" ng-class="sortClass('id')" ng-click="setSort('id')">Id</span>
+                <span class="span2 sortable" ng-class="sortClass('buildNumber')" ng-click="setSort('buildNumber')">Build</span>
+                <span class="span2 sortable" ng-class="sortClass('name')" ng-click="setSort('name')">Name</span>
+                <span class="span2 sortable" ng-class="sortClass('tests')" ng-click="setSort('tests')">Passed</span>
+                <span class="span2 sortable" ng-class="sortClass('failures')" ng-click="setSort('failures')">Failure</span>
+                <span class="span2 sortable" ng-class="sortClass('errors')" ng-click="setSort('errors')">Error</span>
+                <span class="span2 sortable" ng-class="sortClass('duration')" ng-click="setSort('duration')">Duration</span>
+                <span class="span2 sortable" ng-class="sortClass('date')" ng-click="setSort('date')">Date</span>
+            </li>
+        </div>
+        <div class="body" >
+            <li class="build row table-row" ng-repeat="build in builds.items">
+                <span>{{build.id}}</span>
+                <span><a ng-href="#/builds/{{owner}}/{{project}}/{{build.id}}">{{build.buildNumber}}</a></span>
+                <span>{{build.name}}</span>
+                <span>{{build.tests}}</span>
+                <span>{{build.failures}}</span>
+                <span>{{build.errors}}</span>
+                <span>{{build.duration}}</span>
+                <span>{{build.date}}</span>
+            </li>
+        </div>
+     </test-data>
+</div>

@@ -1,0 +1,24 @@
+<testsuite hostname="vagrant-VirtualBox" name="integration.TestSuiteControllerSpec" tests="2" errors="0" failures="1" skipped="0" time="10.470">
+        <testcase name="POST to /api/&lt;owner&gt;/&lt;project&gt; should::with a valid junit xml report return http status 200 and store it in the db" classname="integration.TestSuiteControllerSpec" time="8.892">
+        <failure message="'application changed setup will work should::disable db ssl'
+ is not equal to 
+'application changed setup will work should::enable DB logging'" type="java.lang.Exception">integration.TestSuiteControllerSpec.checkTestCases(TestSuiteControllerSpec.scala:72)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1$$anonfun$2.apply$mcV$sp(TestSuiteControllerSpec.scala:30)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1$$anonfun$2.apply(TestSuiteControllerSpec.scala:28)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1$$anonfun$2.apply(TestSuiteControllerSpec.scala:28)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1$delayedInit$body.apply(TestSuiteControllerSpec.scala:28)
+play.api.test.WithServer$$anonfun$around$2.apply(Specs.scala:35)
+play.api.test.WithServer$$anonfun$around$2.apply(Specs.scala:35)
+play.api.test.PlayRunners$class.running(Helpers.scala:60)
+play.api.test.Helpers$.running(Helpers.scala:364)
+play.api.test.WithServer.around(Specs.scala:35)
+play.api.test.WithServer.delayedInit(Specs.scala:30)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1.&lt;init&gt;(TestSuiteControllerSpec.scala:23)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11.apply(TestSuiteControllerSpec.scala:23)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11.apply(TestSuiteControllerSpec.scala:23)</failure>
+      </testcase><testcase name="GET to /api/&lt;owner&gt;/&lt;project&gt; should::return latest 10 test suites" classname="integration.TestSuiteControllerSpec" time="1.526">
+        
+      </testcase>
+        <system-out></system-out>
+        <system-err></system-err>
+      </testsuite>

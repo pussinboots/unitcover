@@ -1,0 +1,12 @@
+<testsuite hostname="vagrant-VirtualBox" name="integration.ApplicationSpec" tests="7" errors="0" failures="0" skipped="0" time="1.975">
+	<testcase name="application changed setup will work should::disable db ssl" classname="integration.ApplicationSpec" time="0.066">
+		</testcase><testcase name="application changed setup will work should::enable DB logging" classname="integration.ApplicationSpec" time="0.039">
+		</testcase><testcase name="application setup should should::configured with custom keystore is enabled" classname="integration.ApplicationSpec" time="0.046">
+		</testcase><testcase name="application setup should should::check reditect to products.html work" classname="integration.ApplicationSpec" time="1.469">
+		</testcase><testcase name="application setup should should::configured to redirect all http request to https on heroku" classname="integration.ApplicationSpec" time="0.222">
+		</testcase><testcase name="application setup should should::configured with custom truststore is enabled" classname="integration.ApplicationSpec" time="0.046">
+		</testcase><testcase name="application setup should should::configured with DB logging deactivate" classname="integration.ApplicationSpec" time="0.078">
+	</testcase>
+	<system-out></system-out>
+	<system-err></system-err>
+</testsuite>

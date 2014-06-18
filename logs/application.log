@@ -1,0 +1,18 @@
+2014-06-18 14:55:35,073 - [INFO] - from play in pool-4-thread-4 
+Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+2014-06-18 14:58:29,767 - [DEBUG] - from application in play-internal-execution-context-1 
+Application for e2e test has started
+
+2014-06-18 14:58:29,777 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2014-06-18 15:04:19,170 - [DEBUG] - from application in play-internal-execution-context-1 
+Application for e2e test has started
+
+2014-06-18 15:04:19,172 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2014-06-18 15:46:03,299 - [DEBUG] - from application in pool-4-thread-3 
+clear system properties truststore/keystore
+

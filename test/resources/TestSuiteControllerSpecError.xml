@@ -1,0 +1,21 @@
+<testsuite hostname="vagrant-VirtualBox" name="integration.TestSuiteControllerSpec" tests="3" errors="1" failures="0" skipped="0" time="14.179">
+        
+        <testcase name="POST to /api/&lt;owner&gt;/&lt;project&gt; should::with junit xml report all tests passed return http status 200 and store it in the db" classname="integration.TestSuiteControllerSpec" time="12.784">
+        <error message="test error" type="java.lang.Exception">integration.TestSuiteControllerSpec$$anonfun$7$$anonfun$apply$18$$anon$1$delayedInit$body.apply(TestSuiteControllerSpec.scala:27)
+play.api.test.WithServer$$anonfun$around$2.apply(Specs.scala:35)
+play.api.test.WithServer$$anonfun$around$2.apply(Specs.scala:35)
+play.api.test.PlayRunners$class.running(Helpers.scala:60)
+play.api.test.Helpers$.running(Helpers.scala:364)
+play.api.test.WithServer.around(Specs.scala:35)
+play.api.test.WithServer.delayedInit(Specs.scala:30)
+integration.TestSuiteControllerSpec$$anonfun$7$$anonfun$apply$18$$anon$1.&lt;init&gt;(TestSuiteControllerSpec.scala:23)
+integration.TestSuiteControllerSpec$$anonfun$7$$anonfun$apply$18.apply(TestSuiteControllerSpec.scala:23)
+integration.TestSuiteControllerSpec$$anonfun$7$$anonfun$apply$18.apply(TestSuiteControllerSpec.scala:23)</error>
+      </testcase><testcase name="GET to /api/&lt;owner&gt;/&lt;project&gt; should::return latest 10 test suites" classname="integration.TestSuiteControllerSpec" time="0.483">
+        
+      </testcase><testcase name="POST to /api/&lt;owner&gt;/&lt;project&gt; should::with junit xml report one failure return http status 200 and store it in the db" classname="integration.TestSuiteControllerSpec" time="0.886">
+        
+      </testcase>
+        <system-out></system-out>
+        <system-err></system-err>
+      </testsuite>

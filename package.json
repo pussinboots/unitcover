@@ -1,0 +1,30 @@
+{
+  "name": "unitcover",
+  "version": "0.0.1",
+  "dependencies": {
+    "bower": "^1.3.3",
+    "wiredep": "^1.7.2"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "scripts": {
+    "test": "./bliss play stop && play -Dconfig.file=conf/application-e2e.conf start & wget -O/dev/null --retry-connrefused --tries=40 http://localhost:9000 && ./node_modules/.bin/karma start karma.conf-e2e.js --single-run && play stop",
+    "postinstall": "./node_modules/bower/bin/bower install"
+  },
+  "devDependencies": {
+    "karma": "^0.12.16",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-cli": "0.0.4",
+    "karma-coverage": "^0.2.4",
+    "karma-coveralls": "^0.1.4",
+    "karma-firefox-launcher": "~0.1",
+    "karma-jasmine": "^0.1.5",
+    "karma-junit-reporter": "^0.2.2",
+    "karma-ng-scenario": "~0.1",
+    "karma-opera-launcher": "~0.1",
+    "karma-sauce-launcher": "^0.2.8",
+    "karma-script-launcher": "~0.1",
+    "karma-threshold-reporter": "~0.1.6"
+  }
+}
