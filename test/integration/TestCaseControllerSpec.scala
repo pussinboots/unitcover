@@ -15,6 +15,7 @@ import Database.threadLocalSession
 
 class TestCaseControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	sequential
+	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	import DB.dal._
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
@@ -36,7 +37,7 @@ class TestCaseControllerSpec extends PlaySpecification with DatabaseSetupBefore 
 	def insert10TestCases() {
 		DB.db withSession {
 			for(i <- 2 to 11)
-				TestCases.insert(TestCase(None, 1, "pussinboots", "bankapp", s"testcase $i", "testclass",1000))
+				TestCases.insert(TestCase(None, 1, "pussinboots", "bankapp", s"testcase $i", "testclass",1000.0))
 		}	
 	}
 }

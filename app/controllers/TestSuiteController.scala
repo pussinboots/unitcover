@@ -28,37 +28,57 @@ object TestSuiteController extends Controller {
     }
   }
 
-  def saveTestSuite(owner: String, project: String) = ActionWithoutToken(BodyParsers.parse.xml) {request =>
-      val testSuiteXml = (request.body)
-      val testSuiteData = ((testSuiteXml \ "@name").text, 
-                           (testSuiteXml \ "@tests").text.toInt, 
-                           (testSuiteXml \ "@failures").text.toInt, 
-                           (testSuiteXml \ "@errors").text.toInt, 
-                           (testSuiteXml \ "@skipped").text.toInt, 
-                           (testSuiteXml \ "@time").text.toDouble)
+  implicit class ExtendOption(option: Option[String]) {
+    def toDouble:Option[Double] = option.map(_.toDouble)
+    
 
-      val testCasesData = (testSuiteXml \ "testcase").map(testCaseNode => (
-                          (testCaseNode \ "@name").text,
-                          (testCaseNode \ "@classname").text, 
-                          (testCaseNode \ "@time").text.toDouble,
-                          (testCaseNode \ "failure" \ "@message").textOption,
-                          (testCaseNode \ "error" \ "@message").textOption,
-                          (testCaseNode \ "failure" \ "@type").textOption,
-                          (testCaseNode \ "error" \ "@type").textOption))
-      val suite = TestSuite(None, 1, owner, project, testSuiteData._1, testSuiteData._2, testSuiteData._3, testSuiteData._4, testSuiteData._6)
-      val testSuite = DB.db withSession TestSuites.insert(suite)
-      def getType(failureType: Option[String], errorType: Option[String]) = {
-        if (failureType !=None) failureType
-        else errorType
+    def toInt:Option[Int] = option.map(_.toInt)
+  }
+
+  def saveTestSuite(owner: String, project: String) = ActionWithoutToken(BodyParsers.parse.xml) {request =>
+      //extract multiple test suites like karma unit report
+      val testSuites = (request.body \ "testsuite").map{testSuite=>{
+        parseTestSuite(owner, project, testSuite)
+      }}
+      if (testSuites.length > 0) {
+        Ok(Json.obj("testsuites" -> Json.arr(testSuites.map(testSuite=>Json.obj("id" ->testSuite.id.get)))))
+      } else {//extract only one test suite like sbt junit report
+        val testSuite = parseTestSuite(owner, project, request.body)
+        Ok(Json.obj("testsuites" -> Json.arr(Json.obj("id" ->testSuite.id.get))))
       }
-      DB.db withSession testCasesData.map(testCase=>(
-                          TestCases.insert(TestCase(None, testSuite.id.get, owner, project, testCase._1, 
-                                                    testCase._2 , testCase._3, testCase._4, testCase._5, 
-                                                    getType(testCase._6, testCase._7) 
-                                                    )
-                                          )
-                        ))
-      Ok(Json.obj("id" -> testSuite.id.get))
+}
+
+def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq) = {
+  val testSuiteXml = testSuiteNode 
+  val testSuiteData = ((testSuiteXml \ "@name").text, 
+                       (testSuiteXml \ "@tests").textOption.toInt, 
+                       (testSuiteXml \ "@failures").textOption.toInt, 
+                       (testSuiteXml \ "@errors").textOption.toInt, 
+                       (testSuiteXml \ "@skipped").textOption.toInt, 
+                       (testSuiteXml \ "@time").textOption.toDouble)
+
+  val testCasesData = (testSuiteXml \ "testcase").map(testCaseNode => (
+                      (testCaseNode \ "@name").text,
+                      (testCaseNode \ "@classname").text, 
+                      (testCaseNode \ "@time").textOption.toDouble,
+                      (testCaseNode \ "failure" \ "@message").textOption,
+                      (testCaseNode \ "error" \ "@message").textOption,
+                      (testCaseNode \ "failure" \ "@type").textOption,
+                      (testCaseNode \ "error" \ "@type").textOption))
+  val suite = TestSuite(None, 1, owner, project, testSuiteData._1, testSuiteData._2, testSuiteData._3, testSuiteData._4, testSuiteData._6)
+  val testSuite = DB.db withSession TestSuites.insert(suite)
+  def getType(failureType: Option[String], errorType: Option[String]) = {
+    if (failureType !=None) failureType
+    else errorType
+  }
+  DB.db withSession testCasesData.map(testCase=>(
+                      TestCases.insert(TestCase(None, testSuite.id.get, owner, project, testCase._1, 
+                                                testCase._2 , testCase._3, testCase._4, testCase._5, 
+                                                getType(testCase._6, testCase._7) 
+                                                )
+                                      )
+                    ))
+  testSuite
 }
 
   def latestTestSuites(owner: String, project: String) = ActionWithoutToken {request =>

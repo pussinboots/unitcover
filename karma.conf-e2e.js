@@ -45,7 +45,7 @@ module.exports = function (config) {
         // - Safari (only Mac)
         // - IE (only Windows)
         //browsers: ['Chrome','Firefox','Opera','PhantomJS'],
-        browsers: ['Firefox'],
+        browsers: ['Firefox', 'Opera'],
 
         // If browser does not capture in given timeout [ms], kill it
         captureTimeout: 60000,

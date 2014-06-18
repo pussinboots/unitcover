@@ -39,7 +39,7 @@ class DAL(override val profile: ExtendedProfile) extends TestSuiteComponent with
 }
 
 case class TestSuite(var id: Option[Long] = None, buildNumber:Int, owner: String, project: String,
-                     name: String, tests: Int, failures: Int, errors: Int, duration: Double, 
+                     name: String, tests: Option[Int], failures: Option[Int], errors: Option[Int], duration: Option[Double], 
                      date: Timestamp = DateUtil.nowDateTime())
 
 trait TestSuiteComponent {
@@ -58,10 +58,10 @@ trait TestSuiteComponent {
     def owner = column[String]("owner")
     def project = column[String]("project")
     def name = column[String]("name")
-    def tests = column[Int]("tests")
-    def failures = column[Int]("failures")
-    def errors = column[Int]("errors")
-    def duration = column[Double]("duration")
+    def tests = column[Option[Int]]("tests")
+    def failures = column[Option[Int]]("failures")
+    def errors = column[Option[Int]]("errors")
+    def duration = column[Option[Double]]("duration")
     def date = column[Timestamp]("date")
     def * = id.? ~ buildNumber ~ owner ~ project ~ name ~ tests ~ failures ~ errors ~ duration ~ date <>(TestSuite, TestSuite.unapply _)
 
@@ -74,7 +74,7 @@ trait TestSuiteComponent {
   }
 }
 case class TestCase(var id: Option[Long] = None, testSuiteId: Long, owner: String, project: String,
-                     name: String, className: String, duration: Double, 
+                     name: String, className: String, duration: Option[Double], 
                      failureMessage: Option[String] = None, errorMessage: Option[String] = None,
                      typ: Option[String] = None)
 
@@ -95,7 +95,7 @@ trait TestCaseComponent {
     def project = column[String]("project")
     def name = column[String]("name")
     def className = column[String]("tests")
-    def duration = column[Double]("duration")
+    def duration = column[Option[Double]]("duration")
     def failureMessage = column[Option[String]]("failureMessage")
     def errorMessage = column[Option[String]]("errorMessage")
     def typ = column[Option[String]]("typ")

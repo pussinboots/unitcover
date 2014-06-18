@@ -11,6 +11,7 @@ import unit.org.stock.manager.test.DatabaseSetupBefore
 
 class ModelSpec extends PlaySpecification with DatabaseSetupBefore {
   sequential
+  implicit def toOption[A](value: A) : Option[A] = Some(value)
 
   import DB.dal._
   import DB.dal.profile.simple._
@@ -19,14 +20,14 @@ class ModelSpec extends PlaySpecification with DatabaseSetupBefore {
     "save" in {
       DB.db withSession {
         val now = DateUtil.nowDateTime()
-        val savedTestCase = TestCases.insert(TestCase(None, 1, "pussinboots", "bankapp", "testcase", "testclass",1000))
+        val savedTestCase = TestCases.insert(TestCase(None, 1, "pussinboots", "bankapp", "testcase", "testclass",1000.0))
         savedTestCase.id must beEqualTo(Some(2))
         savedTestCase.testSuiteId must beEqualTo(1)
         savedTestCase.owner must beEqualTo("pussinboots")
         savedTestCase.project must beEqualTo("bankapp")
         savedTestCase.name must beEqualTo("testcase")
         savedTestCase.className must beEqualTo("testclass")
-        savedTestCase.duration must beEqualTo(1000)        
+        savedTestCase.duration must beEqualTo(Some(1000.0))        
       }
     }
   }
@@ -35,16 +36,16 @@ class ModelSpec extends PlaySpecification with DatabaseSetupBefore {
     "save" in {
       DB.db withSession {
         val now = DateUtil.nowDateTime()
-        val savedTestSuite = TestSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000, now))
+        val savedTestSuite = TestSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
         savedTestSuite.id must beEqualTo(Some(2))
         savedTestSuite.buildNumber must beEqualTo(1)
         savedTestSuite.owner must beEqualTo("pussinboots")
         savedTestSuite.project must beEqualTo("bankapp")
         savedTestSuite.name must beEqualTo("testsuite")
-        savedTestSuite.tests must beEqualTo(5)
-        savedTestSuite.failures must beEqualTo(1)
-        savedTestSuite.errors must beEqualTo(2)
-        savedTestSuite.duration must beEqualTo(1000)
+        savedTestSuite.tests must beEqualTo(Some(5))
+        savedTestSuite.failures must beEqualTo(Some(1))
+        savedTestSuite.errors must beEqualTo(Some(2))
+        savedTestSuite.duration must beEqualTo(Some(1000.0))
         savedTestSuite.date must beEqualTo(now)
       }
     }
