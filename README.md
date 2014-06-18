@@ -1,88 +1,38 @@
-bankapp
+unitcover
 =======
-[![Build Status](https://travis-ci.org/pussinboots/bankapp.svg?branch=master)](https://travis-ci.org/pussinboots/bankapp)
-[![Coverage Status](https://img.shields.io/coveralls/pussinboots/bankapp.svg)](https://coveralls.io/r/pussinboots/bankapp?branch=master)
-[![Heroku](http://heroku-badge.heroku.com/?app=bana)](https://bana.herokuapp.com)
+[![Build Status](https://travis-ci.org/pussinboots/unitcover.svg?branch=master)](https://travis-ci.org/pussinboots/unitcover)
+[![Coverage Status](https://img.shields.io/coveralls/pussinboots/unitcover.svg)](https://coveralls.io/r/pussinboots/unitcover?branch=master)
+[![Dependencies](https://david-dm.org/pussinboots/unitcover.png)](https://david-dm.org/pussinboots/unitcover)
 
-There is also a little lessons learned documentation in the doc folder
-* [Instanly coding](https://github.com/pussinboots/bankapp/blob/master/doc/instanly_coding.md)
-* [E2E Test angularjs + Play](https://github.com/pussinboots/bankapp/blob/master/doc/e2etest.md) TODO !!!
-* [Multilanguage Project forntend javascript backend scala](https://github.com/pussinboots/bankapp/blob/master/doc/nodejs_play2.md) TODO !!!
-* [multiple build pack on heroku](https://github.com/pussinboots/bankapp/blob/master/doc/buildpack.md)
-* [Play 2 c3p0 own truststore and keystore](https://github.com/pussinboots/bankapp/blob/master/doc/c3p0.md)
-* [IDE Experiences](https://github.com/pussinboots/bankapp/blob/master/doc/ide.md)
-* [Git Shortcuts](https://github.com/pussinboots/bankapp/blob/master/doc/git.md)
-* [Git Commit without CI Build](http://docs.travis-ci.com/user/how-to-skip-a-build/)
-* [Softcover](http://manual.softcover.io/book)
+[![Heroku](http://heroku-badge.heroku.com/?app=unitcover)](https://unitcover.herokuapp.com)
 
-Little personal bank web application that show my account and stock overview of my 
-bank account. The data is fetched from the bank account web site and it is only run local
-because of security constraints by passing my bank account login data. 
 
-The project is split in a display  and import bank data module. So the display part can run on the web 
-but the import part should only be run localy because of the previous mentioned security constrain.
+Since  one or two weeks i search for a service like [coveralls]() but only for test results and i didn't found something for free and
+SonarQube seems to complex for me. So i decided to build one similar to coveralls and that is my motivation. It is in aeryl stage now and implemented in one day so there still a lot of work to do but can be used.
 
-It is also a proof of concept for client side encryption/decryption with the (angularjs crypto modul)[https://github.com/pussinboots/angularjs-crypto]. The bank account and stock data are
-stored on a hosted database like cleardb. But this data are encrypted and will only be decrypted on the 
-client side in angularjs so that the encryption/decryption key is not know to the systems where the
-server part is running and the data are stored to get. I will be prepare a little live demo in
-the next days with random bank data.
+Feel free to fork this repo and hosted it self the heroku instance running is a free one and very limited one web dyno and 10 database connection so please contact me before you want to upload something in the moment.
 
-##Plans
+##TODO
+* authorization is complete missing
+* nice and usable design
+* buildnumber generation is missing always 1
+* sbt plugin to upload the unit reports (maybe the solution with curl seems very simple)
+* grouping of test suites to one build (need build number generation)
 
-Make it possible to insert data by ui and api so that anyone can store his or here bank data and use this app.
-To get a quick start it use google plus for signin. I hope i get it working for other customer than me and
-i plan also to implement a little mobile app with PhoneGap.
+##Uasage
 
-There is already a import modul which fetch the data from the berliner sparkassen web site and stored it encrypted in the database
-(see)[https://github.com/pussinboots/bankapp/blob/master/app/model/SparkassenApp.scala] this read the login information from the
-environment variables and should work for all berliner sparkassen customers (but of course not tested yet). After there is an import API
-than it is possible to write for your own bank a importer which fetch the data somewhere for you and use the offered import api
-to insert your bank data. But be carefull run the importer only from your local maschine because you should not store your bank login somewhere on the net. 
+There is no build integration yet but with the following script you could upload your sbt and karma junit reports
+```bash
+#!/bin/bash
+owenr=pussinboots
+project=bankapp
+FILES=./target/test-reports/*
+#upload play junit reports
+for f in $FILES
+do
+  echo "Processing $f file..."
+  curl -H "Content-Type:application/xml" -X POST --data-binary @$f http://unitcover.heroku.com/api/$owner/$project
+done
 
-##Todos
-* page to insert your data manualy
-* build a android phonegap app and publish it in google play
-* at the moment only for my account there exists bank data (maybe dummy data for new user to test)
-* rest interface to insert encrypted bank data for any account how wants to use the app
-* historical graphs that show the development of your money
-* forcast of mone development based on historical data
-* some fancy features i can imagine now
-
-##Features
-
-There are several use cases in my mind what is possible with that bank data for example you can group your income and outcome by categories to see where you money goes and this stuff. Also a future calculation of your money behavoir could be possible by analyzing the past and get a forecast what your bank account could loke like in 6 Months and so on. 
-
-##Motivation
-
-I want to get a good and quick overview of my bank account and historical development. That's missing in the current applications i guess.
-
-Feel free to contact me for any purpose.
-
-##Screenshots
-
-Here are some mobile fancy screen shots of course with dummy data not my real bank data.
-
-* here you see the requestable pages
- 
-![menu](https://raw.githubusercontent.com/pussinboots/bankapp/master/public/images/menu.png)
-
-* here you see the raw data from the database and you see all data, except the date, are encrypted. That is how they are stored in the database and if the right key is configured at the settings page (see next image) than the data will be readable
-
-![encrypted](https://raw.githubusercontent.com/pussinboots/bankapp/master/public/images/encrypted.png)
-
-* here your configure the encryption key (has to be the same key that was used to encrypt the data for storing it in the database)
-
-![key](https://raw.githubusercontent.com/pussinboots/bankapp/master/public/images/key.png)
-
-* here the balance data readable all encryption is performed on the client side (on the device that use this app) 
-
-![balances](https://raw.githubusercontent.com/pussinboots/bankapp/master/public/images/balances_mobil.png)
-
-* here the stocks data readable all encryption is performed on the client side (on the device that use this app) 
-
-![stocks](https://raw.githubusercontent.com/pussinboots/bankapp/master/public/images/stocks_mobile.png)
-
-* if you are not loged in than you will see nothing google plus sign is used and only the googleid and your email address is stored in the app database
-
-![logout](https://raw.githubusercontent.com/pussinboots/bankapp/master/public/images/logout.png)
+curl -H "Content-Type:application/xml" -X POST --data-binary @test-result.xml http://unitcover.heroku.com/api/$owner/$project
+```
