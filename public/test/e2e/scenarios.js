@@ -25,7 +25,7 @@ describe('UnitCover', function() {
           toEqual(["testsuite 11", "testsuite 10", "testsuite 9","testsuite 8", "testsuite 7","testsuite 6", "testsuite 5","testsuite 4", "testsuite 3", "testsuite 2"]);
     });
 
-    describe('display test cases of complete test suite', function() {
+    /*describe('display test cases of complete test suite', function() {
 
       beforeEach(function() {
         browser().navigateTo('products.html#/builds/pussinboots/bankapp/1');
@@ -40,7 +40,7 @@ describe('UnitCover', function() {
         expect(repeater('li.testcase').column('testcase.name')).
             toEqual(["testsuite 11", "testsuite 10", "testsuite 9","testsuite 8", "testsuite 7","testsuite 6", "testsuite 5","testsuite 4", "testsuite 3", "testsuite 2"]);
       });
-    });
+    });*/
   });
 
 
