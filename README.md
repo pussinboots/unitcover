@@ -4,7 +4,7 @@ unitcover
 [![Coverage Status](https://img.shields.io/coveralls/pussinboots/unitcover.svg)](https://coveralls.io/r/pussinboots/unitcover?branch=master)
 [![Dependencies](https://david-dm.org/pussinboots/unitcover.png)](https://david-dm.org/pussinboots/unitcover)
 [![Heroku](http://heroku-badge.heroku.com/?app=unitcover)](https://unitcover.herokuapp.com)
-[Unit Tests](http://unitcover.herokuapp.com/pussinboots/unitcover)
+[Unit Tests](http://unitcover.herokuapp.com/products.html/pussinboots/unitcover)
 
 
 Since  one or two weeks i search for a service like [coveralls]() but only for test results and i didn't found something for free and
