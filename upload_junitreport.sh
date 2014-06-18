@@ -7,4 +7,4 @@ do
   curl -H "Content-Type:application/xml" -X POST -d @$f http://unitcover.herokuapp.com/api/pussinboots/unitcover
 done
 
-curl -H "Content-Type:application/xml" -X POST -d @test-result.xml http://unitcover.herokuapp.com/api/unitcover/bankapp
+curl -H "Content-Type:application/xml" -X POST -d @test-result.xml http://unitcover.herokuapp.com/api/pussinboots/unitcover
