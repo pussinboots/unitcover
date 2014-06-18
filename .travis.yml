@@ -1,5 +1,5 @@
 language: node_js
-script: play test && npm test 
+script: play test && npm test && ./upload_junitreport.sh
 node_js:
 - 0.1
 env:
@@ -24,4 +24,4 @@ deploy:
   app: bana
   strategy: git
   api_key:
-    secure: gjO1rAOf8UXbWPWwknD7DTXl2dtVPHusPZkL3UMQ++PepxC+5lRAqOOAErHpH99Vj3g68cb9txKeFCKYb11Z4OGdxov3yB75TMNBs9e91nCft+dVhCvtTG5yWMrpGhkhG6CcOrT4OmVz5OxuLwctuoxPolOHFOHI8Iu8ap44U14=
+    secure: D1OyD4rxP9TAvmbYtHHFdRJHuNdoaiuEHmex1QRylqYO3nggelDSBbogajAZPlbwHANkCOnHIPEEgP3zSthjKSZd2xWik7bYUSxYn3RmdQydIxq4NKoINoNeYoRSaRpXjcDxL9gr05B4C/qAd1s9UoAE/d01S+Dgdu12tGkH9Xg=
