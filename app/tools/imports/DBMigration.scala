@@ -7,7 +7,6 @@ import scala.slick.session.Database
 import Database.threadLocalSession
 
 object DBMigration extends App {
-  DB.WithSSL()
   val db = DB.getSlickMysqlJdbcConnection()
   val dao = new DAL(MySQLDriver)
   import dao._
