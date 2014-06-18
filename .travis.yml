@@ -21,7 +21,7 @@ cache:
   - $HOME/.ivy2
 deploy:
   provider: heroku
-  app: bana
+  app: unitcover
   strategy: git
   api_key:
     secure: D1OyD4rxP9TAvmbYtHHFdRJHuNdoaiuEHmex1QRylqYO3nggelDSBbogajAZPlbwHANkCOnHIPEEgP3zSthjKSZd2xWik7bYUSxYn3RmdQydIxq4NKoINoNeYoRSaRpXjcDxL9gr05B4C/qAd1s9UoAE/d01S+Dgdu12tGkH9Xg=
