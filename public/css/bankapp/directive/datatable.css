@@ -2,10 +2,15 @@
     display: table;
     margin: 0px;
     padding: 0px;
+    border-collapse: collapse; 
+    border-spacing: 0; 
+    font-family: Futura, Arial, sans-serif;
 }
 
 .row {
     display: table-row;
+    padding: .75em;
+    content: "";
 }
 
 .row > span {
@@ -16,8 +21,9 @@
 }
 
 .header {
+    background: linear-gradient(#ccc,##777); 
+    /*color: #fff;*/
     display: table-header-group;
-    /*position: absolute;*/
 }
 
 .header span {
@@ -31,3 +37,10 @@
 .footer {
     display: table-footer-group;
 }
+
+
+li:first-child { border-radius: 9px 0 0 0; }
+li:last-child { border-radius: 0 9px 0 0; }
+li:last-child li:first-child { border-radius: 0 0 0 9px; }
+li:last-child li:last-child { border-radius: 0 0 9px 0; }
+li:nth-child(odd) { background: #ccc; }

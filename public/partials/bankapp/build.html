@@ -1,17 +1,17 @@
-<div class="table-responsive" ng-controller="TableCtrl">
+<div ng-controller="TableCtrl">
     <test-data>
         <div class="header">
             <li class="row">
-                <span class="span2 sortable" ng-class="sortClass('id')" ng-click="setSort('id')">Id</span>
-                <span class="span2 sortable" ng-class="sortClass('buildNumber')" ng-click="setSort('buildNumber')">Build</span>
-                <span class="span2 sortable" ng-class="sortClass('date')" ng-click="setSort('date')">Date</span>
-                <span class="span2 sortable" ng-class="sortClass('tests')" ng-click="setSort('tests')">Passed</span>
-                <span class="span2 sortable" ng-class="sortClass('failures')" ng-click="setSort('failures')">Failures</span>
-                <span class="span2 sortable" ng-class="sortClass('errors')" ng-click="setSort('errors')">Errors</span>
+                <span>Id</span>
+                <span>Build</span>
+                <span>Date</span>
+                <span>Passed</span>
+                <span>Failures</span>
+                <span>Errors</span>
             </li>
         </div>
         <div class="body" >
-            <li class="build row table-row" ng-repeat="build in builds.items">
+            <li class="build row" ng-repeat="build in builds.items">
                 <span>{{build.id}}</span>
                 <span><a ng-href="#/builds/{{owner}}/{{project}}/testsuites/{{build.buildNumber}}">{{build.buildNumber}}</a></span>
                 <span>{{build.date}}</span>
@@ -21,4 +21,5 @@
             </li>
         </div>
      </test-data>
+
 </div>

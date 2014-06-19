@@ -18,9 +18,7 @@ angular.module('TestData', []).directive('testData', function () {
 
 
 function TableCtrl($rootScope, $scope, $routeParams) {
-    $scope.totalItems = 20;
     $scope.currentPage = 1;
-
     $scope.filter = {}
 
     $scope.setSort = function (sort) {
@@ -29,7 +27,7 @@ function TableCtrl($rootScope, $scope, $routeParams) {
 
     $scope.pageChanged = function () {
         console.log('Page changed to: ' + $scope.currentPage);
-        $scope.setItems($rootScope, $scope)
+        $scope.setItems($rootScope, $scope, $routeParams)
     };
 
     $rootScope.$on('CtrlPressed', function () {
