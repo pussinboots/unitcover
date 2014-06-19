@@ -43,8 +43,7 @@ ScoverageSbtPlugin.ScoverageKeys.excludedPackages in ScoverageSbtPlugin.scoverag
 envVars := Map("aes_key" -> "16rdKQfqN3L4TY7YktgxBw==", "sparkasse_username"->"username", "sparkasse_password"->"password") // setted for EasyCryptSpec
 
 libraryDependencies ++= Seq(
-    "net.databinder.dispatch" %% "dispatch-core" % "0.10.0",
-    "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.2"
+    "net.databinder.dispatch" %% "dispatch-core" % "0.10.0"
 )
 
 //embedded jetty dependencies
