@@ -23,6 +23,6 @@ object E2ETestGlobal extends GlobalSettings {
       	SetupTestDatabase.insertTestData()
         SetupTestDatabase.insertE2ETestData()
       }
-      Logger.debug("Application for e2e test has started")
+      Logger.trace("Application for e2e test has started")
     }
 }
