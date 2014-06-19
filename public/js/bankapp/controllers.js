@@ -9,7 +9,6 @@ function HeaderController($scope, $location) {
 }
 
 /* Controllers */
-
 function BuildsCtrl($rootScope, $scope, $routeParams, Builds) {
     initTable($scope, 10, 'date', 'desc')
     $scope.owner = $routeParams.owner
@@ -26,16 +25,32 @@ function loadBuilds(rootScope, scope, routeParams, Builds) {
     });
 }
 
-function TestSuiteCtrl($rootScope, $scope, $routeParams, TestSuite) {
+function TestSuitesCtrl($rootScope, $scope, $routeParams, TestSuites) {
     initTable($scope, 10, 'date', 'desc')
+    $scope.owner = $routeParams.owner
+    $scope.project = $routeParams.project
     $scope.setItems = function (rootScope, scope, routeParams) {
-        loadTestSuite(rootScope, scope, routeParams, TestSuite)
+        loadTestSuites(rootScope, scope, routeParams, TestSuites)
     };
     $scope.setItems($rootScope, $scope, $routeParams)
 }
 
-function loadTestSuite(rootScope, scope, routeParams, TestSuite) {
-    scope.testsuite = TestSuite.get({owner:routeParams.owner, project:routeParams.project ,testsuiteid:routeParams.testsuiteid}, function (response) {
+function loadTestSuites(rootScope, scope, routeParams, TestSuites) {
+    scope.builds = TestSuites.get({owner:routeParams.owner, project:routeParams.project, buildnumber:routeParams.buildnumber}, function (response) {
+        scope.totalItems = response.count;
+    });
+}
+
+function TestCasesCtrl($rootScope, $scope, $routeParams, TestCases) {
+    initTable($scope, 10, 'date', 'desc')
+    $scope.setItems = function (rootScope, scope, routeParams) {
+        loadTestCases(rootScope, scope, routeParams, TestCases)
+    };
+    $scope.setItems($rootScope, $scope, $routeParams)
+}
+
+function loadTestCases(rootScope, scope, routeParams, TestCases) {
+    scope.testsuite = TestCases.get({owner:routeParams.owner, project:routeParams.project ,testsuiteid:routeParams.testsuiteid}, function (response) {
         scope.totalItems = response.count;
     });
 }

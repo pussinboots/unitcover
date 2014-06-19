@@ -23,7 +23,7 @@ class TestCaseControllerSpec extends PlaySpecification with DatabaseSetupBefore 
 	"GET to /api/<owner>/<project>/<testSuiteId>" should {
 		"return latest 10 test cases" in new WithServer {
 			insert10TestCases ()
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").get, 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/testcases/1").get, 10000)
 			response.status must equalTo(OK)
 			val testCases = Json.fromJson[JsonFmtListWrapper[TestCase]](response.json).get
 			testCases.count must equalTo(11)

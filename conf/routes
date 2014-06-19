@@ -1,11 +1,15 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
 
-POST        /api/:owner/:project  controllers.TestSuiteController.saveTestSuite(owner: String, project: String)
+POST        /api/:owner/:project/builds  controllers.BuildController.startBuild(owner: String, project: String)
+POST        /api/:owner/:project/builds/:buildNumber/end  controllers.BuildController.endBuild(owner: String, project: String, buildNumber: Int)
+GET         /api/:owner/:project/builds  controllers.BuildController.latestBuilds(owner: String, project: String)
 
-GET        /api/:owner/:project  controllers.TestSuiteController.latestTestSuites(owner: String, project: String)
+POST        /api/:owner/:project/:buildNumber  controllers.TestSuiteController.saveTestSuite(owner: String, project: String, buildNumber: Int)
 
-GET        /api/:owner/:project/:testSuiteId  controllers.TestCaseController.findTestCases(owner: String, project: String, testSuiteId: Long)
+GET        /api/:owner/:project/:buildnumber  controllers.TestSuiteController.latestTestSuites(owner: String, project: String, buildnumber: Int)
+
+GET        /api/:owner/:project/testcases/:testSuiteId  controllers.TestCaseController.findTestCases(owner: String, project: String, testSuiteId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /*file                         controllers.Assets.at(path="/public", file)

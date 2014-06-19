@@ -28,4 +28,7 @@ object JsonHelper {
 
   implicit val testCaseWrites = Json.writes[TestCase]
   implicit val testCaseReads = Json.reads[TestCase]
+
+  implicit val buildWrites = Json.writes[Build]
+  implicit val buildReads = Json.reads[Build]
 }

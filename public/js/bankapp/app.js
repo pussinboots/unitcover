@@ -7,10 +7,12 @@ var myModule = angular.module('bankapp',
                 'productServices', 'ngCookies'])
 myModule.config(function ($routeProvider) {
     $routeProvider
-	.when('/builds/:owner/:project', {  templateUrl: 'partials/bankapp/builds.html',
+    .when('/builds/:owner/:project/builds', {  templateUrl: 'partials/bankapp/build.html',
                                         controller: BuildsCtrl })
-	.when('/builds/:owner/:project/:testsuiteid', {  templateUrl: 'partials/bankapp/testsuite.html',
-                                        controller: TestSuiteCtrl })
+	.when('/builds/:owner/:project/testsuites/:buildnumber', {  templateUrl: 'partials/bankapp/testsuite.html',
+                                        controller: TestSuitesCtrl })
+	.when('/builds/:owner/:project/testcases/:testsuiteid', {  templateUrl: 'partials/bankapp/testcase.html',
+                                        controller: TestCasesCtrl })
     .otherwise({ redirectTo: '/builds' });
 })
 

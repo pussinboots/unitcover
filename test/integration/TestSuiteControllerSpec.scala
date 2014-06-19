@@ -23,7 +23,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	"POST to /api/<owner>/<project>" should {
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/ApplicationSpec.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withSession {
@@ -34,7 +34,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer  { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/ApplicationSpec.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withSession {
@@ -45,8 +45,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 		"with karma junit xml report from all tests passed return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/test-results.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
-			println(response.json)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int])
 			DB.db withSession {
@@ -60,7 +59,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 		"with sbt junit xml report one failure return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/TestSuiteControllerSpecFailure.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withSession {
@@ -71,7 +70,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 		"with sbt junit xml report one error return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/TestSuiteControllerSpecError.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withSession {
@@ -84,7 +83,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	"GET to /api/<owner>/<project>" should {
 		"return latest 10 test suites" in new WithServer {
 			insert10TestSuites ()
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp").get)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").get)
 			response.status must equalTo(OK)
 			val testSuites = Json.fromJson[JsonFmtListWrapper[TestSuite]](response.json).get
 			testSuites.count must equalTo(11)
@@ -95,7 +94,11 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	def insert10TestSuites() {
 		DB.db withSession {
 			for(i <- 1 to 10)
-				TestSuites.insert(TestSuite(None, i, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+				TestSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+			for(i <- 1 to 10)
+				TestSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+			for(i <- 1 to 10)
+				TestSuites.insert(TestSuite(None, 3, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
 		}	
 	}
 

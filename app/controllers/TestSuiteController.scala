@@ -35,20 +35,20 @@ object TestSuiteController extends Controller {
     def toInt:Option[Int] = option.map(_.toInt)
   }
 
-  def saveTestSuite(owner: String, project: String) = ActionWithoutToken(BodyParsers.parse.xml) {request =>
+  def saveTestSuite(owner: String, project: String, buildNumber: Int) = ActionWithoutToken(BodyParsers.parse.xml) {request =>
       //extract multiple test suites like karma unit report
       val testSuites = (request.body \ "testsuite").map{testSuite=>{
-        parseTestSuite(owner, project, testSuite)
+        parseTestSuite(owner, project, testSuite, buildNumber)
       }}
       if (testSuites.length > 0) {
         Ok(Json.obj("testsuites" -> Json.arr(testSuites.map(testSuite=>Json.obj("id" ->testSuite.id.get)))))
       } else {//extract only one test suite like sbt junit report
-        val testSuite = parseTestSuite(owner, project, request.body)
+        val testSuite = parseTestSuite(owner, project, request.body, buildNumber)
         Ok(Json.obj("testsuites" -> Json.arr(Json.obj("id" ->testSuite.id.get))))
       }
 }
 
-def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq) = {
+def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, buildNumber: Int) = {
   val testSuiteXml = testSuiteNode 
   val testSuiteData = ((testSuiteXml \ "@name").text, 
                        (testSuiteXml \ "@tests").textOption.toInt, 
@@ -65,7 +65,7 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq) = {
                       (testCaseNode \ "error" \ "@message").textOption,
                       (testCaseNode \ "failure" \ "@type").textOption,
                       (testCaseNode \ "error" \ "@type").textOption))
-  val suite = TestSuite(None, 1, owner, project, testSuiteData._1, testSuiteData._2, testSuiteData._3, testSuiteData._4, testSuiteData._6)
+  val suite = TestSuite(None, buildNumber, owner, project, testSuiteData._1, testSuiteData._2, testSuiteData._3, testSuiteData._4, testSuiteData._6)
   val testSuite = DB.db withSession TestSuites.insert(suite)
   def getType(failureType: Option[String], errorType: Option[String]) = {
     if (failureType !=None) failureType
@@ -81,9 +81,9 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq) = {
   testSuite
 }
 
-  def latestTestSuites(owner: String, project: String) = ActionWithoutToken {request =>
+  def latestTestSuites(owner: String, project: String, buildNumber: Int) = ActionWithoutToken {request =>
     DB.db withSession  {
-      var query = TestSuites.findBy(owner, project).sortBy(_.id.desc)
+      var query = TestSuites.findBy(owner, project, buildNumber).sortBy(_.id.desc)
       val json = query.take(10).list()
       val count = query.list.length
       Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")

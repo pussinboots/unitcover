@@ -27,6 +27,11 @@ object SetupTestDatabase {
     DB.db withSession {
       for(i <- 2 to 11)
         TestSuites.insert(TestSuite(None, i, "pussinboots", "bankapp", s"testsuite $i", 8,0,0,1000.0, now))
-    } 
+    }
+
+     DB.db withSession {
+      for(i <- 1 to 11)
+        Builds.insertAndIncrement("pussinboots", "bankapp")
+    }  
   }
 }
