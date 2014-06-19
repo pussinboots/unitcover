@@ -7,10 +7,6 @@ env:
 before_script:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
-- sudo sh -c 'echo "deb http://deb.opera.com/opera/ stable non-free" >> /etc/apt/sources.list.d/opera.list'
-- sudo sh -c 'wget -O - http://deb.opera.com/archive.key | apt-key add -'
-- sudo apt-get update
-- sudo apt-get install opera
 - wget http://downloads.typesafe.com/play/${PLAY_VERSION}/play-${PLAY_VERSION}.zip
 - unzip -q play-${PLAY_VERSION}.zip
 - export PATH=$PATH:$PWD/play-${PLAY_VERSION}/
