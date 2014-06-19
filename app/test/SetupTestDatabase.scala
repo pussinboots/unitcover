@@ -1,6 +1,6 @@
 package test
 
-import model.{DateUtil, DB, TestSuite, TestCase}
+import model.{DateUtil, DB, TestSuite, TestCase, Build}
 import scala.slick.session.Database
 import Database.threadLocalSession
 
@@ -31,7 +31,7 @@ object SetupTestDatabase {
 
      DB.db withSession {
       for(i <- 1 to 11)
-        Builds.insertAndIncrement("pussinboots", "bankapp")
+        Builds.insert(Build(buildNumber=i, owner="pussinboots", project="bankapp", tests=i, failures=i/8, errors=i/10))
     }  
   }
 }

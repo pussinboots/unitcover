@@ -40,8 +40,36 @@
 
 </head>
 <body>
-<div class="container-fluid">
-    <div ng-view></div>
-</div>
+    <div class="container-fluid">
+        <div class="footerWrap">
+            <div class="footerPad">
+                <div id="header">
+                    <div class="site-wrapper">
+                        <a href="http://unitcover.herokuapp.com/" class="logo">Unitcover</a>
+                        <nav>
+                            <ul>
+                                <li>
+                                    <a href="#/builds/{{owner}}/{{project}}/builds">
+                                        Builds
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ng-href="http://github.com/{{owner}}/{{project}}">
+                                        GithUb
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ng-href="http://travis-ci.org/{{owner}}/{{project}}">
+                                        Travis
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div ng-view></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

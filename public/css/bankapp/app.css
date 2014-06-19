@@ -24,3 +24,141 @@ th.sortable {
 .clickable:hover {
     cursor: pointer;
 }
+
+.green {
+	background-color: #40FF00;
+}
+
+.yellow {
+	background-color: #FFFF00;
+}
+
+.red {
+	background-color: #FF0000;
+}
+
+.gray {
+	background-color: #D8D8D8;
+}
+
+.footerWrap {
+    min-height: 100%
+}
+
+.footerPad {
+    padding-bottom: 95px
+}
+
+.site-wrapper {
+    margin: auto;
+    padding: 50px 0;
+    width: 1190px
+}
+
+.site-wrapper:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0
+}
+
+.site-wrapper div.content {
+    float: left;
+    width: 940px
+}
+
+.site-wrapper .source-view a {
+    text-decoration: none
+}
+
+.site-wrapper .source-view table .src pre {
+    width: 830px
+}
+
+
+#header {
+    background-color: #FF7535;
+    
+    border-bottom: 2px solid #d7d7d7;
+    margin-bottom: 0
+}
+
+#header:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0
+}
+
+#header .site-wrapper {
+    padding: 0
+}
+
+#header .logo {
+    color: #fcf9ef;
+    float: left;
+    font-family: futura-pt-condensed,"Helvetica",sans-serif;
+    font-weight: 800;
+    font-size: 42px;
+    font-style: italic;
+    padding: 15px 0;
+    text-decoration: none;
+    text-shadow: rgba(0,0,0,0.45) 1px 1px 2px
+}
+
+@media screen and (max-width: 900px) and (min-width: 500px) {
+    #header .logo {
+        font-size:32px
+    }
+}
+
+#header .logo:hover {
+    color: #fff
+}
+
+#header nav {
+    float: right;
+    padding: 31px 0 0
+}
+
+#header nav a {
+    color: #fcf9ef;
+    font-family: futura-pt-condensed,"Helvetica",sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-top: 4px
+}
+
+#header nav a:hover {
+    color: #ddd
+}
+
+#header nav li {
+    display: inline-block;
+    margin-left: 20px
+}
+
+#header nav .subIcon {
+    height: 15px;
+    margin: -2px 5px 0 0;
+    position: relative;
+    vertical-align: middle;
+    width: 15px
+}
+
+#header nav .subIcon img {
+    position: absolute;
+    top: 0;
+    width: 15px
+}
+
+#header nav i {
+    display: inline-block;
+    margin: 0 2px -2px 0
+}

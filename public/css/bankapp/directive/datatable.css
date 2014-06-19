@@ -27,7 +27,8 @@
 }
 
 .header span {
-    background-color: #ccc;
+    background-color: #6E6E6E;
+    color: #fcf9ef;
 }
 
 .body {
@@ -39,8 +40,8 @@
 }
 
 
-li:first-child { border-radius: 9px 0 0 0; }
-li:last-child { border-radius: 0 9px 0 0; }
-li:last-child li:first-child { border-radius: 0 0 0 9px; }
-li:last-child li:last-child { border-radius: 0 0 9px 0; }
-li:nth-child(odd) { background: #ccc; }
+.body li.row:first-child { border-radius: 9px 0 0 0; }
+.body li.row:last-child { border-radius: 0 9px 0 0; }
+.body li.row:last-child .body li.row:first-child { border-radius: 0 0 0 9px; }
+.body li.row:last-child .body li.row:last-child { border-radius: 0 0 9px 0; }
+.body li.row:nth-child(odd) { background: #ccc; }

@@ -11,11 +11,17 @@ function HeaderController($scope, $location) {
 /* Controllers */
 function BuildsCtrl($rootScope, $scope, $routeParams, Builds) {
     initTable($scope, 10, 'date', 'desc')
-    $scope.owner = $routeParams.owner
-    $scope.project = $routeParams.project
+    $rootScope.owner = $routeParams.owner
+    $rootScope.project = $routeParams.project
     $scope.setItems = function (rootScope, scope, routeParams) {
         loadBuilds(rootScope, scope, routeParams, Builds)
     };
+    $scope.statusClass=function(build) {
+        if(build.errors > 0) return "red"
+        if(build.failures > 0) return "yellow"
+        if(build.tests > 0) return "green"
+        return "gray"
+    }
     $scope.setItems($rootScope, $scope, $routeParams)
 }
 
@@ -27,8 +33,8 @@ function loadBuilds(rootScope, scope, routeParams, Builds) {
 
 function TestSuitesCtrl($rootScope, $scope, $routeParams, TestSuites) {
     initTable($scope, 10, 'date', 'desc')
-    $scope.owner = $routeParams.owner
-    $scope.project = $routeParams.project
+    $rootScope.owner = $routeParams.owner
+    $rootScope.project = $routeParams.project
     $scope.setItems = function (rootScope, scope, routeParams) {
         loadTestSuites(rootScope, scope, routeParams, TestSuites)
     };
@@ -42,6 +48,8 @@ function loadTestSuites(rootScope, scope, routeParams, TestSuites) {
 }
 
 function TestCasesCtrl($rootScope, $scope, $routeParams, TestCases) {
+    $rootScope.owner = $routeParams.owner
+    $rootScope.project = $routeParams.project
     initTable($scope, 10, 'date', 'desc')
     $scope.setItems = function (rootScope, scope, routeParams) {
         loadTestCases(rootScope, scope, routeParams, TestCases)
