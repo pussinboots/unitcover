@@ -116,7 +116,8 @@ trait TestCaseComponent {
 
 case class Build(var id: Option[Long] = None, owner: String, project: String,
                      buildNumber: Int, date: Timestamp = DateUtil.nowDateTime(), 
-                     tests: Option[Int]=None, failures: Option[Int]=None, errors: Option[Int]=None)
+                     tests: Option[Int]=None, failures: Option[Int]=None, errors: Option[Int]=None,
+                     trigger: Option[String] = None, branch:Option[String] = None)
 
 trait BuildComponent {
   this: Profile =>
@@ -137,21 +138,23 @@ trait BuildComponent {
     def tests = column[Option[Int]]("tests")
     def failures = column[Option[Int]]("failures")
     def errors = column[Option[Int]]("errors")
+    def trigger = column[Option[String]]("trigger")
+    def branch = column[Option[String]]("branch")
     def idx = index("idx_owner_project", (owner, project), unique = false)
-    def * = id.? ~ owner ~ project ~ buildNumber ~ date ~ tests ~ failures ~ errors<>(Build, Build.unapply _)
+    def * = id.? ~ owner ~ project ~ buildNumber ~ date ~ tests ~ failures ~ errors ~ trigger ~ branch<>(Build, Build.unapply _)
 
-    def forInsert = owner ~ project ~ buildNumber ~ date ~ tests ~ failures ~ errors<>( 
-      { t => Build(None, t._1, t._2, t._3, t._4, t._5, t._6, t._7)}, 
-      { (u: Build) => Some((u.owner, u.project, u.buildNumber, u.date, u.tests, u.failures, u.errors))}) returning id
+    def forInsert = owner ~ project ~ buildNumber ~ date ~ tests ~ failures ~ errors ~ trigger ~ branch<>( 
+      { t => Build(None, t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9)}, 
+      { (u: Build) => Some((u.owner, u.project, u.buildNumber, u.date, u.tests, u.failures, u.errors, u.trigger, u.branch))}) returning id
     def insert(build: Build): Build = build.copy(id = Some(forInsert.insert(build)))
-    def insertAndIncrement(owner: String, project: String): Build = {
-      val q =findLatestBuildNumber(owner, project)
+    
+    def insertAndIncrement(ownerStr: String, projectStr: String): Build = insertAndIncrement(Build(owner=ownerStr, project=projectStr, buildNumber=0))
+    def insertAndIncrement(build: Build): Build = {
+      val q =findLatestBuildNumber(build.owner, build.project)
       val latestBuildNumber:Int = q.first.getOrElse(0)
-      insert(Build(owner=owner, project=project, buildNumber=latestBuildNumber+1))      
+      insert(build.copy(id = None, buildNumber=latestBuildNumber+1))      
     }
     def updateStats(owner: String, project: String, buildNumber: Int, testSum: Int, failureSum: Int, errorSum: Int) {
-      //val build=findByOwnerAndProject(owner, project).firstOption.get
-      //val q2 = Query(Builds).where(_.buildNumber === buildNumber).map(r=>r.tests)
       val q2 = for {a <- Builds if a.buildNumber === buildNumber} yield (a.tests)
       q2.update(Some(testSum))
     }

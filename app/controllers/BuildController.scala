@@ -20,8 +20,9 @@ object BuildController extends Controller {
   import model.SlickHelpers._
   import model.JsonHelper._
 
-  def startBuild(owner: String, project: String) = ActionWithoutToken {request =>
-      val build = DB.db withSession Builds.insertAndIncrement(owner, project)
+  def startBuild(owner: String, project: String, trigger: Option[String], branch: Option[String]) = ActionWithoutToken {request =>
+      val build1 = Build(id=None, owner=owner, project=project, trigger=trigger, buildNumber=0, branch=branch)
+      val build = DB.db withSession Builds.insertAndIncrement(build1)
       Ok(Json.obj("buildNumber" -> build.buildNumber))
   }
 

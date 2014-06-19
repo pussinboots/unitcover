@@ -63,7 +63,6 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/1/end").post(""), 10000)
 			response1.status must equalTo(OK)
 			response2.status must equalTo(OK)
-			println(response2.json)
 			DB.db withSession {
 				val build = Builds.findByBuildNumber(1).firstOption.get
 				build.buildNumber must beEqualTo(1)
@@ -74,6 +73,30 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		}
 	}
 
+	"POST to /api/<owner>/<project>/builds with trigger parameter" should {
+		"create a new build and return its buildNumber" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI").post(""), 10000)
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withSession {
+				checkBuildTravisCI(buildNumber)
+			}
+		}
+	}
+
+	"POST to /api/<owner>/<project>/builds with trigger and branch parameter" should {
+		"create a new build and return its buildNumber" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""), 10000)
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withSession {
+				checkBuildTravisCINotMaster(buildNumber)
+			}
+		}
+	}
+
+	//given
+
 	def insert10Builds() {
 		DB.db withSession {
 			for(i <- 1 to 11)
@@ -82,6 +105,25 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	//then
+	def checkBuildTravisCINotMaster(buildId: Int) {
+		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		build.id must beEqualTo(Some(buildId))
+		build.buildNumber must beEqualTo(1)
+		build.owner must beEqualTo("pussinboots")
+		build.project must beEqualTo("bankapp")
+		build.trigger must beEqualTo(Some("TravisCI"))
+		build.branch must beEqualTo(Some("notMaster"))
+	}
+
+	def checkBuildTravisCI(buildId: Int) {
+		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		build.id must beEqualTo(Some(buildId))
+		build.buildNumber must beEqualTo(1)
+		build.owner must beEqualTo("pussinboots")
+		build.project must beEqualTo("bankapp")
+		build.trigger must beEqualTo(Some("TravisCI"))
+	}
+
     def checkBuild(buildId: Int) {
 		val build = Builds.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
