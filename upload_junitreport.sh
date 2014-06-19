@@ -1,8 +1,8 @@
 #!/bin/bash
 owner=pussinboots
 project=unitcover
-endpoint=localhost:9000
-#endpoint=unitcover.herokuapp.com
+#endpoint=localhost:9000
+endpoint=unitcover.herokuapp.com
 FILES=./target/test-reports/*
 #upload play junit reports
 buildnumber=$(curl -s -X POST http://$endpoint/api/$owner/$project/builds | sed -E 's/.*"buildNumber":([0-9]*).*/\1/')
