@@ -1,17 +1,12 @@
 language: node_js
-script: sbt test && npm test && scripts/bliss scripts/upload_junitreport.sh
+script: sbt coveralls && npm test && scripts/bliss scripts/upload_junitreport.sh
 node_js:
 - 0.1
-env:
-- PLAY_VERSION=2.2.3
 before_script:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
 - wget http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb
 - sudo dpkg -i sbt-0.13.5.deb
-#- wget http://downloads.typesafe.com/play/${PLAY_VERSION}/play-${PLAY_VERSION}.zip
-#- unzip -q play-${PLAY_VERSION}.zip
-#- export PATH=$PATH:$PWD/play-${PLAY_VERSION}/
 before_deploy:
 - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 notifications:
