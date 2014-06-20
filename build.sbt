@@ -67,3 +67,12 @@ libraryDependencies ++= Seq(
     "mysql" % "mysql-connector-java" % "5.1.18",
     "c3p0" % "c3p0" % "0.9.1.2"
 )
+
+//needed for database migration scala.slick.migration.api
+libraryDependencies ++= Seq(
+  "org.xerial"          % "sqlite-jdbc"          % "3.7.2"         % "test",
+  "org.apache.derby"    % "derby"                % "10.10.1.1"     % "test",
+  "org.hsqldb"          % "hsqldb"               % "2.2.8"         % "test",
+  "postgresql"          % "postgresql"           % "9.1-901.jdbc4" % "test",
+  "com.h2database"      % "h2"                   % "1.3.170"          
+)
