@@ -39,6 +39,13 @@ function TestSuitesCtrl($rootScope, $scope, $routeParams, TestSuites) {
         loadTestSuites(rootScope, scope, routeParams, TestSuites)
     };
     $scope.setItems($rootScope, $scope, $routeParams)
+    
+    $scope.statusClass=function(build) {
+        if(build.errors > 0) return "red"
+        if(build.failures > 0) return "yellow"
+        if(build.tests > 0) return "green"
+        return "gray"
+    }
 }
 
 function loadTestSuites(rootScope, scope, routeParams, TestSuites) {
