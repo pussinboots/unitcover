@@ -5,7 +5,7 @@ import PlayKeys._
 import java.io.File
 import scala.sys.process._
 
-ScoverageSbtPlugin.instrumentSettings
+instrumentSettings
 
 CoverallsPlugin.coverallsSettings
 
@@ -19,7 +19,7 @@ parallelExecution in Global := false //disable parallel execution for all tasks 
 
 parallelExecution in Test := false
 
-parallelExecution in ScoverageSbtPlugin.scoverageTest := false
+parallelExecution in ScoverageTest := false
 
 Keys.fork in Test := false
 
@@ -33,7 +33,7 @@ npm := scala.sys.process.Process( "npm" :: "install" :: Nil) ! logger
 
 //(compile in Compile) <<= (compile in Compile) dependsOn (npm)
 
-ScoverageSbtPlugin.ScoverageKeys.excludedPackages in ScoverageSbtPlugin.scoverage := "controllers.javascript;controllers.ref;tools.imports;Routes;controllers.ReverseAssets;controllers.ReverseApplication;controllers.ReverseBuildController;controllers.ReverseTestCaseController;controllers.ReverseTestSuiteController"
+ScoverageKeys.excludedPackages in ScoverageCompile := "controllers.javascript;controllers.ref;tools.imports;Routes;controllers.ReverseAssets;controllers.ReverseApplication;controllers.ReverseBuildController;controllers.ReverseTestCaseController;controllers.ReverseTestSuiteController;scala.slick.migration.api..*"
 
 envVars := Map("aes_key" -> "16rdKQfqN3L4TY7YktgxBw==", "sparkasse_username"->"username", "sparkasse_password"->"password") // setted for EasyCryptSpec
 

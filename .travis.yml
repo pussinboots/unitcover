@@ -1,5 +1,5 @@
 language: node_js
-script: sbt test && npm test && scripts/bliss scripts/upload_junitreport.sh
+script: sbt coveralls && npm test && scripts/bliss scripts/upload_junitreport.sh
 node_js:
 - 0.1
 before_script:
