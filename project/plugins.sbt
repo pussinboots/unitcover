@@ -9,7 +9,7 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 //addSbtPlugin("com.typesafe.play" %% "sbt-plugin" % "2.3.0")
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.0")
 
-addSbtPlugin("com.sksamuel.scoverage" % "sbt-scoverage" % "0.98.0")
+addSbtPlugin("com.sksamuel.scoverage" % "sbt-scoverage" % "0.95.9")
 
 addSbtPlugin("com.sksamuel.scoverage" %% "sbt-coveralls" % "0.0.5")
 
