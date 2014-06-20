@@ -12,7 +12,11 @@ SonarQube seems to complex for me. So i decided to build one similar to coverall
 
 Feel free to fork this repo and hosted it self the heroku instance running is a free one and very limited one web dyno and 10 database connection so please contact me before you want to upload something in the moment.
 
+##Done
+* updated to play 2.3.0
+
 ##TODO
+* migrate from slick version 1 to 2
 * authorization is complete missing
 * nice and usable design
 * buildnumber generation is missing always 1
@@ -20,8 +24,11 @@ Feel free to fork this repo and hosted it self the heroku instance running is a 
 * grouping of test suites to one build (need build number generation)
 * support badge images
 * link test reports with travis build
+ 
+##Features
 
-##Uasage
+
+##Usage
 
 There is no build integration yet but with the following script you could upload your sbt and karma junit reports
 ```bash
@@ -45,3 +52,9 @@ curl -H "Content-Type:application/xml" -X POST -d @test-results.xml http://$endp
 
 curl -X POST http://$endpoint/api/$owner/$project/builds/$buildnumber/end
 ```
+
+##Build
+
+###Requirements
+* play 2.3.0
+* nodejs
