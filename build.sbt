@@ -15,7 +15,7 @@ version := "0.1"
 
 scalaVersion := "2.10.4"
 
-parallelExecution := false //disable parallel execution for all tasks the below configuration could be deleted but for documentation purpose they are still there
+parallelExecution in Global := false //disable parallel execution for all tasks the below configuration could be deleted but for documentation purpose they are still there
 
 parallelExecution in Test := false
 
