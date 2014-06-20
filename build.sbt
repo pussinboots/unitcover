@@ -1,10 +1,9 @@
 import sbt._
 import sbt.Keys._
-import play.Project._
+import play.Play.autoImport._
+import PlayKeys._
 import java.io.File
 import scala.sys.process._
-
-play.Project.playScalaSettings
 
 ScoverageSbtPlugin.instrumentSettings
 
@@ -14,7 +13,7 @@ name := "UnitCover"
 
 version := "0.1"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
 parallelExecution := false //disable parallel execution for all tasks the below configuration could be deleted but for documentation purpose they are still there
 
@@ -34,15 +33,17 @@ npm := scala.sys.process.Process( "npm" :: "install" :: Nil) ! logger
 
 //(compile in Compile) <<= (compile in Compile) dependsOn (npm)
 
-//ScoverageSbtPlugin.ScoverageKeys.highlighting in ScoverageSbtPlugin.scoverage := true
-
 ScoverageSbtPlugin.ScoverageKeys.excludedPackages in ScoverageSbtPlugin.scoverage := "controllers.javascript;controllers.ref;tools.imports;Routes;controllers.ReverseAssets;controllers.ReverseApplication;controllers.ReverseBuildController;controllers.ReverseTestCaseController;controllers.ReverseTestSuiteController"
 
 envVars := Map("aes_key" -> "16rdKQfqN3L4TY7YktgxBw==", "sparkasse_username"->"username", "sparkasse_password"->"password") // setted for EasyCryptSpec
 
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
+
 libraryDependencies ++= Seq(
     "net.databinder.dispatch" %% "dispatch-core" % "0.10.0"
 )
+
+libraryDependencies += ws
 
 //embedded jetty dependencies
 libraryDependencies ++= Seq(
