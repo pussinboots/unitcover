@@ -3,8 +3,8 @@ package unit.org.stock.manager.test
 import org.specs2.mutable.Before
 import org.specs2.execute.AsResult
 import model.DB
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database
+import Database.dynamicSession
 import test.SetupTestDatabase
 
 trait DatabaseSetupBefore extends SlickDbBefore {
@@ -16,7 +16,7 @@ trait DatabaseSetupBefore extends SlickDbBefore {
     import DB.dal._
     import DB.dal.profile.simple._
 
-    db.withSession {
+    db.withDynSession {
       val result = SetupTestDatabase.insertTestData()
       now = result._1
       yesterday = result._2
@@ -24,7 +24,7 @@ trait DatabaseSetupBefore extends SlickDbBefore {
   }
 
   def around[T: AsResult](f: => T) = {
-    DB.db withSession {
+    DB.db withDynSession {
       AsResult(f)
     }
   }

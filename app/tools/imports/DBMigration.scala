@@ -3,8 +3,7 @@ package tools.imports
 import scala.slick.driver.MySQLDriver
 import model.DB
 import model.DAL
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 object DBMigration extends App {
   val db = DB.getSlickMysqlJdbcConnection()
@@ -12,7 +11,7 @@ object DBMigration extends App {
   import dao._
   import dao.profile.simple._
 
-  db withSession {
+  db withDynSession {
     println("create tables")
     dao.create
   }

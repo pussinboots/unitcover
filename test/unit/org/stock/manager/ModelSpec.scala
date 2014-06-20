@@ -1,8 +1,7 @@
 package unit.org.stock.manager
 
 import scala.slick.driver.H2Driver
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import play.api.test.PlaySpecification
 import model.DateUtil
 import scala.Some
@@ -13,14 +12,14 @@ class ModelSpec extends PlaySpecification with DatabaseSetupBefore {
   sequential
   implicit def toOption[A](value: A) : Option[A] = Some(value)
 
-  import DB.dal._
+  import DB.dal
   import DB.dal.profile.simple._
 
   "TestCase model " should {
     "save" in {
-      DB.db withSession {
+      DB.db withDynSession {
         val now = DateUtil.nowDateTime()
-        val savedTestCase = TestCases.insert(TestCase(None, 1, "pussinboots", "bankapp", "testcase", "testclass",1000.0))
+        val savedTestCase = dal.testCaseForInsert.insert(TestCase(None, 1, "pussinboots", "bankapp", "testcase", "testclass",1000.0))
         savedTestCase.id must beEqualTo(Some(2))
         savedTestCase.testSuiteId must beEqualTo(1)
         savedTestCase.owner must beEqualTo("pussinboots")
@@ -34,9 +33,9 @@ class ModelSpec extends PlaySpecification with DatabaseSetupBefore {
 
   "TestSuite model" should {
     "save" in {
-      DB.db withSession {
+      DB.db withDynSession {
         val now = DateUtil.nowDateTime()
-        val savedTestSuite = TestSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+        val savedTestSuite = dal.testSuiteForInsert.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
         savedTestSuite.id must beEqualTo(Some(2))
         savedTestSuite.buildNumber must beEqualTo(1)
         savedTestSuite.owner must beEqualTo("pussinboots")

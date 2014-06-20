@@ -9,14 +9,12 @@ import play.api.test.Helpers._
 import org.specs2.execute.AsResult
 import org.specs2.matcher.DataTables
 import org.specs2.mutable.Before
-
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 
 class E2ETestGlobalSpec extends PlaySpecification with DataTables {
   sys.props.+=("Database" -> "h2")
-  import DB.dal._
+  import DB.dal
   import DB.dal.profile.simple._
       
   val googleId  = "test googleId"
@@ -25,7 +23,7 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
   def around[T: AsResult](f: => T) = {
     running(FakeApplication()) {
       E2ETestGlobal.onStart(Play.application)
-      DB.db withSession {
+      DB.db withDynSession {
         AsResult(f)
       }
     }
@@ -45,7 +43,7 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
         9    ! 9             !  "pussinboots"  !!  "bankapp"  !!    "testsuite 9"   !!    8         ! 0          !  0         !  1000.0     |
         10   ! 10            !  "pussinboots"  !!  "bankapp"  !!    "testsuite 10"  !!    8         ! 0          !  0         !  1000.0     |
         11   ! 11            !  "pussinboots"  !!  "bankapp"  !!    "testsuite 11"  !!    8         ! 0          !  0         !  1000.0     |> { (id, buildNumber, owner, project, name, tests, failures, errors, duration)=>around{
-            val testSuite = TestSuites.findById(id).first
+            val testSuite = dal.findById(id).first
             testSuite.id must beEqualTo(Some(id))
             testSuite.buildNumber must beEqualTo(buildNumber)
             testSuite.owner must beEqualTo(owner)
@@ -72,7 +70,7 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
         9    ! 9             !  "pussinboots"  !!  "bankapp"  !!        9         ! 1          !  0         | 
         10   ! 10            !  "pussinboots"  !!  "bankapp"  !!        10         ! 1          !  1         | 
         11   ! 11            !  "pussinboots"  !!  "bankapp"  !!        11         ! 1          !  1         |> { (id, buildNumber, owner, project, tests, failures, errors)=>around{
-            val testSuite = Builds.findByBuildNumber(buildNumber).first
+            val testSuite = dal.findByBuildNumber(buildNumber).first
             testSuite.id must beEqualTo(Some(id))
             testSuite.buildNumber must beEqualTo(buildNumber)
             testSuite.owner must beEqualTo(owner)

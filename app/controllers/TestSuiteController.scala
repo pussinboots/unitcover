@@ -2,20 +2,17 @@ package controllers
 
 import play.api.libs.json._
 import play.api.libs.json.Json
-import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
-import play.api.mvc.BodyParsers
 import play.api.mvc.Controller
+import play.api.mvc.BodyParsers
 import model.{DB, TestSuite, TestCase}
-import scala.slick.session.Database
-import Database.threadLocalSession
-import DB.dal.profile.simple.{Query => SlickQuery}
+import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
 
 object TestSuiteController extends Controller {
 
   import controllers.ControllerHelpers._
-  import DB.dal._
+  import DB.dal
   import DB.dal.profile.simple._
   import model.SlickHelpers._
   import model.JsonHelper._
@@ -66,13 +63,13 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
                       (testCaseNode \ "failure" \ "@type").textOption,
                       (testCaseNode \ "error" \ "@type").textOption))
   val suite = TestSuite(None, buildNumber, owner, project, testSuiteData._1, testSuiteData._2, testSuiteData._3, testSuiteData._4, testSuiteData._6)
-  val testSuite = DB.db withSession TestSuites.insert(suite)
+  val testSuite = DB.db withDynSession dal.testSuiteForInsert.insert(suite)
   def getType(failureType: Option[String], errorType: Option[String]) = {
     if (failureType !=None) failureType
     else errorType
   }
-  DB.db withSession testCasesData.map(testCase=>(
-                      TestCases.insert(TestCase(None, testSuite.id.get, owner, project, testCase._1, 
+  DB.db withDynSession testCasesData.map(testCase=>(
+                      dal.testCases.insert(TestCase(None, testSuite.id.get, owner, project, testCase._1, 
                                                 testCase._2 , testCase._3, testCase._4, testCase._5, 
                                                 getType(testCase._6, testCase._7) 
                                                 )
@@ -82,8 +79,8 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
 }
 
   def latestTestSuites(owner: String, project: String, buildNumber: Int) = ActionWithoutToken {request =>
-    DB.db withSession  {
-      var query = TestSuites.findBy(owner, project, buildNumber).sortBy(_.id.desc)
+    DB.db withDynSession  {
+      var query = dal.findBy(owner, project, buildNumber).sortBy(_.id.desc)
       val json = query.take(10).list()
       val count = query.list.length
       Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")

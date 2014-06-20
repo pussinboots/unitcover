@@ -10,14 +10,13 @@ import play.api.libs.json.Json
 import unit.org.stock.manager.test.DatabaseSetupBefore
 
 import model.{DB, TestCase}
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 class TestCaseControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	implicit val timeout = 10000
-	import DB.dal._
+	import DB.dal
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
@@ -36,9 +35,9 @@ class TestCaseControllerSpec extends PlaySpecification with DatabaseSetupBefore 
 	}
 
 	def insert10TestCases() {
-		DB.db withSession {
+		DB.db withDynSession {
 			for(i <- 2 to 11)
-				TestCases.insert(TestCase(None, 1, "pussinboots", "bankapp", s"testcase $i", "testclass",1000.0))
+				dal.testCases.insert(TestCase(None, 1, "pussinboots", "bankapp", s"testcase $i", "testclass",1000.0))
 		}	
 	}
 }

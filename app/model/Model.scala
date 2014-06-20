@@ -1,19 +1,18 @@
 package model
 
-import scala.slick.driver.ExtendedProfile
+import scala.slick.driver.{JdbcProfile, H2Driver, MySQLDriver}
 import java.sql.{Timestamp, Date}
 import java.util.{Date, Calendar}
-import scala.slick.session.{Database, Session}
 import scala.slick.jdbc.meta.MTable
 
 trait Profile {
-  val profile: ExtendedProfile
+  val profile: JdbcProfile
 }
 
 /**
  * The Data Access Layer contains all components and a profile
  */
-class DAL(override val profile: ExtendedProfile) extends TestSuiteComponent with TestCaseComponent with BuildComponent with Profile {
+class DAL(override val profile: JdbcProfile) extends TestSuiteComponent with TestCaseComponent with BuildComponent with Profile {
 
   import profile.simple._
 
@@ -23,19 +22,20 @@ class DAL(override val profile: ExtendedProfile) extends TestSuiteComponent with
   }
 
   def create(implicit session: Session) {
-    if (MTable.getTables(TestSuites.tableName).list().isEmpty) {
-      (TestSuites.ddl).create
+    (testSuites.ddl ++ testCases.ddl ++ builds.ddl).create //helper method to create all tables
+/*    if (MTable.getTables(testSuites.tableName).list().isEmpty) {
+      (testSuites.ddl).create
     }
-    if (MTable.getTables(TestCases.tableName).list().isEmpty) {
-      (TestCases.ddl).create
+    if (MTable.getTables(testCases.tableName).list().isEmpty) {
+      (testCases.ddl).create
     }
-    if (MTable.getTables(Builds.tableName).list().isEmpty) {
-      (Builds.ddl).create
-    }
+    if (MTable.getTables(builds.tableName).list().isEmpty) {
+      (builds.ddl).create
+    }*/
   }
 
   def drop(implicit session: Session) = try {
-    (TestSuites.ddl ++ TestCases.ddl ++ Builds.ddl).drop
+    (testSuites.ddl ++ testCases.ddl ++ builds.ddl).drop
   } catch {
     case ioe: Exception =>
   }
@@ -52,10 +52,7 @@ trait TestSuiteComponent {
   import profile.simple._
 
   //...to be able import profile.simple._
-
-  import profile.simple.Database.threadLocalSession
-
-  object TestSuites extends Table[TestSuite]("testSuite") {
+  class TestSuites(tag: Tag) extends Table[TestSuite](tag, "testSuite") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def buildNumber = column[Int]("buildNumber")
     def owner = column[String]("owner")
@@ -66,17 +63,13 @@ trait TestSuiteComponent {
     def errors = column[Option[Int]]("errors")
     def duration = column[Option[Double]]("duration")
     def date = column[Timestamp]("date")
-    def * = id.? ~ buildNumber ~ owner ~ project ~ name ~ tests ~ failures ~ errors ~ duration ~ date <>(TestSuite, TestSuite.unapply _)
-
-    def forInsert = buildNumber ~ owner ~ project ~ name ~ tests ~ failures ~ errors ~ duration ~ date<>( 
-      { t => TestSuite(None, t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9)}, 
-      { (u: TestSuite) => Some((u.buildNumber, u.owner, u.project, u.name, u.tests, u.failures, u.errors, u.duration, u.date))}) returning id
-    def insert(testSuite: TestSuite): TestSuite = testSuite.copy(id = Some(forInsert.insert(testSuite)))
-    def findBy(owner: String, project: String, buildNumber: Int) = (for {a <- TestSuites if a.owner === owner && a.project === project && a.buildNumber === buildNumber} yield (a))
-    def findResultsBy(owner: String, project: String, buildNumber: Int) = (for {a <- TestSuites if a.owner === owner && a.project === project && a.buildNumber === buildNumber} yield (a.tests, a.failures, a.errors))
-    
-    def findById(id: Long) = (for {a <- TestSuites if a.id === id} yield (a))
+    def * = (id.?, buildNumber, owner, project, name, tests, failures, errors, duration, date) <>(TestSuite.tupled, TestSuite.unapply)
   }
+  val testSuites = TableQuery[TestSuites]
+  val testSuiteForInsert = testSuites returning testSuites.map(_.id) into { case (testSuite, id) => testSuite.copy(id = Some(id)) }
+  def findBy(owner: String, project: String, buildNumber: Int) = (for {a <- testSuites if a.owner === owner && a.project === project && a.buildNumber === buildNumber} yield (a))
+  def findResultsBy(owner: String, project: String, buildNumber: Int) = (for {a <- testSuites if a.owner === owner && a.project === project && a.buildNumber === buildNumber} yield (a.tests, a.failures, a.errors))
+  def findById(id: Long) = (for {a <- testSuites if a.id === id} yield (a))
 }
 case class TestCase(var id: Option[Long] = None, testSuiteId: Long, owner: String, project: String,
                      name: String, className: String, duration: Option[Double], 
@@ -91,9 +84,7 @@ trait TestCaseComponent {
 
   //...to be able import profile.simple._
 
-  import profile.simple.Database.threadLocalSession
-
-  object TestCases extends Table[TestCase]("testCase") {
+  class TestCases(tag: Tag) extends Table[TestCase](tag, "testCase") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def testSuiteId = column[Long]("testSuiteId")
     def owner = column[String]("owner")
@@ -104,14 +95,11 @@ trait TestCaseComponent {
     def failureMessage = column[Option[String]]("failureMessage")
     def errorMessage = column[Option[String]]("errorMessage")
     def typ = column[Option[String]]("typ")
-    def * = id.? ~ testSuiteId ~ owner ~ project ~ name ~ className ~ duration ~ failureMessage ~ errorMessage ~ typ <>(TestCase, TestCase.unapply _)
-
-    def forInsert = testSuiteId ~ owner ~ project ~ name ~ className ~ duration ~ failureMessage ~ errorMessage ~ typ <>( 
-      { t => TestCase(None, t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9)}, 
-      { (u: TestCase) => Some((u.testSuiteId, u.owner, u.project, u.name, u.className, u.duration, u.failureMessage, u.errorMessage, u.typ))}) returning id
-    def insert(testCase: TestCase): TestCase = testCase.copy(id = Some(forInsert.insert(testCase)))
-    def findBySuite(testSuiteId: Long) = (for {a <- TestCases if a.testSuiteId === testSuiteId} yield (a))
+    def * = (id.?, testSuiteId, owner, project, name, className, duration, failureMessage, errorMessage, typ) <>(TestCase.tupled, TestCase.unapply)
   }
+  val testCases = TableQuery[TestCases]
+  val testCaseForInsert = testCases returning testCases.map(_.id) into { case (testCase, id) => testCase.copy(id = Some(id)) }
+  def findBySuite(testSuiteId: Long) = (for {a <- testCases if a.testSuiteId === testSuiteId} yield (a))  
 }
 
 case class Build(var id: Option[Long] = None, owner: String, project: String,
@@ -124,12 +112,9 @@ trait BuildComponent {
   //requires a Profile to be mixed in...
 
   import profile.simple._
-
+  import profile.simple.Database.dynamicSession
   //...to be able import profile.simple._
-
-  import profile.simple.Database.threadLocalSession
-
-  object Builds extends Table[Build]("builds") {
+  class Builds(tag: Tag) extends Table[Build](tag, "builds") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def owner = column[String]("owner")
     def project = column[String]("project")
@@ -141,25 +126,21 @@ trait BuildComponent {
     def trigger = column[Option[String]]("trigger")
     def branch = column[Option[String]]("branch")
     def idx = index("idx_owner_project", (owner, project), unique = false)
-    def * = id.? ~ owner ~ project ~ buildNumber ~ date ~ tests ~ failures ~ errors ~ trigger ~ branch<>(Build, Build.unapply _)
-
-    def forInsert = owner ~ project ~ buildNumber ~ date ~ tests ~ failures ~ errors ~ trigger ~ branch<>( 
-      { t => Build(None, t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9)}, 
-      { (u: Build) => Some((u.owner, u.project, u.buildNumber, u.date, u.tests, u.failures, u.errors, u.trigger, u.branch))}) returning id
-    def insert(build: Build): Build = build.copy(id = Some(forInsert.insert(build)))
-    
-    def insertAndIncrement(ownerStr: String, projectStr: String): Build = insertAndIncrement(Build(owner=ownerStr, project=projectStr, buildNumber=0))
-    def insertAndIncrement(build: Build): Build = {
-      val q =findLatestBuildNumber(build.owner, build.project)
-      val latestBuildNumber:Int = q.first.getOrElse(0)
-      insert(build.copy(id = None, buildNumber=latestBuildNumber+1))      
-    }
-    def updateStats(owner: String, project: String, buildNumber: Int, testSum: Int, failureSum: Int, errorSum: Int) {
-      val q2 = for {a <- Builds if a.buildNumber === buildNumber} yield (a.tests)
-      q2.update(Some(testSum))
-    }
-    def findByOwnerAndProject(owner: String, project: String) = (for {a <- Builds if a.owner === owner && a.project === project} yield (a))
-    def findByBuildNumber(buildNumber: Int) = (for {a <- Builds if a.buildNumber === buildNumber} yield (a))
-    def findLatestBuildNumber(owner: String, project: String) = Query((for {a <- Builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max)
+    def * = (id.?, owner, project, buildNumber, date, tests, failures, errors, trigger, branch)<>(Build.tupled, Build.unapply _)
   }
+  val builds = TableQuery[Builds]
+  val buildForInsert = builds returning builds.map(_.id) into { case (build, id) => build.copy(id = Some(id)) }
+  def insertAndIncrement(ownerStr: String, projectStr: String): Build = insertAndIncrement(Build(owner=ownerStr, project=projectStr, buildNumber=0))
+  def insertAndIncrement(build: Build): Build = {
+    val q =findLatestBuildNumber(build.owner, build.project)
+    val latestBuildNumber:Int = q.first.getOrElse(0)
+    buildForInsert.insert(build.copy(id = None, buildNumber=latestBuildNumber+1))      
+  }
+  def updateStats(owner: String, project: String, buildNumber: Int, testSum: Int, failureSum: Int, errorSum: Int) {
+    val q2 = for {a <- builds if a.buildNumber === buildNumber} yield (a.tests)
+    q2.update(Some(testSum))
+  }
+  def findByOwnerAndProject(owner: String, project: String) = (for {a <- builds if a.owner === owner && a.project === project} yield (a))
+  def findByBuildNumber(buildNumber: Int) = (for {a <- builds if a.buildNumber === buildNumber} yield (a))
+  def findLatestBuildNumber(owner: String, project: String) = Query((for {a <- builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max)
 }

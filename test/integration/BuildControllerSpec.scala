@@ -9,14 +9,13 @@ import play.api.Play
 import unit.org.stock.manager.test.DatabaseSetupBefore
 
 import model.{DB, Build}
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	implicit val timeout = 10000
-	import DB.dal._
+	import DB.dal
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
@@ -25,7 +24,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
 			response.status must equalTo(OK)
 			val buildNumber = (response.json \ "buildNumber").as[Int]
-			DB.db withSession {
+			DB.db withDynSession {
 				checkBuild(buildNumber)
 			}
 		}
@@ -37,7 +36,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			response2.status must equalTo(OK)
 			val buildNumber1 = (response1.json \ "buildNumber").as[Int]
 			val buildNumber2 = (response2.json \ "buildNumber").as[Int]
-			DB.db withSession {
+			DB.db withDynSession {
 				checkBuild(buildNumber1)
 				checkSecondBuild(buildNumber2)
 			}
@@ -64,8 +63,8 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/1/end").post(""))
 			response1.status must equalTo(OK)
 			response2.status must equalTo(OK)
-			DB.db withSession {
-				val build = Builds.findByBuildNumber(1).firstOption.get
+			DB.db withDynSession {
+				val build = dal.findByBuildNumber(1).firstOption.get
 				build.buildNumber must beEqualTo(1)
 				build.owner must beEqualTo("pussinboots")
 				build.project must beEqualTo("bankapp")
@@ -79,7 +78,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI").post(""))
 			response.status must equalTo(OK)
 			val buildNumber = (response.json \ "buildNumber").as[Int]
-			DB.db withSession {
+			DB.db withDynSession {
 				checkBuildTravisCI(buildNumber)
 			}
 		}
@@ -90,7 +89,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""))
 			response.status must equalTo(OK)
 			val buildNumber = (response.json \ "buildNumber").as[Int]
-			DB.db withSession {
+			DB.db withDynSession {
 				checkBuildTravisCINotMaster(buildNumber)
 			}
 		}
@@ -99,15 +98,15 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	//given
 
 	def insert10Builds() {
-		DB.db withSession {
+		DB.db withDynSession {
 			for(i <- 1 to 11)
-				Builds.insertAndIncrement("pussinboots", "bankapp")
+				dal.insertAndIncrement("pussinboots", "bankapp")
 		}	
 	}
 
 	//then
 	def checkBuildTravisCINotMaster(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = dal.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
 		build.buildNumber must beEqualTo(1)
 		build.owner must beEqualTo("pussinboots")
@@ -117,7 +116,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	def checkBuildTravisCI(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = dal.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
 		build.buildNumber must beEqualTo(1)
 		build.owner must beEqualTo("pussinboots")
@@ -126,7 +125,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
     def checkBuild(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = dal.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
 		build.buildNumber must beEqualTo(1)
 		build.owner must beEqualTo("pussinboots")
@@ -134,7 +133,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	def checkSecondBuild(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = dal.findByBuildNumber(buildId).firstOption.get
 		build.buildNumber must beEqualTo(2)
 		build.owner must beEqualTo("pussinboots")
 		build.project must beEqualTo("bankapp")

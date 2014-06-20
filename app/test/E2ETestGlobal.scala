@@ -19,7 +19,7 @@ object E2ETestGlobal extends GlobalSettings {
         System.clearProperty("com.mchange.v2.log.MLog")
         System.clearProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL")
       }
-      DB.db withSession {
+      DB.db withDynSession {
       	SetupTestDatabase.insertTestData()
         SetupTestDatabase.insertE2ETestData()
       }

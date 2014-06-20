@@ -63,7 +63,7 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-    "com.typesafe.slick" %% "slick" % "1.0.1",
+    "com.typesafe.slick" %% "slick" % "2.0.2",
     "mysql" % "mysql-connector-java" % "5.1.18",
     "c3p0" % "c3p0" % "0.9.1.2"
 )

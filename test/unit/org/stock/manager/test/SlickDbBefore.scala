@@ -2,8 +2,8 @@ package unit.org.stock.manager.test
 
 import org.specs2.specification.BeforeExample
 import model.DB
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database
+import Database.dynamicSession
 
 trait SlickDbBefore extends BeforeExample {
   //set h2 database for tests
@@ -12,7 +12,7 @@ trait SlickDbBefore extends BeforeExample {
   override def before {
     val schema = "test"
     val db = DB.db
-    db withSession DB.dal.recreate
+    db withDynSession DB.dal.recreate
     initTestData(db)
   }
 

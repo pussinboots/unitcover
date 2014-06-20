@@ -10,14 +10,13 @@ import play.api.libs.json.Json
 import unit.org.stock.manager.test.DatabaseSetupBefore
 
 import model.{DB, TestSuite, TestCase}
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	implicit val timeout = 10000
-	import DB.dal._
+	import DB.dal
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
@@ -27,7 +26,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			DB.db withSession {
+			DB.db withDynSession {
 				checkTestSuite(suiteId)
 				checkTestCases(suiteId)
 			}
@@ -38,7 +37,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			DB.db withSession {
+			DB.db withDynSession {
 				checkTestSuite(suiteId)
 				checkTestCases(suiteId)
 			}
@@ -49,7 +48,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int])
-			DB.db withSession {
+			DB.db withDynSession {
 				checkTestSuiteKarmaOpera(suiteId(0))
 				checkTestCasesKarma(suiteId(0))
 				checkTestSuiteKarmaFireFox(suiteId(1))
@@ -63,7 +62,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			DB.db withSession {
+			DB.db withDynSession {
 				checkTestSuiteWithFailure(suiteId)
 				checkTestCasesWithFailure(suiteId)
 			}
@@ -74,7 +73,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			DB.db withSession {
+			DB.db withDynSession {
 				checkTestSuiteWithError(suiteId)
 				checkTestCasesWithError(suiteId)
 			}
@@ -93,20 +92,20 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def insert10TestSuites() {
-		DB.db withSession {
+		DB.db withDynSession {
 			for(i <- 1 to 10)
-				TestSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+				dal.testSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
 			for(i <- 1 to 10)
-				TestSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+				dal.testSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
 			for(i <- 1 to 10)
-				TestSuites.insert(TestSuite(None, 3, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+				dal.testSuites.insert(TestSuite(None, 3, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
 		}	
 	}
 
 	//then
 
 	def checkTestSuiteKarmaFireFox(suiteId: Long) {
-		val suite = TestSuites.findById(suiteId).firstOption.get
+		val suite = dal.findById(suiteId).firstOption.get
 		suite.id must beEqualTo(Some(suiteId))
 		suite.buildNumber must beEqualTo(1)
 		suite.owner must beEqualTo("pussinboots")
@@ -119,7 +118,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def checkTestSuiteKarmaOpera(suiteId: Long) {
-		val suite = TestSuites.findById(suiteId).firstOption.get
+		val suite = dal.findById(suiteId).firstOption.get
 		suite.id must beEqualTo(Some(suiteId))
 		suite.buildNumber must beEqualTo(1)
 		suite.owner must beEqualTo("pussinboots")
@@ -132,7 +131,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def checkTestCasesKarma(suiteId: Long) {
-		val testCases = TestCases.findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
 		testCases.length must equalTo(3)
 		testCases(0).name must equalTo("ten test suites are display")
 		testCases(1).name must equalTo("the latest ten test suites should be display started with the eleven test suite")
@@ -140,7 +139,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def checkTestSuite(suiteId: Long) {
-		val suite = TestSuites.findById(suiteId).firstOption.get
+		val suite = dal.findById(suiteId).firstOption.get
 		suite.id must beEqualTo(Some(suiteId))
 		suite.buildNumber must beEqualTo(1)
 		suite.owner must beEqualTo("pussinboots")
@@ -153,7 +152,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def checkTestCases(suiteId: Long) {
-		val testCases = TestCases.findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
 		testCases.length must equalTo(7)
 		testCases(0).name must equalTo("application changed setup will work should::disable db ssl")
 		testCases(1).name must equalTo("application changed setup will work should::enable DB logging")
@@ -165,7 +164,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def checkTestSuiteWithFailure(suiteId: Long) {
-		val suite = TestSuites.findById(suiteId).firstOption.get
+		val suite = dal.findById(suiteId).firstOption.get
 		suite.id must beEqualTo(Some(suiteId))
 		suite.buildNumber must beEqualTo(1)
 		suite.owner must beEqualTo("pussinboots")
@@ -177,7 +176,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		suite.duration must beEqualTo(Some(10.470))
 	}
 	def checkTestCasesWithFailure(suiteId: Long) {
-		val testCases = TestCases.findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
 		testCases.length must equalTo(2)
 		testCases(0).name must equalTo("POST to /api/<owner>/<project> should::with a valid junit xml report return http status 200 and store it in the db")
 		testCases(0).failureMessage must equalTo(Some("'application changed setup will work should::disable db ssl'  is not equal to  'application changed setup will work should::enable DB logging'"))
@@ -187,7 +186,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def checkTestSuiteWithError(suiteId: Long) {
-		val suite = TestSuites.findById(suiteId).firstOption.get
+		val suite = dal.findById(suiteId).firstOption.get
 		suite.id must beEqualTo(Some(suiteId))
 		suite.buildNumber must beEqualTo(1)
 		suite.owner must beEqualTo("pussinboots")
@@ -199,7 +198,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		suite.duration must beEqualTo(Some(14.179))
 	}
 	def checkTestCasesWithError(suiteId: Long) {
-		val testCases = TestCases.findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
 		testCases.length must equalTo(3)
 		testCases(0).name must equalTo("POST to /api/<owner>/<project> should::with junit xml report all tests passed return http status 200 and store it in the db")
 		testCases(0).typ must equalTo(Some("java.lang.Exception"))
