@@ -1,18 +1,18 @@
 package model
 
-import scala.slick.driver.{JdbcProfile, H2Driver, MySQLDriver}
+import scala.slick.driver.{JdbcDriver, H2Driver, MySQLDriver}
 import java.sql.{Timestamp, Date}
 import java.util.{Date, Calendar}
 import scala.slick.jdbc.meta.MTable
 
 trait Profile {
-  val profile: JdbcProfile
+  val profile: JdbcDriver
 }
 
 /**
  * The Data Access Layer contains all components and a profile
  */
-class DAL(override val profile: JdbcProfile) extends TestSuiteComponent with TestCaseComponent with BuildComponent with Profile {
+class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with TestCaseComponent with BuildComponent with Profile {
 
   import profile.simple._
 
