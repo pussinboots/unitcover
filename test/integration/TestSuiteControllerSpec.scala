@@ -16,6 +16,7 @@ import Database.threadLocalSession
 class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
+	implicit val timeout = 10000
 	import DB.dal._
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
@@ -23,7 +24,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	"POST to /api/<owner>/<project>" should {
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/ApplicationSpec.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withSession {
@@ -34,7 +35,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer  { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/ApplicationSpec.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withSession {
@@ -45,7 +46,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 		"with karma junit xml report from all tests passed return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/test-results.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int])
 			DB.db withSession {
@@ -59,7 +60,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 		"with sbt junit xml report one failure return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/TestSuiteControllerSpecFailure.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withSession {
@@ -70,7 +71,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 		"with sbt junit xml report one error return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/TestSuiteControllerSpecError.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withSession {

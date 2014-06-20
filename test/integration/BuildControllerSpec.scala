@@ -15,13 +15,14 @@ import Database.threadLocalSession
 class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
+	implicit val timeout = 10000
 	import DB.dal._
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
 	"POST to /api/<owner>/<project>/builds" should {
 		"create a new build and return its buildNumber" in new WithServer { 
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
 			response.status must equalTo(OK)
 			val buildNumber = (response.json \ "buildNumber").as[Int]
 			DB.db withSession {
@@ -30,8 +31,8 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		}
 
 		"create two new builds and second build should have buildname equal two" in new WithServer { 
-			val response1 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""), 10000)
-			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""), 10000)
+			val response1 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
 			response1.status must equalTo(OK)
 			response2.status must equalTo(OK)
 			val buildNumber1 = (response1.json \ "buildNumber").as[Int]
@@ -58,9 +59,9 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	"upload complete build to /api/<owner>/<project>/builds" should {
 		"complete build" in new WithServer {
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/test-results.xml")).mkString
-			val response0 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString), 10000)
-			val response1 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""), 10000)
-			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/1/end").post(""), 10000)
+			val response0 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
+			val response1 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/1/end").post(""))
 			response1.status must equalTo(OK)
 			response2.status must equalTo(OK)
 			DB.db withSession {
@@ -75,7 +76,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 
 	"POST to /api/<owner>/<project>/builds with trigger parameter" should {
 		"create a new build and return its buildNumber" in new WithServer { 
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI").post(""), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI").post(""))
 			response.status must equalTo(OK)
 			val buildNumber = (response.json \ "buildNumber").as[Int]
 			DB.db withSession {
@@ -86,7 +87,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 
 	"POST to /api/<owner>/<project>/builds with trigger and branch parameter" should {
 		"create a new build and return its buildNumber" in new WithServer { 
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""), 10000)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""))
 			response.status must equalTo(OK)
 			val buildNumber = (response.json \ "buildNumber").as[Int]
 			DB.db withSession {

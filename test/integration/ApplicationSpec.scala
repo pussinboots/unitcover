@@ -38,7 +38,8 @@ class ApplicationSpec extends PlaySpecification {
     }*/
 
     "configured to redirect all http request to https on heroku" in new WithServer(FakeApplication(additionalConfiguration=Map("enableDBSSL" -> "false"))) {
-      val response = await(WS.url(s"http://localhost:$port/rest/balances").withFollowRedirects(false).withHeaders("x-forwarded-proto" -> "http").get)
+      val response = await(WS.url(s"http://localhost:$port/products.html").withFollowRedirects(false).withHeaders("x-forwarded-proto" -> "http").get)
+      response.status must beEqualTo(OK)
       response.header("Location") must beEqualTo(None)
     }
   }
