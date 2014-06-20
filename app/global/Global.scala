@@ -13,7 +13,7 @@ object Global extends GlobalSettings
       if(enableDBSSL) {
         //TODO set log level for test to info
         //Logger.debug("set custom truststore for cleardb mysql ssl connections")
-        DB.WithSSL()
+        //DB.WithSSL()
       } else {
         Logger.debug("clear system properties truststore/keystore")
         System.clearProperty("javax.net.ssl.keyStore")
