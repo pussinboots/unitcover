@@ -34,10 +34,10 @@ object BadgeController extends Controller {
       query.firstOption match {
         case Some(build) => println(build)
                             val desc = if(build.errors.getOrElse(0) > 0) "error" else if (build.failures.getOrElse(0) > 0 ) "failed" else "passed"
-                            val color = if(build.errors.getOrElse(0) > 0) "red" else if (build.failures.getOrElse(0) > 0 ) "yellow" else "green"
+                            val color = if(build.errors.getOrElse(0) > 0) "red" else if (build.failures.getOrElse(0) > 0 ) "yellow" else "brightgreen"
                             val count = if(build.errors.getOrElse(0) > 0) build.errors.get else if (build.failures.getOrElse(0) > 0 ) build.failures.get else build.tests.getOrElse(0)
                             Results.Redirect(s"http://img.shields.io/badge/test-$desc $count-$color.svg?ts=${scala.compat.Platform.currentTime}")
-        case None => Results.MovedPermanently("http://img.shields.io/badge/test-unknown-gray.svg")
+        case None => Results.MovedPermanently("http://img.shields.io/badge/test-unknown-lightgrey.svg")
       }
       
       
