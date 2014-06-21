@@ -27,6 +27,6 @@ object SetupTestDatabase {
       dal.testSuites.insert(TestSuite(None, i, "pussinboots", "bankapp", s"testsuite $i", 8,0,0,1000.0, now))
   
     for(i <- 1 to 11)
-      dal.builds.insert(Build(buildNumber=i, owner="pussinboots", project="bankapp", tests=i, failures=i/8, errors=i/10))
+      dal.builds.insert(Build(buildNumber=i, owner="pussinboots", project="bankapp", tests=i, failures=i/8, errors=i/10, travisBuildId=Some(s"$i")))
   }
 }

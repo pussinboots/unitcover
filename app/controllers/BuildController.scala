@@ -17,9 +17,9 @@ object BuildController extends Controller {
   import model.SlickHelpers._
   import model.JsonHelper._
 
-  def startBuild(owner: String, project: String, trigger: Option[String], branch: Option[String]) = ActionWithoutToken {request =>
-      val build1 = Build(id=None, owner=owner, project=project, trigger=trigger, buildNumber=0, branch=branch)
-      val build = DB.db withDynSession dal.insertAndIncrement(build1)
+  def startBuild(owner: String, project: String, trigger: Option[String], branch: Option[String], travisBuildId: Option[String]) = ActionWithoutToken {request =>
+      val build = DB.db withDynSession dal.insertAndIncrement(Build(id=None, owner=owner, project=project, trigger=trigger, 
+                                                                    buildNumber=0, branch=branch, travisBuildId=travisBuildId))
       Ok(Json.obj("buildNumber" -> build.buildNumber))
   }
 

@@ -105,7 +105,7 @@ trait TestCaseComponent {
 case class Build(var id: Option[Long] = None, owner: String, project: String,
                      buildNumber: Int, date: Timestamp = DateUtil.nowDateTime(), 
                      tests: Option[Int]=None, failures: Option[Int]=None, errors: Option[Int]=None,
-                     trigger: Option[String] = None, branch:Option[String] = None)
+                     trigger: Option[String] = None, branch:Option[String] = None, travisBuildId: Option[String] = None)
 
 trait BuildComponent {
   this: Profile =>
@@ -125,8 +125,9 @@ trait BuildComponent {
     def errors = column[Option[Int]]("errors")
     def trigger = column[Option[String]]("trigger")
     def branch = column[Option[String]]("branch")
+    def travisBuildId = column[Option[String]]("travisBuildId")
     def idx = index("idx_owner_project", (owner, project), unique = false)
-    def * = (id.?, owner, project, buildNumber, date, tests, failures, errors, trigger, branch)<>(Build.tupled, Build.unapply _)
+    def * = (id.?, owner, project, buildNumber, date, tests, failures, errors, trigger, branch, travisBuildId)<>(Build.tupled, Build.unapply _)
   }
   val builds = TableQuery[Builds]
   val buildForInsert = builds returning builds.map(_.id) into { case (build, id) => build.copy(id = Some(id)) }

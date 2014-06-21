@@ -78,6 +78,7 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
             testSuite.tests must beEqualTo(Some(tests))
             testSuite.failures must beEqualTo(Some(failures))
             testSuite.errors must beEqualTo(Some(errors))          
+            testSuite.travisBuildId must beEqualTo(Some(s"$buildNumber"))    
           }
         }
     }

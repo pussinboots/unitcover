@@ -84,6 +84,17 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		}
 	}
 
+	"POST to /api/<owner>/<project>/builds with travisBuildId parameter" should {
+		"create a new build and return its buildNumber" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?travisBuildId=123456").post(""))
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuildTravisBuildId(buildNumber)
+			}
+		}
+	}
+
 	"POST to /api/<owner>/<project>/builds with trigger and branch parameter" should {
 		"create a new build and return its buildNumber" in new WithServer { 
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""))
@@ -122,6 +133,15 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		build.owner must beEqualTo("pussinboots")
 		build.project must beEqualTo("bankapp")
 		build.trigger must beEqualTo(Some("TravisCI"))
+	}
+
+	def checkBuildTravisBuildId(buildId: Int) {
+		val build = dal.findByBuildNumber(buildId).firstOption.get
+		build.id must beEqualTo(Some(buildId))
+		build.buildNumber must beEqualTo(1)
+		build.owner must beEqualTo("pussinboots")
+		build.project must beEqualTo("bankapp")
+		build.travisBuildId must beEqualTo(Some("123456"))
 	}
 
     def checkBuild(buildId: Int) {
