@@ -5,14 +5,14 @@
 describe('builds', function() {
 
   it('should redirect / to #/builds', function() {
-    browser().navigateTo('/');
+    browser().navigateTo('/index.html');
     expect(browser().location().url()).toBe('/builds');
   });
 
   describe('build with eleven test suites', function() {
 
     beforeEach(function() {
-      browser().navigateTo('#/builds/pussinboots/bankapp/builds');
+      browser().navigateTo('index.html#/builds/pussinboots/bankapp/builds');
     });
 
     it('ten builds are display', function() {
