@@ -19,7 +19,7 @@
                 <span>{{build.tests}}</span>
                 <span>{{build.failures}}</span>
                 <span>{{build.errors}}</span>
-                <span>{{build.trigger}}<a ng-show="build.trigger =='Travis'" ng-href="http://travis-ci.org/{{owner}}/{{project}}/builds/{{build.travisBuildId}}">{{build.trigger}}</a></span>
+                <span><a ng-show="build.trigger =='Travis'" ng-href="http://travis-ci.org/{{owner}}/{{project}}/builds/{{build.travisBuildId}}">{{build.trigger}}</a></span>
             </li>
         </div>
      </test-data>
