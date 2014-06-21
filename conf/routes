@@ -12,4 +12,9 @@ GET        /api/:owner/:project/:buildnumber  controllers.TestSuiteController.la
 GET        /api/:owner/:project/testcases/:testSuiteId  controllers.TestCaseController.findTestCases(owner: String, project: String, testSuiteId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
+
+GET         /api                   		   controllers.Assets.at(path="/public", file="api.html")
+
 GET         /*file                         controllers.Assets.at(path="/public", file)
+
+GET         /                   		   controllers.Assets.at(path="/public", file="index.html")

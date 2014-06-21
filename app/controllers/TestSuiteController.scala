@@ -87,7 +87,7 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
   def latestTestSuites(owner: String, project: String, buildNumber: Int) = ActionWithoutToken {request =>
     DB.db withDynSession  {
       var query = dal.findBy(owner, project, buildNumber).sortBy(_.id.desc)
-      val json = query.take(10).list()
+      val json = query.list()
       val count = query.list.length
       Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")
     }

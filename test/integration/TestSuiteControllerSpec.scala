@@ -95,13 +95,13 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	"GET to /api/<owner>/<project>" should {
-		"return latest 10 test suites" in new WithServer {
+		"return all test suites" in new WithServer {
 			insert10TestSuites ()
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").get)
 			response.status must equalTo(OK)
 			val testSuites = Json.fromJson[JsonFmtListWrapper[TestSuite]](response.json).get
 			testSuites.count must equalTo(11)
-			testSuites.items.length must equalTo(10)
+			testSuites.items.length must equalTo(11)
 		}
 	}
 
