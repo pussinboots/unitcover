@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<testsuites>
+  <testsuite name="Firefox 30.0.0 (Ubuntu)" package="" timestamp="2014-06-21T14:46:02" id="0" hostname="vagrant-VirtualBox">
+    <properties>
+      <property name="browser.fullName" value="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0"/>
+    </properties>
+  </testsuite>
+  <testsuite name="Firefox 30.0.0 (Ubuntu)" package="" timestamp="2014-06-21T14:46:02" id="0" hostname="vagrant-VirtualBox" tests="8" errors="0" failures="6" time="9.67">
+    <properties>
+      <property name="browser.fullName" value="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0"/>
+    </properties>
+    <testcase name="ten builds are display" time="4.229" classname="Firefox 30.0.0 (Ubuntu).builds build with eleven test suites">
+      <failure type="">expect repeater &apos;li.build&apos; count toBe 10
+</failure>
+      <failure type="">/home/vagrant/workspace/frank/unitcover/node_modules/karma-ng-scenario/lib/angular-scenario.js:27592:5: expected 10 but was 0
+</failure>
+    </testcase>
+    <testcase name="the latest build with buildNumber 11 show as first" time="0.986" classname="Firefox 30.0.0 (Ubuntu).builds build with eleven test suites">
+      <failure type="">repeater &apos;li.build:eq(0)&apos; column &apos;build.buildNumber&apos;
+</failure>
+      <failure type="">/home/vagrant/workspace/frank/unitcover/node_modules/karma-ng-scenario/lib/angular-scenario.js:27592:5: Selector li.build:eq(0) did not match any elements.
+</failure>
+    </testcase>
+    <testcase name="the latest testsuite show as first" time="1.067" classname="Firefox 30.0.0 (Ubuntu).testsuites build with eleven test suites">
+      <error type="">repeater &apos;li.build:eq(0)&apos; column &apos;build.name&apos;
+</error>
+      <error type="">/home/vagrant/workspace/frank/unitcover/node_modules/karma-ng-scenario/lib/angular-scenario.js:27592:5: Selector li.build:eq(0) did not match any elements.
+</error>
+    </testcase>
+    <testcase name="should redirect products.html to products.html#/builds" time="0.269" classname="Firefox 30.0.0 (Ubuntu).testsuites"/>
+    <system-out><![CDATA[
+]]></system-out>
+    <system-err/>
+  </testsuite>
+</testsuites>
