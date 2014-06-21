@@ -15,7 +15,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	implicit val timeout = 10000
-	import DB.dal
+	import DB.dal._
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
@@ -41,6 +41,59 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 				checkSecondBuild(buildNumber2)
 			}
 		}
+
+		"upload complete build with two test suite results" in new WithServer {
+			val karmaTestResult = scala.io.Source.fromFile(Play.getFile("test/resources/test-results.xml")).mkString
+			val sbtTestResultWithError = scala.io.Source.fromFile(Play.getFile("test/resources/TestSuiteControllerSpecError.xml")).mkString
+			
+			val buildResponse = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			buildResponse.status must equalTo(OK)
+			val buildNumber = (buildResponse.json \ "buildNumber").as[Int]
+
+			await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/$buildNumber").withHeaders("Content-Type" -> "text/xml").post(karmaTestResult))
+			await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/$buildNumber").withHeaders("Content-Type" -> "text/xml").post(sbtTestResultWithError))
+			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/$buildNumber/end").post(""))
+			
+			response2.status must equalTo(OK)
+			DB.db withDynSession {
+				val build = Builds.findByBuildNumber(buildNumber).firstOption.get
+				build.buildNumber must beEqualTo(buildNumber)
+				build.owner must beEqualTo("pussinboots")
+				build.project must beEqualTo("bankapp")
+				build.tests must beEqualTo(Some(14))
+				build.failures must beEqualTo(Some(1))
+				build.errors must beEqualTo(Some(3))
+			}
+		}
+		
+
+		"create a new build with trigger parameter" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI").post(""))
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuildTravisCI(buildNumber)
+			}
+		}
+	
+
+		"create a new build with travisBuildId parameter" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?travisBuildId=123456").post(""))
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuildTravisBuildId(buildNumber)
+			}
+		}
+	
+		"create a new build with trigger and branch parameter" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""))
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuildTravisCINotMaster(buildNumber)
+			}
+		}
 	}
 
 	"GET to /api/<owner>/<project>/builds" should {
@@ -55,69 +108,18 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		}
 	}
 
-	"upload complete build to /api/<owner>/<project>/builds" should {
-		"complete build" in new WithServer {
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/test-results.xml")).mkString
-			val response0 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
-			val response1 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
-			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/1/end").post(""))
-			response1.status must equalTo(OK)
-			response2.status must equalTo(OK)
-			DB.db withDynSession {
-				val build = dal.findByBuildNumber(1).firstOption.get
-				build.buildNumber must beEqualTo(1)
-				build.owner must beEqualTo("pussinboots")
-				build.project must beEqualTo("bankapp")
-				build.tests must beEqualTo(Some(11))
-			}
-		}
-	}
-
-	"POST to /api/<owner>/<project>/builds with trigger parameter" should {
-		"create a new build and return its buildNumber" in new WithServer { 
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI").post(""))
-			response.status must equalTo(OK)
-			val buildNumber = (response.json \ "buildNumber").as[Int]
-			DB.db withDynSession {
-				checkBuildTravisCI(buildNumber)
-			}
-		}
-	}
-
-	"POST to /api/<owner>/<project>/builds with travisBuildId parameter" should {
-		"create a new build and return its buildNumber" in new WithServer { 
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?travisBuildId=123456").post(""))
-			response.status must equalTo(OK)
-			val buildNumber = (response.json \ "buildNumber").as[Int]
-			DB.db withDynSession {
-				checkBuildTravisBuildId(buildNumber)
-			}
-		}
-	}
-
-	"POST to /api/<owner>/<project>/builds with trigger and branch parameter" should {
-		"create a new build and return its buildNumber" in new WithServer { 
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""))
-			response.status must equalTo(OK)
-			val buildNumber = (response.json \ "buildNumber").as[Int]
-			DB.db withDynSession {
-				checkBuildTravisCINotMaster(buildNumber)
-			}
-		}
-	}
-
 	//given
 
 	def insert10Builds() {
 		DB.db withDynSession {
 			for(i <- 1 to 11)
-				dal.insertAndIncrement("pussinboots", "bankapp")
+				Builds.insertAndIncrement("pussinboots", "bankapp")
 		}	
 	}
 
 	//then
 	def checkBuildTravisCINotMaster(buildId: Int) {
-		val build = dal.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
 		build.buildNumber must beEqualTo(1)
 		build.owner must beEqualTo("pussinboots")
@@ -127,7 +129,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	def checkBuildTravisCI(buildId: Int) {
-		val build = dal.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
 		build.buildNumber must beEqualTo(1)
 		build.owner must beEqualTo("pussinboots")
@@ -136,7 +138,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	def checkBuildTravisBuildId(buildId: Int) {
-		val build = dal.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
 		build.buildNumber must beEqualTo(1)
 		build.owner must beEqualTo("pussinboots")
@@ -145,7 +147,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
     def checkBuild(buildId: Int) {
-		val build = dal.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
 		build.buildNumber must beEqualTo(1)
 		build.owner must beEqualTo("pussinboots")
@@ -153,7 +155,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	def checkSecondBuild(buildId: Int) {
-		val build = dal.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber(buildId).firstOption.get
 		build.buildNumber must beEqualTo(2)
 		build.owner must beEqualTo("pussinboots")
 		build.project must beEqualTo("bankapp")

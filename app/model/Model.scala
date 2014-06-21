@@ -22,7 +22,7 @@ class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with Test
   }
 
   def create(implicit session: Session) {
-    (testSuites.ddl ++ testCases.ddl ++ builds.ddl).create //helper method to create all tables
+    (testSuites.ddl ++ testCases.ddl ++ Builds.builds.ddl).create //helper method to create all tables
 /*    if (MTable.getTables(testSuites.tableName).list().isEmpty) {
       (testSuites.ddl).create
     }
@@ -35,7 +35,7 @@ class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with Test
   }
 
   def drop(implicit session: Session) = try {
-    (testSuites.ddl ++ testCases.ddl ++ builds.ddl).drop
+    (testSuites.ddl ++ testCases.ddl ++ Builds.builds.ddl).drop
   } catch {
     case ioe: Exception =>
   }
@@ -129,19 +129,21 @@ trait BuildComponent {
     def idx = index("idx_owner_project", (owner, project), unique = false)
     def * = (id.?, owner, project, buildNumber, date, tests, failures, errors, trigger, branch, travisBuildId)<>(Build.tupled, Build.unapply _)
   }
-  val builds = TableQuery[Builds]
-  val buildForInsert = builds returning builds.map(_.id) into { case (build, id) => build.copy(id = Some(id)) }
-  def insertAndIncrement(ownerStr: String, projectStr: String): Build = insertAndIncrement(Build(owner=ownerStr, project=projectStr, buildNumber=0))
-  def insertAndIncrement(build: Build): Build = {
-    val q =findLatestBuildNumber(build.owner, build.project)
-    val latestBuildNumber:Int = q.first.getOrElse(0)
-    buildForInsert.insert(build.copy(id = None, buildNumber=latestBuildNumber+1))      
+  object Builds {
+    val builds = TableQuery[Builds]
+    val buildForInsert = builds returning builds.map(_.id) into { case (build, id) => build.copy(id = Some(id)) }
+    def insertAndIncrement(ownerStr: String, projectStr: String): Build = insertAndIncrement(Build(owner=ownerStr, project=projectStr, buildNumber=0))
+    def insertAndIncrement(build: Build): Build = {
+      val q =findLatestBuildNumber(build.owner, build.project)
+      val latestBuildNumber:Int = q.first.getOrElse(0)
+      buildForInsert.insert(build.copy(id = None, buildNumber=latestBuildNumber+1))      
+    }
+    def updateStats(owner: String, project: String, buildNumber: Int, testSum: Int, failureSum: Int, errorSum: Int) {
+      val q2 = for {a <- builds if a.buildNumber === buildNumber} yield (a.tests, a.failures, a.errors)
+      q2.update(Some(testSum), Some(failureSum), Some(errorSum))
+    }
+    def findByOwnerAndProject(owner: String, project: String) = (for {a <- builds if a.owner === owner && a.project === project} yield (a))
+    def findByBuildNumber(buildNumber: Int) = (for {a <- builds if a.buildNumber === buildNumber} yield (a))
+    def findLatestBuildNumber(owner: String, project: String) = Query((for {a <- builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max)
   }
-  def updateStats(owner: String, project: String, buildNumber: Int, testSum: Int, failureSum: Int, errorSum: Int) {
-    val q2 = for {a <- builds if a.buildNumber === buildNumber} yield (a.tests)
-    q2.update(Some(testSum))
-  }
-  def findByOwnerAndProject(owner: String, project: String) = (for {a <- builds if a.owner === owner && a.project === project} yield (a))
-  def findByBuildNumber(buildNumber: Int) = (for {a <- builds if a.buildNumber === buildNumber} yield (a))
-  def findLatestBuildNumber(owner: String, project: String) = Query((for {a <- builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max)
 }

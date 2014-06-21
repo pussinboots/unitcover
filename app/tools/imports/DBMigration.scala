@@ -15,7 +15,7 @@ object DBMigration extends App {
   import dao._
   import dao.profile.simple._
 
-  update2006()
+  update2106()
   def create() {
 	  db withDynSession {
 	    println("create tables")
@@ -25,11 +25,20 @@ object DBMigration extends App {
 
   //add trigger and branch column to builds table
   def update2006() {
-  	val migrate = TableMigration(builds)
+  	val migrate = TableMigration(Builds.builds)
   	 				.addColumns(_.trigger, _.branch)
   	db withDynSession {
 	   migrate()
 	  }
+  }
+
+  //add travisBuildId to build table
+  def update2106() {
+    val migrate = TableMigration(Builds.builds)
+            .addColumns(_.travisBuildId)
+    db withDynSession {
+     migrate()
+    }
   }
 
 }

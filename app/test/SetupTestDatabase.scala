@@ -9,6 +9,7 @@ object SetupTestDatabase {
   var now = DateUtil.nowDateTime()
   var yesterday = Option(DateUtil.daysBeforDateTime(1))
   import DB.dal
+  import dal._
   import DB.dal.profile.simple._
   def insertTestData(googleId: String = "test googleId") = {
     DB.dal.recreate
@@ -27,6 +28,6 @@ object SetupTestDatabase {
       dal.testSuites.insert(TestSuite(None, i, "pussinboots", "bankapp", s"testsuite $i", 8,0,0,1000.0, now))
   
     for(i <- 1 to 11)
-      dal.builds.insert(Build(buildNumber=i, owner="pussinboots", project="bankapp", tests=i, failures=i/8, errors=i/10, travisBuildId=Some(s"$i")))
+      Builds.builds.insert(Build(buildNumber=i, owner="pussinboots", project="bankapp", tests=i, failures=i/8, errors=i/10, travisBuildId=Some(s"$i")))
   }
 }

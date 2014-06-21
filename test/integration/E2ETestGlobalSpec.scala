@@ -15,6 +15,7 @@ import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 class E2ETestGlobalSpec extends PlaySpecification with DataTables {
   sys.props.+=("Database" -> "h2")
   import DB.dal
+  import dal._
   import DB.dal.profile.simple._
       
   val googleId  = "test googleId"
@@ -70,7 +71,7 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
         9    ! 9             !  "pussinboots"  !!  "bankapp"  !!        9         ! 1          !  0         | 
         10   ! 10            !  "pussinboots"  !!  "bankapp"  !!        10         ! 1          !  1         | 
         11   ! 11            !  "pussinboots"  !!  "bankapp"  !!        11         ! 1          !  1         |> { (id, buildNumber, owner, project, tests, failures, errors)=>around{
-            val testSuite = dal.findByBuildNumber(buildNumber).first
+            val testSuite = Builds.findByBuildNumber(buildNumber).first
             testSuite.id must beEqualTo(Some(id))
             testSuite.buildNumber must beEqualTo(buildNumber)
             testSuite.owner must beEqualTo(owner)
