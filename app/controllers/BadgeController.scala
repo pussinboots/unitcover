@@ -32,8 +32,16 @@ object BadgeController extends Controller {
   def badge(owner: String, project: String) = ActionWithoutToken {request =>
     DB.db withDynSession  {
       var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.id.desc)
-      val json = query.first
-      println(json)
+      query.firstOption match {
+        case Some(build) => println(build)
+                            val desc = if(build.errors.getOrElse(0) > 0) "error" else if (build.failures.getOrElse(0) > 0 ) "failed" else "passed"
+                            val color = if(build.errors.getOrElse(0) > 0) "red" else if (build.failures.getOrElse(0) > 0 ) "yellow" else "green"
+                            val count = build.errors.getOrElse(build.failures.getOrElse(build.tests.getOrElse(0)))
+                            Results.MovedPermanently(s"http://img.shields.io/badge/test $desc-$count-$color.svg")
+        case None => Results.MovedPermanently("http://img.shields.io/badge/test-unknown-gray.svg")
+      }
+      
+      
       /*val file = Play.getFile("images/heroku-badge.png")
       val fileContent: Enumerator[Array[Byte]] = Enumerator.fromFile(file)    
         
@@ -41,7 +49,7 @@ object BadgeController extends Controller {
         header = ResponseHeader(200, Map(CONTENT_LENGTH -> file.length.toString)),
         body = fileContent
       )*/
-      val svg = <svg xmlns="http://www.w3.org/2000/svg" width="90" height="18">
+      /*val svg = <svg xmlns="http://www.w3.org/2000/svg" width="90" height="18">
             <linearGradient id="a" x2="0" y2="100%">
             <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
             <stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
@@ -59,7 +67,7 @@ object BadgeController extends Controller {
             <text x="62.5" y="12">{json.tests.getOrElse(0)}</text>
             </g>
             </svg>
-      Ok(svg) as ("image/svg+xml")
+      Ok(svg) as ("image/svg+xml")*/
     }
   }
 }
