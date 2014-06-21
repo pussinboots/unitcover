@@ -61,16 +61,22 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
                       (testCaseNode \ "failure" \ "@message").textOption,
                       (testCaseNode \ "error" \ "@message").textOption,
                       (testCaseNode \ "failure" \ "@type").textOption,
-                      (testCaseNode \ "error" \ "@type").textOption))
+                      (testCaseNode \ "error" \ "@type").textOption,
+                      (testCaseNode \ "failure").textOption,
+                      (testCaseNode \ "error").textOption))
   val suite = TestSuite(None, buildNumber, owner, project, testSuiteData._1, testSuiteData._2, testSuiteData._3, testSuiteData._4, testSuiteData._6)
   val testSuite = DB.db withDynSession dal.testSuiteForInsert.insert(suite)
   def getType(failureType: Option[String], errorType: Option[String]) = {
     if (failureType !=None) failureType
     else errorType
   }
+  def getMessage(message1: Option[String], message2: Option[String]) = {
+    if (message1 !=None) message1
+    else message2
+  }
   DB.db withDynSession testCasesData.map(testCase=>(
                       dal.testCases.insert(TestCase(None, testSuite.id.get, owner, project, testCase._1, 
-                                                testCase._2 , testCase._3, testCase._4, testCase._5, 
+                                                testCase._2 , testCase._3, getMessage(testCase._4, testCase._8), getMessage(testCase._5, testCase._9), 
                                                 getType(testCase._6, testCase._7) 
                                                 )
                                       )

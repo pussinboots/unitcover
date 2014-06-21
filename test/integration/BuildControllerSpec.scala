@@ -43,8 +43,8 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		}
 
 		"upload complete build with two test suite results" in new WithServer {
-			val karmaTestResult = scala.io.Source.fromFile(Play.getFile("test/resources/test-results.xml")).mkString
-			val sbtTestResultWithError = scala.io.Source.fromFile(Play.getFile("test/resources/TestSuiteControllerSpecError.xml")).mkString
+			val karmaTestResult = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results.xml")).mkString
+			val sbtTestResultWithError = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecError.xml")).mkString
 			
 			val buildResponse = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
 			buildResponse.status must equalTo(OK)

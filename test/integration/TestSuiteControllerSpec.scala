@@ -22,7 +22,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 
 	"POST to /api/<owner>/<project>" should {
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/ApplicationSpec.xml")).mkString
+			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/ApplicationSpec.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
@@ -33,7 +33,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		}
 
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer  { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/ApplicationSpec.xml")).mkString
+			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/ApplicationSpec.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
@@ -44,7 +44,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		}
 
 		"with karma junit xml report from all tests passed return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/test-results.xml")).mkString
+			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int])
@@ -56,9 +56,11 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			}
 		}
 
+		// test results contains failures and errors
+
 
 		"with sbt junit xml report one failure return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/TestSuiteControllerSpecFailure.xml")).mkString
+			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecFailure.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
@@ -69,13 +71,25 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		}
 
 		"with sbt junit xml report one error return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/TestSuiteControllerSpecError.xml")).mkString
+			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecError.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
 			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
 			DB.db withDynSession {
 				checkTestSuiteWithError(suiteId)
 				checkTestCasesWithError(suiteId)
+			}
+		}
+
+		"with karma junit xml report one failure return http status 200 and store it in the db" in new WithServer { 
+			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results-failures.xml")).mkString
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
+			response.status must equalTo(OK)
+			println(response.json)
+			val suiteIds = (response.json \ "testsuites"  \\ "id").map(_.as[Long])
+			DB.db withDynSession {
+				checkKarmaTestSuiteWithFailure(suiteIds)
+				checkKarmaTestCasesWithFailure(suiteIds)
 			}
 		}
 	}
@@ -161,6 +175,50 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		testCases(4).name must equalTo("application setup should should::configured to redirect all http request to https on heroku")
 		testCases(5).name must equalTo("application setup should should::configured with custom truststore is enabled")
 		testCases(6).name must equalTo("application setup should should::configured with DB logging deactivate")
+	}
+
+	def checkKarmaTestSuiteWithFailure(suiteIds: Seq[Long]) {
+		//the first test suite coul dbe ignored 
+		var suite = dal.findById(suiteIds(0)).firstOption.get
+		suite.id must beEqualTo(Some(suiteIds(0)))
+		suite.buildNumber must beEqualTo(1)
+		suite.owner must beEqualTo("pussinboots")
+		suite.project must beEqualTo("bankapp")
+		suite.name must beEqualTo("Firefox 30.0.0 (Ubuntu)")
+		suite.tests must beEqualTo(None)
+		suite.failures must beEqualTo(None)
+		suite.errors must beEqualTo(None)
+		suite.duration must beEqualTo(None)
+
+		suite = dal.findById(suiteIds(1)).firstOption.get
+		suite.id must beEqualTo(Some(suiteIds(1)))
+		suite.buildNumber must beEqualTo(1)
+		suite.owner must beEqualTo("pussinboots")
+		suite.project must beEqualTo("bankapp")
+		suite.name must beEqualTo("Firefox 30.0.0 (Ubuntu)")
+		suite.tests must beEqualTo(Some(8))
+		suite.failures must beEqualTo(Some(6))
+		suite.errors must beEqualTo(Some(0))
+		println(suite)
+		suite.duration must beEqualTo(Some(9.67))
+	}
+	def checkKarmaTestCasesWithFailure(suiteIds: Seq[Long]) {
+		var testCases = dal.findBySuite(suiteIds(0)).sortBy(_.id.asc).list()
+		testCases.length must equalTo(0)
+		testCases = dal.findBySuite(suiteIds(1)).sortBy(_.id.asc).list()
+		testCases.length must equalTo(4)
+		testCases(0).name must equalTo("ten builds are display")
+		testCases(1).name must equalTo("the latest build with buildNumber 11 show as first")
+		testCases(2).name must equalTo("the latest testsuite show as first")
+		testCases(3).name must equalTo("should redirect products.html to products.html#/builds")
+		testCases(0).failureMessage must equalTo(Some("expect repeater 'li.build' count toBe 10\n/home/vagrant/workspace/frank/unitcover/node_modules/karma-ng-scenario/lib/angular-scenario.js:27592:5: expected 10 but was 0\n"))
+		testCases(0).typ must equalTo(None)
+		testCases(1).failureMessage must equalTo(Some("repeater 'li.build:eq(0)' column 'build.buildNumber'\n/home/vagrant/workspace/frank/unitcover/node_modules/karma-ng-scenario/lib/angular-scenario.js:27592:5: Selector li.build:eq(0) did not match any elements.\n"))
+		testCases(1).typ must equalTo(None)
+		testCases(2).errorMessage must equalTo(Some("repeater 'li.build:eq(0)' column 'build.name'\n/home/vagrant/workspace/frank/unitcover/node_modules/karma-ng-scenario/lib/angular-scenario.js:27592:5: Selector li.build:eq(0) did not match any elements.\n"))
+		testCases(2).typ must equalTo(None)
+		testCases(3).failureMessage must equalTo(None)
+		testCases(3).typ must equalTo(None)		
 	}
 
 	def checkTestSuiteWithFailure(suiteId: Long) {
