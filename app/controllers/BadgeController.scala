@@ -35,8 +35,8 @@ object BadgeController extends Controller {
         case Some(build) => println(build)
                             val desc = if(build.errors.getOrElse(0) > 0) "error" else if (build.failures.getOrElse(0) > 0 ) "failed" else "passed"
                             val color = if(build.errors.getOrElse(0) > 0) "red" else if (build.failures.getOrElse(0) > 0 ) "yellow" else "green"
-                            val count = build.errors.getOrElse(build.failures.getOrElse(build.tests.getOrElse(0)))
-                            Results.MovedPermanently(s"http://img.shields.io/badge/test $desc-$count-$color.svg")
+                            val count = if(build.errors.getOrElse(0) > 0) build.errors.get else if (build.failures.getOrElse(0) > 0 ) builds.failures.get else build.tests.getOrElse(0)
+                            Results.MovedPermanently(s"http://img.shields.io/badge/test-$desc $count-$color.svg?ts=${scala.compat.Platform.currentTime}")
         case None => Results.MovedPermanently("http://img.shields.io/badge/test-unknown-gray.svg")
       }
       
