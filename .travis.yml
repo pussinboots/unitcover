@@ -7,8 +7,10 @@ before_script:
 - sh -e /etc/init.d/xvfb start
 - wget http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb
 - sudo dpkg -i sbt-0.13.5.deb
-before_deploy:
+after_failure:
 - cat logs/application.log
+- scripts/upload_junitreport.sh
+before_deploy:
 - scripts/upload_junitreport.sh
 - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 notifications:
