@@ -8,6 +8,7 @@
                 <span>Passed</span>
                 <span>Failures</span>
                 <span>Errors</span>
+                <span>Trigger</span>
             </li>
         </div>
         <div class="body" >
@@ -15,9 +16,10 @@
                 <span class="status" ng-class="statusClass(build)"></span>
                 <span><a ng-href="#/builds/{{owner}}/{{project}}/testsuites/{{build.buildNumber}}">{{build.buildNumber}}</a></span>
                 <span>{{build.date | date:dateFormat}}</span>
-                <span ng-class="">{{build.tests}}</span>
+                <span>{{build.tests}}</span>
                 <span>{{build.failures}}</span>
                 <span>{{build.errors}}</span>
+                <span>{{build.trigger}}<a ng-show="build.trigger =='Travis'" ng-href="http://travis-ci.org/{{owner}}/{{project}}/builds/{{build.travisBuildId}}">{{build.trigger}}</a></span>
             </li>
         </div>
      </test-data>
