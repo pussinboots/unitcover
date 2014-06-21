@@ -2,8 +2,6 @@
     <test-data>
         <div class="header">
             <li class="row">
-                <span>Id</span>
-                <span>Build</span>
                 <span>Name</span>
                 <span>Passed</span>
                 <span>Failure</span>
@@ -14,9 +12,7 @@
         </div>
         <div class="body" >
             <li class="build row table-row" ng-repeat="build in builds.items">
-                <span>{{build.id}}</span>
-                <span><a ng-href="#/builds/{{owner}}/{{project}}/testcases/{{build.id}}">{{build.id}}</a></span>
-                <span class="status" ng-class="statusClass(build)">{{build.name}}</span>
+                <span class="status" ng-class="statusClass(build)"><a ng-href="#/builds/{{owner}}/{{project}}/testcases/{{build.id}}">{{build.name}}</a></span>
                 <span>{{build.tests}}</span>
                 <span>{{build.failures}}</span>
                 <span>{{build.errors}}</span>

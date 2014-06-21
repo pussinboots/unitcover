@@ -2,8 +2,6 @@
     <test-data>
         <div class="header">
             <li class="row">
-                <span>Id</span>
-                <span>Suite Id</span>
                 <span>Name</span>
                 <span>className</span>
                 <span>Failure</span>
@@ -14,9 +12,7 @@
         </div>
         <div class="body" >
             <li class="testcase row table-row" ng-repeat="testcase in testsuite.items">
-                <span>{{testcase.id}}</span>
-                <span>{{testcase.testSuiteId}}</span>
-                <span>{{testcase.name}}</span>
+                <span class="status" ng-class="statusClass(testcase)">{{testcase.name}}</span>
                 <span>{{testcase.className}}</span>
                 <span>{{testcase.failureMessage}}</span>
                 <span>{{testcase.errorMessage}}</span>

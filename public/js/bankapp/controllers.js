@@ -62,6 +62,12 @@ function TestCasesCtrl($rootScope, $scope, $routeParams, TestCases) {
         loadTestCases(rootScope, scope, routeParams, TestCases)
     };
     $scope.setItems($rootScope, $scope, $routeParams)
+
+    $scope.statusClass=function(testCase) {
+        if(typeof testCase.errorMessage === "string") return "red"
+        if(typeof testCase.failureMessage === "string") return "yellow"
+        return "green"
+    }
 }
 
 function loadTestCases(rootScope, scope, routeParams, TestCases) {
