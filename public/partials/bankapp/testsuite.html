@@ -16,7 +16,7 @@
             <li class="build row table-row" ng-repeat="build in builds.items">
                 <span>{{build.id}}</span>
                 <span><a ng-href="#/builds/{{owner}}/{{project}}/testcases/{{build.id}}">{{build.id}}</a></span>
-                <span ng-class="statusClass(build)">{{build.name}}</span>
+                <span class="status" ng-class="statusClass(build)">{{build.name}}</span>
                 <span>{{build.tests}}</span>
                 <span>{{build.failures}}</span>
                 <span>{{build.errors}}</span>

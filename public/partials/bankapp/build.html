@@ -12,7 +12,7 @@
         </div>
         <div class="body" >
             <li class="build row" ng-repeat="build in builds.items">
-                <span ng-class="statusClass(build)"></span>
+                <span class="status" ng-class="statusClass(build)"></span>
                 <span><a ng-href="#/builds/{{owner}}/{{project}}/testsuites/{{build.buildNumber}}">{{build.buildNumber}}</a></span>
                 <span>{{build.date | date:dateFormat}}</span>
                 <span ng-class="">{{build.tests}}</span>
