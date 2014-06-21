@@ -15,7 +15,7 @@ describe('builds', function() {
       browser().navigateTo('products.html#/builds/pussinboots/bankapp/builds');
     });
 
-    it('ten test suites are display', function() {
+    it('ten builds are display', function() {
       expect(repeater('li.build').count()).toBe(10);
     });
     

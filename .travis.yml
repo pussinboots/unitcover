@@ -10,6 +10,7 @@ before_script:
 before_deploy:
 - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 after_script:
+- cat logs/application.log
 - scripts/upload_junitreport.sh
 notifications:
   email:
