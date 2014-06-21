@@ -8,10 +8,9 @@ before_script:
 - wget http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb
 - sudo dpkg -i sbt-0.13.5.deb
 before_deploy:
-- if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-after_script:
 - cat logs/application.log
 - scripts/upload_junitreport.sh
+- if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 notifications:
   email:
     on_success: never
