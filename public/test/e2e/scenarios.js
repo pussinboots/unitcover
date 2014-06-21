@@ -11,16 +11,19 @@ describe('UnitCover', function() {
 
   describe('build with eleven test suites', function() {
 
-    /*beforeEach(function() {
+    beforeEach(function() {
       browser().navigateTo('products.html#/builds/pussinboots/bankapp/builds');
     });
 
     it('ten test suites are display', function() {
       expect(repeater('li.build').count()).toBe(10);
     });
+    
+    it('the latest build show as first', function() {
+      expect(repeater('li.build').count().row(0).column('build.name')).toEqual("testsuite 11");
+    });
 
-    //problem that field name_enc is empty for that expect here but than setted right
-    it('the latest ten test suites should be display started with the eleven test suite', function() {
+    /*it('the latest ten test suites should be display started with the eleven test suite', function() {
       expect(repeater('li.build').column('build.name')).
           toEqual(["testsuite 11", "testsuite 10", "testsuite 9","testsuite 8", "testsuite 7","testsuite 6", "testsuite 5","testsuite 4", "testsuite 3", "testsuite 2"]);
     });*/
