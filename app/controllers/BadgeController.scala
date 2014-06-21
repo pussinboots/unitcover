@@ -8,8 +8,7 @@ import play.api.mvc.Controller
 import model.{DB, Build, TestSuite}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
-import play.api.Play
-import play.api.Play.current
+import play.api.mvc.Results
 
 object BadgeController extends Controller {
 
