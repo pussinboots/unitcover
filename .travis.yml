@@ -1,5 +1,5 @@
 language: node_js
-script: sbt coveralls && npm test && scripts/bliss scripts/upload_junitreport.sh
+script: sbt coveralls && npm test && scripts/bliss
 node_js:
 - 0.1
 before_script:
@@ -9,6 +9,8 @@ before_script:
 - sudo dpkg -i sbt-0.13.5.deb
 before_deploy:
 - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+after_script:
+- scripts/upload_junitreport.sh
 notifications:
   email:
     on_success: never
