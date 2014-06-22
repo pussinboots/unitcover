@@ -38,7 +38,7 @@ class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with Test
   def drop(implicit session: Session) = try {
     (testSuites.ddl ++ testCases.ddl ++ Builds.builds.ddl).drop
   } catch {
-    case ioe: Exception =>
+    case e: Exception => e.printStackTrace(System.out)
   }
 }
 
@@ -47,13 +47,14 @@ case class TestSuite(var id: Option[Long] = None, buildNumber:Int, owner: String
                      date: Timestamp = DateUtil.nowDateTime())
 
 trait TestSuiteComponent {
-  this: BuildComponent =>
+  this: BuildComponent with Profile =>
   //requires a Profile to be mixed in...
 
   import profile.simple._
 
   //...to be able import profile.simple._
   class TestSuites(tag: Tag) extends Table[TestSuite](tag, "testSuite") {
+    //todo database optimization removed autoinc key and have a other unique identifier also multiple fields supported 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def buildNumber = column[Int]("buildNumber")
     def owner = column[String]("owner")
@@ -64,7 +65,7 @@ trait TestSuiteComponent {
     def errors = column[Option[Int]]("errors")
     def duration = column[Option[Double]]("duration")
     def date = column[Timestamp]("date")
-    def buildFK = foreignKey("build_fk", buildNumber, Builds.builds)(_.id, onDelete=ForeignKeyAction.Cascade)
+    def buildFK = foreignKey("build_fk", (owner, project, buildNumber), Builds.builds)(o=>(o.owner, o.project, o.buildNumber), onDelete=ForeignKeyAction.Cascade)
     def * = (id.?, buildNumber, owner, project, name, tests, failures, errors, duration, date) <>(TestSuite.tupled, TestSuite.unapply)
   }
   val testSuites = TableQuery[TestSuites]
@@ -79,7 +80,7 @@ case class TestCase(var id: Option[Long] = None, testSuiteId: Long, owner: Strin
                      typ: Option[String] = None)
 
 trait TestCaseComponent {
-  this: Profile =>
+  this: Profile with TestSuiteComponent =>
   //requires a Profile to be mixed in...
 
   import profile.simple._
@@ -87,6 +88,7 @@ trait TestCaseComponent {
   //...to be able import profile.simple._
 
   class TestCases(tag: Tag) extends Table[TestCase](tag, "testCase") {
+        //todo database optimization removed autoinc key and have a other unique identifier also multiple fields supported
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def testSuiteId = column[Long]("testSuiteId")
     def owner = column[String]("owner")
@@ -97,6 +99,7 @@ trait TestCaseComponent {
     def failureMessage = column[Option[String]]("failureMessage")
     def errorMessage = column[Option[String]]("errorMessage")
     def typ = column[Option[String]]("typ")
+    def suiteFK = foreignKey("suite_fk", testSuiteId, testSuites)(_.id, onDelete=ForeignKeyAction.Cascade)
     def * = (id.?, testSuiteId, owner, project, name, className, duration, failureMessage, errorMessage, typ) <>(TestCase.tupled, TestCase.unapply)
   }
   val testCases = TableQuery[TestCases]
@@ -104,7 +107,7 @@ trait TestCaseComponent {
   def findBySuite(testSuiteId: Long) = (for {a <- testCases if a.testSuiteId === testSuiteId} yield (a))  
 }
 
-case class Build(var id: Option[Long] = None, owner: String, project: String,
+case class Build(owner: String, project: String,
                      buildNumber: Int, date: Timestamp = DateUtil.nowDateTime(), 
                      tests: Option[Int]=None, failures: Option[Int]=None, errors: Option[Int]=None,
                      trigger: Option[String] = None, branch:Option[String] = None, travisBuildId: Option[String] = None)
@@ -117,7 +120,6 @@ trait BuildComponent {
   import profile.simple.Database.dynamicSession
   //...to be able import profile.simple._
   class Builds(tag: Tag) extends Table[Build](tag, "builds") {
-    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def owner = column[String]("owner")
     def project = column[String]("project")
     def buildNumber = column[Int]("buildNumber")
@@ -128,23 +130,28 @@ trait BuildComponent {
     def trigger = column[Option[String]]("trigger")
     def branch = column[Option[String]]("branch")
     def travisBuildId = column[Option[String]]("travisBuildId")
-    def idx = index("idx_owner_project", (owner, project), unique = false)
-    def * = (id.?, owner, project, buildNumber, date, tests, failures, errors, trigger, branch, travisBuildId)<>(Build.tupled, Build.unapply _)
+    def pk = primaryKey("pk_a", (owner, project, buildNumber))
+    def idx1 = index("idx_owner_project", (owner, project), unique = false)
+    def idx2 = index("idx_owner_project_buildNumber", (owner, project, buildNumber), unique = true)
+    def * = (owner, project, buildNumber, date, tests, failures, errors, trigger, branch, travisBuildId)<>(Build.tupled, Build.unapply _)
   }
   object Builds {
     val builds = TableQuery[Builds]
-    val buildForInsert = builds returning builds.map(_.id) into { case (build, id) => build.copy(id = Some(id)) }
+    //val buildForInsert = builds returning builds.map(_) into { case (build) => build }
     def insertAndIncrement(ownerStr: String, projectStr: String): Build = insertAndIncrement(Build(owner=ownerStr, project=projectStr, buildNumber=0))
     def insertAndIncrement(build: Build): Build = {
       val q =findLatestBuildNumber(build.owner, build.project)
       val latestBuildNumber:Int = q.first.getOrElse(0)
-      buildForInsert.insert(build.copy(id = None, buildNumber=latestBuildNumber+1))      
+      val buildToInsert = build.copy(buildNumber=latestBuildNumber+1)
+      builds.insert(buildToInsert)      
+      buildToInsert
     }
     def updateStats(owner: String, project: String, buildNumber: Int, testSum: Int, failureSum: Int, errorSum: Int) {
       val q2 = for {a <- builds if a.buildNumber === buildNumber} yield (a.tests, a.failures, a.errors)
       q2.update(Some(testSum), Some(failureSum), Some(errorSum))
     }
     def deleteOldestFirstUntil(buildLimit: Int, latestBuild: Build) {
+      if (buildLimit <=0) return
       val q = for {a <- builds if a.buildNumber < (latestBuild.buildNumber+1)-buildLimit} yield (a)
       q.delete
     }

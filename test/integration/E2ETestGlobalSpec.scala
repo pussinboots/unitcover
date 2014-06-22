@@ -17,10 +17,7 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
   import DB.dal
   import dal._
   import DB.dal.profile.simple._
-      
-  val googleId  = "test googleId"
-  val googleIdEnc  = "test googleid encrypted"
-
+ 
   def around[T: AsResult](f: => T) = {
     running(FakeApplication()) {
       E2ETestGlobal.onStart(Play.application)
@@ -59,27 +56,26 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
     }
 
     "eleven builds exists" in { 
-        "id" | "buildNumber" |  "owner"         |  "project"   |        "tests"   | "failures" |  "errors"  | 
-        1    ! 1             !  "pussinboots"  !!  "bankapp"  !!        1         ! 0          !  0         | 
-        2    ! 2             !  "pussinboots"  !!  "bankapp"  !!        2         ! 0          !  0         | 
-        3    ! 3             !  "pussinboots"  !!  "bankapp"  !!        3         ! 0          !  0         | 
-        4    ! 4             !  "pussinboots"  !!  "bankapp"  !!        4         ! 0          !  0         | 
-        5    ! 5             !  "pussinboots"  !!  "bankapp"  !!        5         ! 0          !  0         | 
-        6    ! 6             !  "pussinboots"  !!  "bankapp"  !!        6         ! 0          !  0         | 
-        7    ! 7             !  "pussinboots"  !!  "bankapp"  !!        7         ! 0          !  0         | 
-        8    ! 8             !  "pussinboots"  !!  "bankapp"  !!        8         ! 1          !  0         | 
-        9    ! 9             !  "pussinboots"  !!  "bankapp"  !!        9         ! 1          !  0         | 
-        10   ! 10            !  "pussinboots"  !!  "bankapp"  !!        10         ! 1          !  1         | 
-        11   ! 11            !  "pussinboots"  !!  "bankapp"  !!        11         ! 1          !  1         |> { (id, buildNumber, owner, project, tests, failures, errors)=>around{
-            val testSuite = Builds.findByBuildNumber(buildNumber).first
-            testSuite.id must beEqualTo(Some(id))
-            testSuite.buildNumber must beEqualTo(buildNumber)
-            testSuite.owner must beEqualTo(owner)
-            testSuite.project must beEqualTo(project)
-            testSuite.tests must beEqualTo(Some(tests))
-            testSuite.failures must beEqualTo(Some(failures))
-            testSuite.errors must beEqualTo(Some(errors))          
-            testSuite.travisBuildId must beEqualTo(Some(s"$buildNumber"))    
+        "buildNumber" |  "owner"         |  "project"   |        "tests"   | "failures" |  "errors"  | 
+        1             !  "pussinboots"  !!  "bankapp"  !!        5         ! 1          !  2         | 
+        2             !  "pussinboots"  !!  "bankapp"  !!        2         ! 0          !  0         | 
+        3             !  "pussinboots"  !!  "bankapp"  !!        3         ! 0          !  0         | 
+        4             !  "pussinboots"  !!  "bankapp"  !!        4         ! 0          !  0         | 
+        5             !  "pussinboots"  !!  "bankapp"  !!        5         ! 0          !  0         | 
+        6             !  "pussinboots"  !!  "bankapp"  !!        6         ! 0          !  0         | 
+        7             !  "pussinboots"  !!  "bankapp"  !!        7         ! 0          !  0         | 
+        8             !  "pussinboots"  !!  "bankapp"  !!        8         ! 1          !  0         | 
+        9             !  "pussinboots"  !!  "bankapp"  !!        9         ! 1          !  0         | 
+        10            !  "pussinboots"  !!  "bankapp"  !!        10        ! 1          !  1         | 
+        11            !  "pussinboots"  !!  "bankapp"  !!        11        ! 1          !  1         |> { (buildNumber, owner, project, tests, failures, errors)=>around{
+            val build = Builds.findByBuildNumber(buildNumber).first
+            build.buildNumber must beEqualTo(buildNumber)
+            build.owner must beEqualTo(owner)
+            build.project must beEqualTo(project)
+            build.tests must beEqualTo(Some(tests))
+            build.failures must beEqualTo(Some(failures))
+            build.errors must beEqualTo(Some(errors))          
+            build.travisBuildId must beEqualTo(Some(s"$buildNumber"))    
           }
         }
     }

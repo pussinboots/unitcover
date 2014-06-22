@@ -24,7 +24,7 @@ object BadgeController extends Controller {
 
   def status(owner: String, project: String) = Action {request =>
     DB.db withDynSession  {
-      var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.id.desc)
+      var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc)
       Ok(Json.stringify(Json.toJson(query.first))) as ("application/json")
     }
   }
@@ -42,7 +42,7 @@ object BadgeController extends Controller {
 
   def badge(owner: String, project: String) = Action.async {request =>
     DB.db withDynSession  {
-      var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.id.desc)
+      var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc)
       WS.url(badgeUrl(query.firstOption)).get().map { response =>
           Ok(response.body).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
       }

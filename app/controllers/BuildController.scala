@@ -19,7 +19,7 @@ object BuildController extends Controller {
   import model.JsonHelper._
 
   def startBuild(owner: String, project: String, trigger: Option[String], branch: Option[String], travisBuildId: Option[String]) = ActionWithoutToken {request =>
-      val build = DB.db withDynSession Builds.insertAndIncrement(Build(id=None, owner=owner, project=project, trigger=trigger, 
+      val build = DB.db withDynSession Builds.insertAndIncrement(Build(owner=owner, project=project, trigger=trigger, 
                                                                     buildNumber=0, branch=branch, travisBuildId=travisBuildId))
       DB.db withDynSession Builds.deleteOldestFirstUntil(Play.current.configuration.getInt("buildslimit").get,build)
       Ok(Json.obj("buildNumber" -> build.buildNumber))
@@ -40,7 +40,7 @@ object BuildController extends Controller {
   
   def latestBuilds(owner: String, project: String) = ActionWithoutToken {request =>
     DB.db withDynSession  {
-      var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.id.desc)
+      var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc)
       val json = query.take(10).list()
       val count = query.list.length
       Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")

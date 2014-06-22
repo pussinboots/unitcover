@@ -9,7 +9,7 @@ import play.api.Play.current
 import play.api.libs.json.Json
 import unit.org.stock.manager.test.DatabaseSetupBefore
 
-import model.{DB, TestSuite, TestCase}
+import model.{DB, Build, TestSuite, TestCase}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore {
@@ -17,6 +17,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	implicit val timeout = 10000
 	import DB.dal
+	import dal._
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
@@ -109,10 +110,9 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		DB.db withDynSession {
 			for(i <- 1 to 10)
 				dal.testSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+			Builds.builds.insert(Build(owner="pussinboots", project="bankapp", buildNumber=2, date=now, tests=Some(5),failures = Some(1), errors = Some(2), travisBuildId=Some("2")))	
 			for(i <- 1 to 10)
 				dal.testSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
-			for(i <- 1 to 10)
-				dal.testSuites.insert(TestSuite(None, 3, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
 		}	
 	}
 
