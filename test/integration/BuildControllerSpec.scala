@@ -94,6 +94,21 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 				checkBuildTravisCINotMaster(buildNumber)
 			}
 		}
+		
+		"create five new builds and delete old once except the latest two's" in new WithServer(app = FakeApplication(additionalConfiguration=Map("buildslimit" -> "2"))) {
+			for(i <- 1 to 4)
+				await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			val buildResp = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			buildResp.status must equalTo(OK)
+			val buildNumber = (buildResp.json \ "buildNumber").as[Int]
+			buildNumber must equalTo(6)
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
+			response.status must equalTo(OK)
+			val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
+			builds.count must equalTo(2)
+			builds.items.length must equalTo(2)
+			builds.items(0).buildNumber must equalTo(6)
+		}
 	}
 
 	"GET to /api/<owner>/<project>/builds" should {
@@ -146,7 +161,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		build.travisBuildId must beEqualTo(Some("123456"))
 	}
 
-    def checkBuild(buildId: Int) {
+        def checkBuild(buildId: Int) {
 		val build = Builds.findByBuildNumber(buildId).firstOption.get
 		build.id must beEqualTo(Some(buildId))
 		build.buildNumber must beEqualTo(1)
