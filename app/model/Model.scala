@@ -142,6 +142,10 @@ trait BuildComponent {
       val q2 = for {a <- builds if a.buildNumber === buildNumber} yield (a.tests, a.failures, a.errors)
       q2.update(Some(testSum), Some(failureSum), Some(errorSum))
     }
+    def deleteOldestFirstUntil(buildLimit: Int, latestBuild: Build) {
+      val q = for {a <- builds if a.buildNumber < latestBuild.buildNumber-buildLimit} yield (a)
+      q.delete
+    }
     def findByOwnerAndProject(owner: String, project: String) = (for {a <- builds if a.owner === owner && a.project === project} yield (a))
     def findByBuildNumber(buildNumber: Int) = (for {a <- builds if a.buildNumber === buildNumber} yield (a))
     def findLatestBuildNumber(owner: String, project: String) = Query((for {a <- builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max)
