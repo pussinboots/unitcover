@@ -6,6 +6,7 @@ import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.mvc.BodyParsers
 import play.api.mvc.Controller
+import play.api.mvc.Action
 import model.{DB, Build, TestSuite}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
