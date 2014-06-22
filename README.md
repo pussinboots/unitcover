@@ -26,7 +26,7 @@ To increase the supported unit reports from different language send me or upload
 * migrate from slick version 1 to 2
 * buildnumber generation is missing always 1 (done)
 * grouping of test suites to one build (need build number generation) (done)
-* support badge images (done)
+* support badge images (done) like [![Unit Tests](https://unitcover.herokuapp.com/api/pussinboots/unitcover/badge?ts=10)](https://unitcover.herokuapp.com/#/builds/pussinboots/unitcover/builds)
 * link test reports with travis build (done)
 
 ##TODO
