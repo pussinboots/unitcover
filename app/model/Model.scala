@@ -47,7 +47,7 @@ case class TestSuite(var id: Option[Long] = None, buildNumber:Int, owner: String
                      date: Timestamp = DateUtil.nowDateTime())
 
 trait TestSuiteComponent {
-  this: Profile =>
+  this: BuildComponent =>
   //requires a Profile to be mixed in...
 
   import profile.simple._
