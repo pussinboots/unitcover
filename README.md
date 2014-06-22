@@ -58,21 +58,31 @@ travisBuildId=""
     else
         trigger="trigger=Local"
     fi
-#upload play junit reports
+#create new build and fetch the build number
 buildnumber=$(curl -s -X POST http://$endpoint/api/$owner/$project/builds?$trigger$travisBuildId | sed -E 's/.*"buildNumber":([0-9]*).*/\1/')
 echo $buildnumber
 echo "http://$endpoint/api/$owner/$project/$buildnumber"
 for f in $FILES
 do
   echo "Processing $f file..."
+  #upload play junit reports
   curl -H "Content-Type:application/xml" -X POST -d @$f http://$endpoint/api/$owner/$project/$buildnumber
 done
-
+#upload karma unit report
 curl -H "Content-Type:application/xml" -X POST -d @test-results.xml http://$endpoint/api/$owner/$project/$buildnumber
 
 curl -X POST http://$endpoint/api/$owner/$project/builds/$buildnumber/end
-
+```
 ##Build
+
+```
+git clone https://github.com/pussinboots/unitcover.git
+cd unitcover
+npm install
+sbt -Dconfig.file=conf/application-e2e.conf run
+```
+Than the [server](http://localhost:9000/#/builds/pussinboots/banbapp/builds) should be accessible with some dummy data. It use 
+an h2 in memory database.
 
 ###Requirements
 * play 2.3.0
