@@ -30,41 +30,41 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
   }
 
 	"BadgeController" should {
-		"tests passed build return tests passed badge" in {around{
-		    val build = Builds.findByBuildNumber(7).firstOption
-		    val badgeUrl = BadgeController.badgeUrl(build)
-		    val desc = "passed"
-		    val count = 7
-		    val color = "brightgreen"
-		    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc20$count-$color.svg")
-		  }	
-		}
-		
-		"tests failed build return tests failed badge" in {around{
-		    val build = Builds.findByBuildNumber(9).firstOption
-		    val badgeUrl = BadgeController.badgeUrl(build)
-		    val desc = "failed"
-		    val count = 1
-		    val color = "yellow"
-		    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc20$count-$color.svg")
-		  }	
-		}
-		
-		"tests errored build return tests error badge" in {around{ 
-		    val build = Builds.findByBuildNumber(10).firstOption
-		    val badgeUrl = BadgeController.badgeUrl(build)
-		    val desc = "error"
-		    val count = 1
-		    val color = "red"
-		    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc20$count-$color.svg")
-		  }	
-		}
-		
-		"build not exists return tests unknown" in {around{ 
-		    val build = Builds.findByBuildNumber(200).firstOption
-		    val badgeUrl = BadgeController.badgeUrl(build)
-		    badgeUrl must equalTo("http://img.shields.io/badge/test-unknown-lightgrey.svg")
-		  }	
-		}
+	"tests passed build return tests passed badge" in {around{
+	    val build = Builds.findByBuildNumber(7).firstOption
+	    val badgeUrl = BadgeController.badgeUrl(build)
+	    val desc = "passed"
+	    val count = 7
+	    val color = "brightgreen"
+	    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc%20$count-$color.svg")
+	  }	
 	}
+	
+	"tests failed build return tests failed badge" in {around{
+	    val build = Builds.findByBuildNumber(9).firstOption
+	    val badgeUrl = BadgeController.badgeUrl(build)
+	    val desc = "failed"
+	    val count = 1
+	    val color = "yellow"
+	    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc%20$count-$color.svg")
+	  }	
+	}
+	
+	"tests errored build return tests error badge" in {around{ 
+	    val build = Builds.findByBuildNumber(10).firstOption
+	    val badgeUrl = BadgeController.badgeUrl(build)
+	    val desc = "error"
+	    val count = 1
+	    val color = "red"
+	    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc%20$count-$color.svg")
+	  }	
+	}
+	
+	"build not exists return tests unknown" in {around{ 
+	    val build = Builds.findByBuildNumber(200).firstOption
+	    val badgeUrl = BadgeController.badgeUrl(build)
+	    badgeUrl must equalTo("http://img.shields.io/badge/test-unknown-lightgrey.svg")
+	  }	
+	}
+  }
 }
