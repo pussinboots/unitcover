@@ -5,6 +5,7 @@ import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.mvc.BodyParsers
 import play.api.mvc.Controller
+import play.api.Play
 import model.{DB, Build, TestSuite}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
@@ -20,6 +21,7 @@ object BuildController extends Controller {
   def startBuild(owner: String, project: String, trigger: Option[String], branch: Option[String], travisBuildId: Option[String]) = ActionWithoutToken {request =>
       val build = DB.db withDynSession Builds.insertAndIncrement(Build(id=None, owner=owner, project=project, trigger=trigger, 
                                                                     buildNumber=0, branch=branch, travisBuildId=travisBuildId))
+      DB.db withDynSession Builds.deleteOldestFirstUntil(Play.current.configuration.getInt("buildslimit").get,build)
       Ok(Json.obj("buildNumber" -> build.buildNumber))
   }
 

@@ -101,13 +101,13 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			val buildResp = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
 			buildResp.status must equalTo(OK)
 			val buildNumber = (buildResp.json \ "buildNumber").as[Int]
-			buildNumber must equalTo(6)
+			buildNumber must equalTo(5)
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
 			response.status must equalTo(OK)
 			val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
 			builds.count must equalTo(2)
 			builds.items.length must equalTo(2)
-			builds.items(0).buildNumber must equalTo(6)
+			builds.items(0).buildNumber must equalTo(5)
 		}
 	}
 
