@@ -1,5 +1,5 @@
 language: node_js
-script: sbt coveralls && npm test && scripts/bliss
+script: sbt coveralls && npm test
 node_js:
 - 0.1
 before_script:
@@ -9,9 +9,9 @@ before_script:
 - sudo dpkg -i sbt-0.13.5.deb
 after_failure:
 - cat logs/application.log
-- scripts/upload_junitreport.sh
+- scripts/bliss scripts/upload_junitreport.sh
 before_deploy:
-- scripts/upload_junitreport.sh
+- scripts/bliss scripts/upload_junitreport.sh
 - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 notifications:
   email:
