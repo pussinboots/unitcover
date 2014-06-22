@@ -2,6 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 
 GET        /api/:owner/:project/badge  controllers.BadgeController.badge(owner: String, project: String)
+GET        /api/:owner/:project/status  controllers.BadgeController.status(owner: String, project: String)
 
 POST        /api/:owner/:project/builds  controllers.BuildController.startBuild(owner: String, project: String, trigger: Option[String] ?= None, branch: Option[String] ?= None, travisBuildId: Option[String] ?= None)
 POST        /api/:owner/:project/builds/:buildNumber/end  controllers.BuildController.endBuild(owner: String, project: String, buildNumber: Int)
