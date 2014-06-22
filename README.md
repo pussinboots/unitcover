@@ -12,9 +12,22 @@ SonarQube seems to complex for me. So i decided to build one similar to coverall
 
 Feel free to fork this repo and hosted it self the heroku instance running is a free one and very limited one web dyno and 10 database connection so please contact me before you want to upload something in the moment. 
 
-At the top of the project you see different badges and the badge on the right side is the badge from this unitcover project. Thanks to [shields.io](http://shields.io/) they make the creation of image badges so easy like calculate 1 + 1 in the mind.
+At the top of the project you see different badges and the badge on the right side is the badge from this unitcover project. Thanks to [shields.io](http://shields.io/) they make the creation of image badges so easy like calculate 1 + 1.
+
+##Supported unit reports
+To increase the supported unit reports from different language send me or upload it into the test/resources folder.
+
+* karma unit report
+* sbt unit report
+
 ##Done
+* max build history is ten
 * updated to play 2.3.0
+* migrate from slick version 1 to 2
+* buildnumber generation is missing always 1 (done)
+* grouping of test suites to one build (need build number generation) (done)
+* support badge images (done)
+* link test reports with travis build (done)
 
 ##TODO
 * authorization is complete missing
@@ -22,15 +35,9 @@ At the top of the project you see different badges and the badge on the right si
 * sbt plugin to upload the unit reports (maybe the solution with curl seems very simple)
 
 Transfer the todos to trello is still open
-* migrate from slick version 1 to 2
-* buildnumber generation is missing always 1 (done)
-* grouping of test suites to one build (need build number generation) (done)
-* support badge images (done)
-* link test reports with travis build (done)
 
- 
 ##Features
-Todo and features are mantained with trello now https://trello.com/b/tPkEhbaY/unitcover
+Todo and features are mantained with trello now [Trello](https://trello.com/b/tPkEhbaY/unitcover)
 
 
 ##Usage
