@@ -45,7 +45,6 @@ object BadgeController extends Controller {
       var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.id.desc)
       WS.url(badgeUrl(query.firstOption)).get().map { response =>
           Ok(response.body).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate") as ("image/svg+xml")
-        }
       }
     }
   }
