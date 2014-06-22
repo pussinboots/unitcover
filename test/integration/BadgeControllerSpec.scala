@@ -20,7 +20,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	sequential
 	import DB.dal._
 	import DB.dal.profile.simple._
-	def around[T: AsResult](f: => T) = {
+	def setupTestData[T: AsResult](f: => T) = {
     running(FakeApplication()) {
       E2ETestGlobal.onStart(Play.application)
       DB.db withDynSession {
@@ -30,7 +30,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
   }
 
 	"BadgeController" should {
-	"tests passed build return tests passed badge" in {around{
+	"tests passed build return tests passed badge" in {setupTestData{
 	    val build = Builds.findByBuildNumber(7).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)
 	    val desc = "passed"
@@ -40,7 +40,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	  }	
 	}
 	
-	"tests failed build return tests failed badge" in {around{
+	"tests failed build return tests failed badge" in {setupTestData{
 	    val build = Builds.findByBuildNumber(9).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)
 	    val desc = "failed"
@@ -50,7 +50,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	  }	
 	}
 	
-	"tests errored build return tests error badge" in {around{ 
+	"tests errored build return tests error badge" in {setupTestData{ 
 	    val build = Builds.findByBuildNumber(10).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)
 	    val desc = "error"
@@ -60,7 +60,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	  }	
 	}
 	
-	"build not exists return tests unknown" in {around{ 
+	"build not exists return tests unknown" in {setupTestData{ 
 	    val build = Builds.findByBuildNumber(200).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)
 	    badgeUrl must equalTo("http://img.shields.io/badge/test-unknown-lightgrey.svg")
