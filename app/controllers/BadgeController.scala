@@ -44,7 +44,7 @@ object BadgeController extends Controller {
     DB.db withDynSession  {
       var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.id.desc)
       WS.url(badgeUrl(query.firstOption)).get().map { response =>
-          Ok(response.body).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate") as ("image/svg+xml")
+          Ok(response.body).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
       }
     }
   }
