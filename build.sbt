@@ -36,7 +36,9 @@ npm := scala.sys.process.Process( "npm" :: "install" :: Nil) ! logger
 ScoverageKeys.excludedPackages in ScoverageCompile := "controllers.javascript;controllers.ref;tools.imports;Routes;controllers.ReverseAssets;controllers.ReverseApplication;controllers.ReverseBuildController;controllers.ReverseTestCaseController;controllers.ReverseTestSuiteController;controllers.ReverseBadgeController;scala.slick.migration.api..*"
 
 envVars := Map("aes_key" -> "16rdKQfqN3L4TY7YktgxBw==", "sparkasse_username"->"username", "sparkasse_password"->"password") // setted for EasyCryptSpec
+
 lazy val stickMigrationApi = RootProject(uri("git@github.com:nafg/slick-migration-api.git"))
+
 lazy val root = (project in file(".")).enablePlugins(PlayScala).dependsOn(stickMigrationApi)
 
 libraryDependencies ++= Seq(
