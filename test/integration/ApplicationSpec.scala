@@ -24,7 +24,7 @@ class ApplicationSpec extends PlaySpecification {
         val loggingClass = System.getProperty("com.mchange.v2.log.MLog")
         val loggingLevel = System.getProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL")
         loggingClass must beEqualTo("com.mchange.v2.log.FallbackMLog")
-        loggingLevel must beEqualTo("ALL")
+        loggingLevel must beEqualTo("DEBUG")
       }
     }
 
