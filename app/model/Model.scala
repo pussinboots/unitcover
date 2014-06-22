@@ -4,6 +4,7 @@ import scala.slick.driver.{JdbcDriver, H2Driver, MySQLDriver}
 import java.sql.{Timestamp, Date}
 import java.util.{Date, Calendar}
 import scala.slick.jdbc.meta.MTable
+import scala.slick.model.ForeignKeyAction
 
 trait Profile {
   val profile: JdbcDriver
@@ -63,6 +64,7 @@ trait TestSuiteComponent {
     def errors = column[Option[Int]]("errors")
     def duration = column[Option[Double]]("duration")
     def date = column[Timestamp]("date")
+    def buildFK = foreignKey("build_fk", buildNumber, Builds.builds)(_.id, onDelete=ForeignKeyAction.Cascade)
     def * = (id.?, buildNumber, owner, project, name, tests, failures, errors, duration, date) <>(TestSuite.tupled, TestSuite.unapply)
   }
   val testSuites = TableQuery[TestSuites]
