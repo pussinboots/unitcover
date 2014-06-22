@@ -9,6 +9,7 @@ import play.api.mvc.Controller
 import play.api.mvc.Action
 import play.api.mvc.Results
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.Play.current
 import model.{DB, Build, TestSuite}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
@@ -22,7 +23,7 @@ object BadgeController extends Controller {
   import model.JsonHelper._
 
 
-  def status(owner: String, project: String) = Action.async {request =>
+  def status(owner: String, project: String) = Action {request =>
     DB.db withDynSession  {
       var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.id.desc)
       val json = query.first
