@@ -14,6 +14,7 @@ Feel free to fork this repo and hosted it self the heroku instance running is a 
 
 At the top of the project you see different badges and the badge on the right side is the badge from this unitcover project. Thanks to [shields.io](http://shields.io/) they make the creation of image badges so easy like calculate 1 + 1.
 
+**It runs on the [heroku](https://www.heroku.com/) plattform but with the lowest free scalability setup. So it could take some minutes to restart after it was suspended.**
 ##Supported unit reports
 To increase the supported unit reports from different languages you can send me or upload the unit test result xml file into the test/resources folder. 
 
