@@ -152,12 +152,12 @@ trait BuildComponent {
     }
     def deleteOldestFirstUntil(buildLimit: Int, latestBuild: Build) {
       if (buildLimit <=0) return
-      val q = for {a <- builds if a.buildNumber < (latestBuild.buildNumber+1)-buildLimit} yield (a)
+      val q = for {a <- builds if a.owner === latestBuild.owner && a.project === latestBuild.project && a.buildNumber < (latestBuild.buildNumber+1)-buildLimit} yield (a)
       q.delete
     }
     def findByOwnerAndProject(owner: String, project: String) = (for {a <- builds if a.owner === owner && a.project === project} yield (a))
     def findByBuildNumber(buildNumber: Int) = (for {a <- builds if a.buildNumber === buildNumber} yield (a))
-    def findLatestBuildNumber(owner: String, project: String) = (for {a <- builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max
+    def findLatestBuildNumber(owner: String, project: String) = Query((for {a <- builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max)
     def findLatestBuilds() = (for {a <- builds} yield (a)).sortBy(_.date.desc)
   }
 }

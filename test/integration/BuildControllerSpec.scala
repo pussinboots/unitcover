@@ -99,12 +99,16 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			"build limit" should {
 				"enabled with value two" should{
 					"create four new builds and delete old once and all it testsuites except the latest two's" in new WithServer(app = FakeApplication(additionalConfiguration=Map("buildslimit" -> "2"))) {
-						uploadFourBuilds(port)
+						uploadBuilds(port, 1, "otherproject")
+						uploadBuilds(port, 4, "bankapp")
 						//check that the three old builds and complete test suites and cases are deleted
 						DB.db withDynSession {
+							//test suite of otherproject
+							testSuiteExists(2, "otherproject")
+							//test suite of bankapp
 							testSuiteNotExists(1)
-							testSuiteNotExists(2)
 							testSuiteNotExists(3)
+							testSuiteNotExists(4)
 						}
 						val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
 						response.status must equalTo(OK)
@@ -156,17 +160,17 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		}	
 	}
 
-	def uploadFourBuilds(port: Int) {
+	def uploadBuilds(port: Int, count: Int, project: String) {
 		import play.api.Play.current
-		for(i <- 1 to 4) {
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+		for(i <- 1 to count) {
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/$project/builds").post(""))
 			response.status must equalTo(OK)
 			val buildNumber = (response.json \ "buildNumber").as[Int]
 			val sbtTestResultWithError = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecError.xml")).mkString
-			val testSuiteResponse = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/$buildNumber").withHeaders("Content-Type" -> "text/xml").post(sbtTestResultWithError))
+			val testSuiteResponse = await(WS.url(s"http://localhost:$port/api/pussinboots/$project/$buildNumber").withHeaders("Content-Type" -> "text/xml").post(sbtTestResultWithError))
 			testSuiteResponse.status must equalTo(OK)
 			val suiteId = (testSuiteResponse.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			val responseEndBuild = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/$buildNumber/end").post(""))
+			val responseEndBuild = await(WS.url(s"http://localhost:$port/api/pussinboots/$project/builds/$buildNumber/end").post(""))
 			responseEndBuild.status must equalTo(OK)
 			DB.db withDynSession {
 				checkTestSuiteWithError(suiteId, buildNumber)
@@ -240,9 +244,14 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		testCases(2).failureMessage must equalTo(None)
 	}
 
+        def testSuiteExists(buildNumber: Int, project: String) {
+		val deletedTestCases = findBySuite(buildNumber).list()
+		deletedTestCases.length must greaterThan(0)
+		val deletedTestSuites = findResultsBy("pussinboots", project, buildNumber).list()
+		deletedTestSuites.length must equalTo(1)
+	}
 	def testSuiteNotExists(buildNumber: Int) {
 		val deletedTestCases = findBySuite(buildNumber).list()
-		println(deletedTestCases)
 		deletedTestCases.length must equalTo(0)
 		val deletedTestSuites = findResultsBy("pussinboots", "bankapp", buildNumber).list()
 		deletedTestSuites.length must equalTo(0)
