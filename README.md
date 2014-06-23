@@ -15,10 +15,51 @@ Feel free to fork this repo and hosted it self the heroku instance running is a 
 At the top of the project you see different badges and the badge on the right side is the badge from this unitcover project. Thanks to [shields.io](http://shields.io/) they make the creation of image badges so easy like calculate 1 + 1.
 
 ##Supported unit reports
-To increase the supported unit reports from different language send me or upload it into the test/resources folder.
+To increase the supported unit reports from different languages you can send me or upload the unit test result xml file into the test/resources folder. 
 
 * karma unit report
+```xml
+<?xml version="1.0"?>
+<testsuites>
+  <testsuite name="Opera 12.16.0 (Linux)" package="" timestamp="2014-06-18T18:38:51" id="0" hostname="vagrant-VirtualBox" tests="3" errors="0" failures="0" time="10.997">
+    <properties>
+      <property name="browser.fullName" value="Opera/9.80 (X11; Linux x86_64) Presto/2.12.388 Version/12.16"/>
+    </properties>
+    <testcase name="ten test suites are display" time="9.178" classname="Opera 12.16.0 (Linux).UnitCover build with eleven test suites"/>
+    <testcase name="the latest ten test suites should be display started with the eleven test suite" time="1.103" classname="Opera 12.16.0 (Linux).UnitCover build with eleven test suites"/>
+    <testcase name="should redirect products.html to products.html#/builds" time="0.716" classname="Opera 12.16.0 (Linux).UnitCover"/>
+    <system-out><![CDATA[
+]]></system-out>
+    <system-err/>
+  </testsuite>
+  <testsuite name="Firefox 30.0.0 (Ubuntu)" package="" timestamp="2014-06-18T18:38:51" id="0" hostname="vagrant-VirtualBox" tests="3" errors="0" failures="0" time="10.684">
+    <properties>
+      <property name="browser.fullName" value="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0"/>
+    </properties>
+    <testcase name="ten test suites are display" time="9.071" classname="Firefox 30.0.0 (Ubuntu).UnitCover build with eleven test suites"/>
+    <testcase name="the latest ten test suites should be display started with the eleven test suite" time="1.149" classname="Firefox 30.0.0 (Ubuntu).UnitCover build with eleven test suites"/>
+    <testcase name="should redirect products.html to products.html#/builds" time="0.464" classname="Firefox 30.0.0 (Ubuntu).UnitCover"/>
+    <system-out><![CDATA[
+]]></system-out>
+    <system-err/>
+  </testsuite>
+</testsuites>
+```
 * sbt unit report
+```xml
+<testsuite hostname="vagrant-VirtualBox" name="integration.ApplicationSpec" tests="7" errors="0" failures="0" skipped="0" time="1.975">
+	<testcase name="application changed setup will work should::disable db ssl" classname="integration.ApplicationSpec" time="0.066">
+		</testcase><testcase name="application changed setup will work should::enable DB logging" classname="integration.ApplicationSpec" time="0.039">
+		</testcase><testcase name="application setup should should::configured with custom keystore is enabled" classname="integration.ApplicationSpec" time="0.046">
+		</testcase><testcase name="application setup should should::check reditect to products.html work" classname="integration.ApplicationSpec" time="1.469">
+		</testcase><testcase name="application setup should should::configured to redirect all http request to https on heroku" classname="integration.ApplicationSpec" time="0.222">
+		</testcase><testcase name="application setup should should::configured with custom truststore is enabled" classname="integration.ApplicationSpec" time="0.046">
+		</testcase><testcase name="application setup should should::configured with DB logging deactivate" classname="integration.ApplicationSpec" time="0.078">
+	</testcase>
+	<system-out></system-out>
+	<system-err></system-err>
+</testsuite>
+```
 
 ##Done
 * max build history is ten
