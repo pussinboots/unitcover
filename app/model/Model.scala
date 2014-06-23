@@ -157,6 +157,7 @@ trait BuildComponent {
     }
     def findByOwnerAndProject(owner: String, project: String) = (for {a <- builds if a.owner === owner && a.project === project} yield (a))
     def findByBuildNumber(buildNumber: Int) = (for {a <- builds if a.buildNumber === buildNumber} yield (a))
-    def findLatestBuildNumber(owner: String, project: String) = Query((for {a <- builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max)
+    def findLatestBuildNumber(owner: String, project: String) = (for {a <- builds if a.owner === owner && a.project === project} yield (a.buildNumber)).max
+    def findLatestBuilds() = (for {a <- builds} yield (a)).sortBy(_.date.desc)
   }
 }

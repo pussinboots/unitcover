@@ -46,4 +46,13 @@ object BuildController extends Controller {
       Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")
     }
   }
+  
+  def latests() = ActionWithoutToken {request =>
+    DB.db withDynSession  {
+      var query = Builds.findLatestBuilds()
+      val json = query.take(10).list()
+      val count = query.list.length
+      Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")
+    }
+  }
 }
