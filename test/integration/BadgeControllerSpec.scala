@@ -31,7 +31,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 
 	"BadgeController" should {
 	"tests passed build return tests passed badge" in {setupTestData{
-	    val build = Builds.findByBuildNumber(7).firstOption
+	    val build = Builds.findByBuildNumber("pussinboots", "bankapp", 7).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)
 	    val desc = "passed"
 	    val count = 7
@@ -41,7 +41,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 	
 	"tests failed build return tests failed badge" in {setupTestData{
-	    val build = Builds.findByBuildNumber(9).firstOption
+	    val build = Builds.findByBuildNumber("pussinboots", "bankapp", 9).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)
 	    val desc = "failed"
 	    val count = 1
@@ -51,7 +51,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 	
 	"tests errored build return tests error badge" in {setupTestData{ 
-	    val build = Builds.findByBuildNumber(10).firstOption
+	    val build = Builds.findByBuildNumber("pussinboots", "bankapp", 10).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)
 	    val desc = "error"
 	    val count = 1
@@ -61,7 +61,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 	
 	"build not exists return tests unknown" in {setupTestData{ 
-	    val build = Builds.findByBuildNumber(200).firstOption
+	    val build = Builds.findByBuildNumber("pussinboots", "bankapp", 200).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)
 	    badgeUrl must equalTo("http://img.shields.io/badge/test-unknown-lightgrey.svg")
 	  }	

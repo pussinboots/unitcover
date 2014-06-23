@@ -57,7 +57,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 				
 				response2.status must equalTo(OK)
 				DB.db withDynSession {
-					val build = Builds.findByBuildNumber(buildNumber).firstOption.get
+					val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildNumber).firstOption.get
 					build.buildNumber must beEqualTo(buildNumber)
 					build.owner must beEqualTo("pussinboots")
 					build.project must beEqualTo("bankapp")
@@ -104,11 +104,11 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 						//check that the three old builds and complete test suites and cases are deleted
 						DB.db withDynSession {
 							//test suite of otherproject
-							testSuiteExists(2, "otherproject")
-							//test suite of bankapp
-							testSuiteNotExists(1)
-							testSuiteNotExists(3)
-							testSuiteNotExists(4)
+							testSuiteExists(1, "otherproject")
+							//test suite of bankapp that should be deleted
+							testSuiteNotExists(1,1)
+							testSuiteNotExists(3,2)
+							testSuiteNotExists(4,3)
 						}
 						val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
 						response.status must equalTo(OK)
@@ -122,7 +122,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 
 				"disabled with value zero" should{
 					"create four new builds and nothing should be deleted five builds should be left" in new WithServer(app = FakeApplication(additionalConfiguration=Map("buildslimit" -> "0"))) {
-						uploadFourBuilds(port)
+						uploadBuilds(port, 4, "bankapp")
 						val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
 						response.status must equalTo(OK)
 						val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
@@ -173,7 +173,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 			val responseEndBuild = await(WS.url(s"http://localhost:$port/api/pussinboots/$project/builds/$buildNumber/end").post(""))
 			responseEndBuild.status must equalTo(OK)
 			DB.db withDynSession {
-				checkTestSuiteWithError(suiteId, buildNumber)
+				checkTestSuiteWithError(suiteId, buildNumber, project)
 				checkTestCasesWithError(suiteId)
 			}
 
@@ -182,7 +182,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 
 	//then
 	def checkBuildTravisCINotMaster(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildId).firstOption.get
 		build.buildNumber must beEqualTo(2)
 		build.owner must beEqualTo("pussinboots")
 		build.project must beEqualTo("bankapp")
@@ -191,7 +191,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	def checkBuildTravisCI(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildId).firstOption.get
 		build.buildNumber must beEqualTo(2)
 		build.owner must beEqualTo("pussinboots")
 		build.project must beEqualTo("bankapp")
@@ -199,7 +199,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	def checkBuildTravisBuildId(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildId).firstOption.get
 		build.buildNumber must beEqualTo(2)
 		build.owner must beEqualTo("pussinboots")
 		build.project must beEqualTo("bankapp")
@@ -207,25 +207,25 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
     def checkBuild(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildId).firstOption.get
 		build.buildNumber must beEqualTo(2)
 		build.owner must beEqualTo("pussinboots")
 		build.project must beEqualTo("bankapp")
 	}
 
 	def checkSecondBuild(buildId: Int) {
-		val build = Builds.findByBuildNumber(buildId).firstOption.get
+		val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildId).firstOption.get
 		build.buildNumber must beEqualTo(3)
 		build.owner must beEqualTo("pussinboots")
 		build.project must beEqualTo("bankapp")
 	}
 
-	def checkTestSuiteWithError(suiteId: Long, buildNumber: Int) {
+	def checkTestSuiteWithError(suiteId: Long, buildNumber: Int, project: String) {
 		val suite = findById(suiteId).firstOption.get
 		suite.id must beEqualTo(Some(suiteId))
 		suite.buildNumber must beEqualTo(buildNumber)
 		suite.owner must beEqualTo("pussinboots")
-		suite.project must beEqualTo("bankapp")
+		suite.project must beEqualTo(project)
 		suite.name must beEqualTo("integration.TestSuiteControllerSpec")
 		suite.tests must beEqualTo(Some(3))
 		suite.failures must beEqualTo(Some(0))
@@ -244,16 +244,17 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		testCases(2).failureMessage must equalTo(None)
 	}
 
-        def testSuiteExists(buildNumber: Int, project: String) {
-		val deletedTestCases = findBySuite(buildNumber).list()
-		deletedTestCases.length must greaterThan(0)
-		val deletedTestSuites = findResultsBy("pussinboots", project, buildNumber).list()
-		deletedTestSuites.length must equalTo(1)
+    def testSuiteExists(buildNumber: Int, project: String) {
+		val testCases = findBySuite(2).list()
+		testCases.length must greaterThan(0)
+		val testSuites = findBy("pussinboots", project, buildNumber).list()
+		testSuites.length must equalTo(1)
+		testSuites(0).project must equalTo(project)
 	}
-	def testSuiteNotExists(buildNumber: Int) {
-		val deletedTestCases = findBySuite(buildNumber).list()
-		deletedTestCases.length must equalTo(0)
-		val deletedTestSuites = findResultsBy("pussinboots", "bankapp", buildNumber).list()
+	def testSuiteNotExists(testSuiteId: Int, buildNumber: Int) {
+		val deletedTestSuites = findBy("pussinboots", "bankapp", buildNumber).list()
+		val deletedTestCases = findBySuite(testSuiteId).list()
 		deletedTestSuites.length must equalTo(0)
+		deletedTestCases.length must equalTo(0)
 	}
 }

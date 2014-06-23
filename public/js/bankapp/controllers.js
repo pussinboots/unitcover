@@ -9,6 +9,19 @@ function HeaderController($scope, $location) {
 }
 
 /* Controllers */
+function OverviewCtrl($rootScope, $scope, Builds) {
+    initTable($scope, 10, 'date', 'desc')
+    $scope.setItems = function (rootScope, scope) {
+        loadLatestBuilds(rootScope, scope, Builds)
+    };
+    $scope.statusClass=function(build) {
+        if(build.errors > 0) return "red"
+        if(build.failures > 0) return "yellow"
+        if(build.tests > 0) return "green"
+        return "gray"
+    }
+    $scope.setItems($rootScope, $scope)
+}
 function BuildsCtrl($rootScope, $scope, $routeParams, Builds) {
     initTable($scope, 10, 'date', 'desc')
     $rootScope.owner = $routeParams.owner
@@ -23,6 +36,12 @@ function BuildsCtrl($rootScope, $scope, $routeParams, Builds) {
         return "gray"
     }
     $scope.setItems($rootScope, $scope, $routeParams)
+}
+
+function loadLatestBuilds(rootScope, scope, Builds) {
+    scope.builds = Builds.get({owner:'all', project:'all'}, function (response) {
+        scope.totalItems = response.count;
+    });
 }
 
 function loadBuilds(rootScope, scope, routeParams, Builds) {

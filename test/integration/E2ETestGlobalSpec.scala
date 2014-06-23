@@ -57,18 +57,19 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
 
     "eleven builds exists" in { 
         "buildNumber" |  "owner"         |  "project"   |        "tests"   | "failures" |  "errors"  | 
-        1             !  "pussinboots"  !!  "bankapp"  !!        5         ! 1          !  2         | 
-        2             !  "pussinboots"  !!  "bankapp"  !!        2         ! 0          !  0         | 
-        3             !  "pussinboots"  !!  "bankapp"  !!        3         ! 0          !  0         | 
-        4             !  "pussinboots"  !!  "bankapp"  !!        4         ! 0          !  0         | 
-        5             !  "pussinboots"  !!  "bankapp"  !!        5         ! 0          !  0         | 
-        6             !  "pussinboots"  !!  "bankapp"  !!        6         ! 0          !  0         | 
-        7             !  "pussinboots"  !!  "bankapp"  !!        7         ! 0          !  0         | 
-        8             !  "pussinboots"  !!  "bankapp"  !!        8         ! 1          !  0         | 
-        9             !  "pussinboots"  !!  "bankapp"  !!        9         ! 1          !  0         | 
-        10            !  "pussinboots"  !!  "bankapp"  !!        10        ! 1          !  1         | 
-        11            !  "pussinboots"  !!  "bankapp"  !!        11        ! 1          !  1         |> { (buildNumber, owner, project, tests, failures, errors)=>around{
-            val build = Builds.findByBuildNumber(buildNumber).first
+        1             !  "pussinboots"  !!  "bankapp"        !!        5         ! 1          !  2         | 
+        2             !  "pussinboots"  !!  "bankapp"       !!        2         ! 0          !  0         | 
+        3             !  "pussinboots"  !!  "bankapp"       !!        3         ! 0          !  0         | 
+        4             !  "pussinboots"  !!  "bankapp"       !!        4         ! 0          !  0         | 
+        5             !  "pussinboots"  !!  "bankapp"       !!        5         ! 0          !  0         | 
+        6             !  "pussinboots"  !!  "bankapp"       !!        6         ! 0          !  0         | 
+        7             !  "pussinboots"  !!  "bankapp"       !!        7         ! 0          !  0         | 
+        8             !  "pussinboots"  !!  "bankapp"       !!        8         ! 1          !  0         | 
+        9             !  "pussinboots"  !!  "bankapp"       !!        9         ! 1          !  0         | 
+        10            !  "pussinboots"  !!  "bankapp"       !!        10        ! 1          !  1         | 
+        11            !  "pussinboots"  !!  "bankapp"       !!        11        ! 1          !  1         |
+        1             !  "otherowner"   !!  "otherproject"  !!        20        ! 0          !  1         |> { (buildNumber, owner, project, tests, failures, errors)=>around{
+            val build = Builds.findByBuildNumber(owner, project, buildNumber).first
             build.buildNumber must beEqualTo(buildNumber)
             build.owner must beEqualTo(owner)
             build.project must beEqualTo(project)

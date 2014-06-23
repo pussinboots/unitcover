@@ -4,9 +4,9 @@
 
 describe('testsuites', function() {
 
-  it('should redirect / to /builds', function() {
+  it('should redirect /index.html to /index.html/#builds/', function() {
     browser().navigateTo('/index.html');
-    expect(browser().location().url()).toBe('/builds');
+    expect(browser().location().url()).toBe('/builds/');
   });
 
   describe('build with eleven test suites', function() {

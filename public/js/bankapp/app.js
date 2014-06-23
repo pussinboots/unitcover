@@ -7,6 +7,8 @@ var myModule = angular.module('bankapp',
                 'productServices', 'ngCookies'])
 myModule.config(function ($routeProvider) {
     $routeProvider
+    .when('/builds/', {  templateUrl: 'partials/bankapp/overview.html',
+                                        controller: OverviewCtrl })
     .when('/builds/:owner/:project/builds', {  templateUrl: 'partials/bankapp/build.html',
                                         controller: BuildsCtrl })
 	.when('/builds/:owner/:project/testsuites/:buildnumber', {  templateUrl: 'partials/bankapp/testsuite.html',
