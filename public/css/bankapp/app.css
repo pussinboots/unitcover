@@ -26,15 +26,18 @@ th.sortable {
 }
 
 .green {
-	background-color: #40FF00;
+	background-color: darkgreen;
+	color: white;
 }
 
 .yellow {
-	background-color: #FFFF00;
+	background-color: darkgoldenrod;
+	color: white;
 }
 
 .red {
-	background-color: #FF0000;
+	background-color: darkred;
+	color: white;
 }
 
 .gray {
