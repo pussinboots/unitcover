@@ -105,8 +105,8 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
         val count = if(build.errors.getOrElse(0) > 0) build.errors.get else if (build.failures.getOrElse(0) > 0 ) build.failures.get else build.tests.getOrElse(0)
                             
         val rect = <rect xmlns="http://www.w3.org/2000/svg" rx="4" y="{y}" width="90" height="18" fill="#555"/>
-        <rect xmlns="http://www.w3.org/2000/svg" rx="4" y="{y}" x="37" width="53" height="18" fill="#4c1"/>
-        <rect rx="4" y="{y}" width="90" height="18" fill="url(#lgr1)"/>
+                   <rect xmlns="http://www.w3.org/2000/svg" rx="4" y="{y}" x="37" width="53" height="18" fill="#4c1"/>
+                   <rect rx="4" y="{y}" width="90" height="18" fill="url(#lgr1)"/>
                 
         val text = <text x="19.5" y="{y-4}" fill="#010101" fill-opacity=".3">{testSuite.name}</text>
                 <text x="19.5" y="{y-5}">{testSuite.name}</text>
