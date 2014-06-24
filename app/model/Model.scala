@@ -147,7 +147,7 @@ trait BuildComponent {
       buildToInsert
     }
     def updateStats(owner: String, project: String, buildNumber: Int, testSum: Int, failureSum: Int, errorSum: Int) {
-      val q2 = for {a <- builds if a.buildNumber === buildNumber} yield (a.tests, a.failures, a.errors)
+      val q2 = for {a <- builds if a.owner === owner && a.project === project && a.buildNumber === buildNumber} yield (a.tests, a.failures, a.errors)
       q2.update(Some(testSum), Some(failureSum), Some(errorSum))
     }
     def deleteOldestFirstUntil(buildLimit: Int, latestBuild: Build) {
