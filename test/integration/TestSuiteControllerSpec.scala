@@ -118,7 +118,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			response.status must equalTo(OK)
             println(response.xml)
             val printer = new scala.xml.PrettyPrinter(140, 2)
-            printer.format(response.xml) must equalTo(printer.format(<svg height="200" width="900" xmlns="http://www.w3.org/2000/svg">                                                                                                  
+            printer.format(response.xml) must equalTo(printer.format(<svg height="200" width="400" xmlns="http://www.w3.org/2000/svg">                                                                                                  
                 <defs>                                                                                                                                             
                  <linearGradient y2="1" x2="0" y1="0" x1="0" id="lgr1">                                                                                            
                       <stop stop-opacity=".7" stop-color="#fff" offset="0"/>                                                                                       

@@ -121,7 +121,7 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
       
       
       import collection.breakOut
-      val svg = <svg xmlns="http://www.w3.org/2000/svg" width="900" height="200">
+      val svg = <svg xmlns="http://www.w3.org/2000/svg" width="400" height="200">
                 <defs>
                  <linearGradient id="lgr1"
                       x1="0" y1="0" x2="0" y2="1">
