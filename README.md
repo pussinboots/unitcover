@@ -71,6 +71,7 @@ To increase the supported unit reports from different languages you can send me 
 * grouping of test suites to one build (need build number generation) (done)
 * support badge images (done) like [![Unit Tests](https://unitcover.herokuapp.com/api/pussinboots/unitcover/badge?ts=10)](https://unitcover.herokuapp.com/#/builds/pussinboots/unitcover/builds)
 * link test reports with travis build (done)
+* badge for all testsuites (done) [![Unit Tests](http://unitcover.herokuapp.com/api/pussinboots/unitcover/testsuites/badge)](https://unitcover.herokuapp.com/#/builds/pussinboots/unitcover/builds)
 
 ##TODO
 * authorization is complete missing
@@ -124,8 +125,7 @@ cd unitcover
 npm install
 sbt -Dconfig.file=conf/application-e2e.conf run
 ```
-Than the [server](http://localhost:9000/#/builds/pussinboots/banbapp/builds) should be accessible with some dummy data. It use 
-an h2 in memory database.
+Than the [server](http://localhost:9000/#/builds/pussinboots/banbapp/builds) should be accessible with some dummy data. It use an h2 in memory database.
 
 ###Requirements
 * play 2.3.0
