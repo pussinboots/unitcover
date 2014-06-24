@@ -98,26 +98,30 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
     DB.db withDynSession  {
       var query = dal.findBy(owner, project, Builds.findLatestBuildNumber(owner, project).first.getOrElse(0)).sortBy(_.id.desc)
       val testSuites = query.list()
-      val rect, text = testSuites.zipWithIndex.map {entry=>
+      import scala.xml.NodeSeq     
+      val rect = testSuites.zipWithIndex.map {entry=>
         val testSuite = entry._1
         val i= entry._2
         val y=17*i
         val desc = if(testSuite.errors.getOrElse(0) > 0) "error" else if (testSuite.failures.getOrElse(0) > 0 ) "failed" else "passed"
         val color = if(testSuite.errors.getOrElse(0) > 0) "red" else if (testSuite.failures.getOrElse(0) > 0 ) "yellow" else "brightgreen"
         val count = if(testSuite.errors.getOrElse(0) > 0) testSuite.errors.get else if (testSuite.failures.getOrElse(0) > 0 ) testSuite.failures.get else testSuite.tests.getOrElse(0)
-                            
-        val rect = <rect xmlns="http://www.w3.org/2000/svg" rx="4" y="{y}" width="90" height="18" fill="#555"/>
-                   <rect xmlns="http://www.w3.org/2000/svg" rx="4" y="{y}" x="37" width="53" height="18" fill="#4c1"/>
-                   <rect rx="4" y="{y}" width="90" height="18" fill="url(#lgr1)"/>
-                
-        /*val text = <text x="19.5" y="{y-4}" fill="#010101" fill-opacity=".3">{testSuite.name}</text>
-                <text x="19.5" y="{y-5}">{testSuite.name}</text>
-                <text x="62.5" y="{y-4}" fill="#010101" fill-opacity=".3">{desc} {count}</text>
-                <text x="62.5" y="{y-5}">{desc} {count}</text>*/
+        import scala.xml.NodeBuffer        
+        val rectXml = new NodeBuffer
+        rectXml += (<rect rx="4" y={s"$y"} width="90" height="18" fill="#555"/>)
+        rectXml += (<rect rx="4" y={s"$y"} x="37" width="53" height="18" fill="#4c1"/>)
+        rectXml += (<rect rx="4" y={s"$y"} width="90" height="18" fill="url(#lgr1)"/>)
+       
+		val textXml = <text x="19.5" y={s"${y-4}"} fill="#010101" fill-opacity=".3">{testSuite.name}</text>
+            <text x="19.5" y={s"${y-5}"}>{testSuite.name}</text>
+                <text x="62.5" y={s"${y-4}"} fill="#010101" fill-opacity=".3">{desc} {count}</text>
+                <text x="62.5" y={s"${y-5}"}>{desc} {count}</text>;
           
-        (rect, "text")
+        (rectXml, textXml)
       }
       
+      
+      import collection.breakOut
       val svg = <svg xmlns="http://www.w3.org/2000/svg" width="900" height="200">
                 <defs>
                  <linearGradient id="lgr1"
@@ -129,11 +133,11 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
                     </linearGradient>
                 </defs>
                 
-                {rect}
+      {rect.flatMap{s=>s._1}}
                 <path fill="#4c1" d="M37 0h4v18h-4z"/>
                 
                 <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-                {text}
+                {rect.flatMap{s=>s._2}}
                 </g>
                 </svg>
       Ok(svg).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
