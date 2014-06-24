@@ -9,9 +9,10 @@ before_script:
 - sudo dpkg -i sbt-0.13.5.deb
 after_failure:
 - cat logs/application.log
+- wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash pussinboots unitcover ./target/test-reports/
 - scripts/bliss scripts/upload_junitreport.sh
 before_deploy:
-- scripts/bliss scripts/upload_junitreport.sh
+- wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash pussinboots unitcover ./target/test-reports/
 - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 notifications:
   email:
