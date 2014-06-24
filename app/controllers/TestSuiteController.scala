@@ -109,12 +109,12 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
         import scala.xml.NodeBuffer        
         val rectXml = new NodeBuffer
         //rectXml += (<rect rx="4" y={s"$y"} width="90" height="18" fill="#555"/>)
-        rectXml += (<rect rx="4" y={s"${y-17}"} x="0" width="400" height="18" fill="#4c1"/>)
-        rectXml += (<rect rx="4" y={s"${y-17}"} x="340" width="60" height="18" fill={color}/>)
+        rectXml += (<rect rx="4" y={s"${y-17}"} x="0" width="330" height="18" fill="#555" />)
+        rectXml += (<rect rx="4" y={s"${y-17}"} x="330" width="70" height="18" fill={color} />)
         rectXml += (<rect rx="4" y={s"${y-17}"} width="400" height="18" fill="url(#lgr1)"/>)
        
 		val textXml = <text x="19.5" y={s"${y-5}"} fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">{testSuite.name}</text>
-            		      <text x="240.5" y={s"${y-5}"} fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">{desc} {count}</text>;
+            		      <text x="360.5" y={s"${y-5}"} fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">{desc} {count}</text>;
           
         (rectXml, textXml)
       }
@@ -131,14 +131,12 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
                 	  <stop offset="1" stop-opacity=".5"/>
                     </linearGradient>
                 </defs>
+            	{rect.flatMap{s=>s._1}}
                 
-      		{rect.flatMap{s=>s._1}}
-                
-                //<g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
                 {rect.flatMap{s=>s._2}}
-                //</g>
                 </svg>
-      Ok(svg).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
+      val printer = new scala.xml.PrettyPrinter(140, 2)
+      Ok(printer.format(svg)).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
     }
   }
 }

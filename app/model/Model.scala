@@ -38,7 +38,7 @@ class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with Test
   def drop(implicit session: Session) = try {
     (testSuites.ddl ++ testCases.ddl ++ Builds.builds.ddl).drop
   } catch {
-    case e: Exception => e.printStackTrace(System.out)
+    case e: Exception =>
   }
 }
 
