@@ -21,7 +21,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
-	"POST to /api/<owner>/<project>" should {
+	/*"POST to /api/<owner>/<project>" should {
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/ApplicationSpec.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
@@ -104,8 +104,9 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			testSuites.count must equalTo(11)
 			testSuites.items.length must equalTo(11)
 		}
-	}
+	}*/
     
+    import org.specs2.matcher.XmlMatchers._
     "GET to /api/<owner>/<project>/testsuites/badge" should {
 		"return all test suites" in new WithServer {
 			DB.db withDynSession {
@@ -116,7 +117,8 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/testsuites/badge").get)
 			response.status must equalTo(OK)
             println(response.xml)
-            response.xml must equalTo(<svg height="200" width="900" xmlns="http://www.w3.org/2000/svg">                                                                                                  
+            val printer = new scala.xml.PrettyPrinter(140, 2)
+            printer.format(response.xml) must equalTo(printer.format(<svg height="200" width="900" xmlns="http://www.w3.org/2000/svg">                                                                                                  
                 <defs>                                                                                                                                             
                  <linearGradient y2="1" x2="0" y1="0" x1="0" id="lgr1">                                                                                            
                       <stop stop-opacity=".7" stop-color="#fff" offset="0"/>                                                                                       
@@ -126,15 +128,19 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
                     </linearGradient>                                                                                                                              
                 </defs>                                                                                                                                            
                                                                                                                                                                    
-      <rect fill="#555" height="18" width="90" y="0" rx="4"/><rect fill="#4c1" height="18" width="53" x="37" y="0" rx="4"/><rect fill="url(#lgr1)" height="18" width="90" y="0" rx="4"/><rect fill="#555" height="18" width="90" y="17" rx="4"/><rect fill="#4c1" height="18" width="53" x="37" y="17" rx="4"/><rect fill="url(#lgr1)" height="18" width="90" y="17" rx="4"/>                                                                                                                            
-                <path d="M37 0h4v18h-4z" fill="#4c1"/>                                                                                                             
-                                                                                                                                                                   
-                <g font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff">                                            
+                <rect fill="#555" height="18" width="340" x="0" y="0" rx="4"/>
+               	<rect fill="red" height="18" width="60" x="340" y="0" rx="4"/>
+                <rect fill="url(#lgr1)" height="18" width="400" y="0" rx="4"/>
+                <rect fill="#555" height="18" width="340" x="0" y="17" rx="4"/>                                                                                                                                                                                                                                                                      
+                <rect fill="red" height="18" width="60" x="340" y="17" rx="4"/>
+                <rect fill="url(#lgr1)" height="18" width="400" y="17" rx="4"/>
+         		                                                                                                                                                   
+                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="12" x="19.5">testsuite</text>	
+                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="12" x="240.5">error 2</text>
+                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="29" x="19.5">testsuite</text>
+                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="29" x="240.5">error 2</text>
                 
-                <text fill-opacity=".3" fill="#010101" y="-4" x="19.5">testsuite</text><text y="-5" x="19.5">testsuite</text><text fill-opacity=".3" fill="#010101" y="-4" x="62.5">error 2</text><text y="-5" x="62.5">error 2</text><text fill-opacity=".3" fill="#010101" y="13" x="19.5">testsuite</text><text y="12" x="19.5">testsuite</text><text fill-opacity=".3" fill="#010101" y="13" x="62.5">error 2</text><text y="12" x="62.5">error 2</text>                                             
-                </g>                                                                                                                                               
-                
-				</svg>)
+				</svg>))
 		}
 	}
 
