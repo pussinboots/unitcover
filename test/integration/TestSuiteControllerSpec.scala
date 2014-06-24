@@ -21,7 +21,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
-	/*"POST to /api/<owner>/<project>" should {
+	"POST to /api/<owner>/<project>" should {
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/ApplicationSpec.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
@@ -93,7 +93,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 				checkKarmaTestCasesWithFailure(suiteIds)
 			}
 		}
-	}*/
+	}
 
 	"GET to /api/<owner>/<project>" should {
 		"return all test suites" in new WithServer {
