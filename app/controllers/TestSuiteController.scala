@@ -102,20 +102,20 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
       val rect = testSuites.zipWithIndex.map {entry=>
         val testSuite = entry._1
         val i= entry._2
-        val y=17*i
+        val y=17*i+1
         val desc = if(testSuite.errors.getOrElse(0) > 0) "error" else if (testSuite.failures.getOrElse(0) > 0 ) "failed" else "passed"
         val color = if(testSuite.errors.getOrElse(0) > 0) "red" else if (testSuite.failures.getOrElse(0) > 0 ) "yellow" else "brightgreen"
         val count = if(testSuite.errors.getOrElse(0) > 0) testSuite.errors.get else if (testSuite.failures.getOrElse(0) > 0 ) testSuite.failures.get else testSuite.tests.getOrElse(0)
         import scala.xml.NodeBuffer        
         val rectXml = new NodeBuffer
-        rectXml += (<rect rx="4" y={s"$y"} width="90" height="18" fill="#555"/>)
-        rectXml += (<rect rx="4" y={s"$y"} x="37" width="53" height="18" fill="#4c1"/>)
-        rectXml += (<rect rx="4" y={s"$y"} width="90" height="18" fill="url(#lgr1)"/>)
+        //rectXml += (<rect rx="4" y={s"$y"} width="90" height="18" fill="#555"/>)
+        rectXml += (<rect rx="4" y={s"$y-17"} x="0" width="400" height="18" fill="#4c1"/>)
+        rectXml += (<rect rx="4" y={s"$y-17"} width="90" height="18" fill="url(#lgr1)"/>)
        
-		val textXml = <text x="19.5" y={s"${y-4}"} fill="#010101" fill-opacity=".3">{testSuite.name}</text>
+		val textXml = //<text x="19.5" y={s"${y-4}"} fill="#010101" fill-opacity=".3">{testSuite.name}</text>
             <text x="19.5" y={s"${y-5}"}>{testSuite.name}</text>
-                <text x="62.5" y={s"${y-4}"} fill="#010101" fill-opacity=".3">{desc} {count}</text>
-                <text x="62.5" y={s"${y-5}"}>{desc} {count}</text>;
+                //<text x="62.5" y={s"${y-4}"} fill="#010101" fill-opacity=".3">{desc} {count}</text>
+                <text x="240.5" y={s"${y-5}"}>{desc} {count}</text>;
           
         (rectXml, textXml)
       }
