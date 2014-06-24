@@ -136,7 +136,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
                 <rect fill="url(#lgr1)" height="18" width="400" y="17" rx="4"/>
          		                                                                                                                                                   
 				<text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="12" x="180.5">testsuite</text>	
-                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-seri fill="#fff" y="12" x="335.5">error 2</text>
+                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="12" x="335.5">error 2</text>
                 <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="29" x="180.5">testsuite</text>
                 <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="29" x="335.5">error 2</text>
 
