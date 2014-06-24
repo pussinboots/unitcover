@@ -6,6 +6,7 @@ unitcover
 [![Heroku](http://heroku-badge.heroku.com/?app=unitcover)](https://unitcover.herokuapp.com/products.html#/builds/pussinboots/unitcover/builds)
 [![Unit Tests](https://unitcover.herokuapp.com/api/pussinboots/unitcover/badge?ts=10)](https://unitcover.herokuapp.com/#/builds/pussinboots/unitcover/builds)
 
+[![Unit Tests](http://unitcover.herokuapp.com/api/pussinboots/unitcover/testsuites/badge)](https://unitcover.herokuapp.com/#/builds/pussinboots/unitcover/builds)
 
 Since one or two weeks i search for a service like [coveralls](https://coveralls.io) but only for test results and i didn't found something for free and
 SonarQube seems to complex for me. So i decided to build one similar to coveralls and that is my motivation. It is in aeryl stage now and implemented in one day so there still a lot of work to do but can be used.
