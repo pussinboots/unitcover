@@ -114,7 +114,7 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
         rectXml += (<rect rx="4" y={s"${y-17}"} width="400" height="18" fill="url(#lgr1)"/>)
        
 		val textXml = <text x="180.5" y={s"${y-5}"} fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">{testSuite.name}</text>
-            		      <text x="360.5" y={s"${y-5}"} fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">{desc} {count}</text>;
+            		      <text x="335.5" y={s"${y-5}"} fill="#fff" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">{desc} {count}</text>;
           
         (rectXml, textXml)
       }
