@@ -15,7 +15,7 @@
         </div>
         <div class="body" >
             <li class="build row" ng-repeat="build in builds.items">
-                <span><a ng-href="https://{{build.owner}}.github.io">{build.owner}}</a></span>
+                <span><a ng-href="https://{{build.owner}}.github.io">{{build.owner}}</a></span>
                 <span><a ng-href="https://github.com/{{build.owner}}/{{build.project}}">{{build.project}}</a></span>
                 <span class="status" ng-class="statusClass(build)"></span>
                 <span><a ng-href="#/builds/{{build.owner}}/{{build.project}}/testsuites/{{build.buildNumber}}">{{build.buildNumber}}</a></span>
