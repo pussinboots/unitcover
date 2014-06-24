@@ -104,7 +104,7 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
         val i= entry._2
         val y=17*(i+1)
         val desc = if(testSuite.errors.getOrElse(0) > 0) "error" else if (testSuite.failures.getOrElse(0) > 0 ) "failed" else "passed"
-        val color = if(testSuite.errors.getOrElse(0) > 0) "red" else if (testSuite.failures.getOrElse(0) > 0 ) "yellow" else "brightgreen"
+        val color = if(testSuite.errors.getOrElse(0) > 0) "red" else if (testSuite.failures.getOrElse(0) > 0 ) "yellow" else "green"
         val count = if(testSuite.errors.getOrElse(0) > 0) testSuite.errors.get else if (testSuite.failures.getOrElse(0) > 0 ) testSuite.failures.get else testSuite.tests.getOrElse(0)
         import scala.xml.NodeBuffer        
         val rectXml = new NodeBuffer
