@@ -16,6 +16,8 @@ describe('overview', function() {
     
     it('the latest build with buildNumber 11 show as first', function() {
       expect(repeater('li.build:eq(0)').column('build.buildNumber')).toEqual(["1"]);
+      expect(repeater('li.build:eq(0) > span:eq(0) > a').attr('href')).toEqual("https://github.com/otherowner/otherproject");
+      expect(repeater('li.build:eq(0) > span:eq(2) > a').attr('href')).toEqual("#builds/otherowner/otherproject/testsuites/1");
       expect(repeater('li.build:eq(0)').column('build.project')).toEqual(["otherproject"]);
       expect(repeater('li.build:eq(0)').column('build.owner')).toEqual(["otherowner"]);
       expect(element('li.build:eq(0) > span.status').attr('class')).toEqual("status red");
