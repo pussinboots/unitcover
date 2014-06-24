@@ -110,12 +110,11 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
         val rectXml = new NodeBuffer
         //rectXml += (<rect rx="4" y={s"$y"} width="90" height="18" fill="#555"/>)
         rectXml += (<rect rx="4" y={s"${y-17}"} x="0" width="400" height="18" fill="#4c1"/>)
+        rectXml += (<rect rx="4" y={s"${y-17}"} x="340" width="60" height="18" fill={color}/>)
         rectXml += (<rect rx="4" y={s"${y-17}"} width="400" height="18" fill="url(#lgr1)"/>)
        
-		val textXml = //<text x="19.5" y={s"${y-4}"} fill="#010101" fill-opacity=".3">{testSuite.name}</text>
-            <text x="19.5" y={s"${y-5}"}>{testSuite.name}</text>
-                //<text x="62.5" y={s"${y-4}"} fill="#010101" fill-opacity=".3">{desc} {count}</text>
-                <text x="240.5" y={s"${y-5}"}>{desc} {count}</text>;
+		val textXml = <text x="19.5" y={s"${y-5}"} fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">{testSuite.name}</text>
+            		      <text x="240.5" y={s"${y-5}"} fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">{desc} {count}</text>;
           
         (rectXml, textXml)
       }
@@ -133,8 +132,7 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
                     </linearGradient>
                 </defs>
                 
-      {rect.flatMap{s=>s._1}}
-                <path fill="#4c1" d="M37 0h4v18h-4z"/>
+      		{rect.flatMap{s=>s._1}}
                 
                 //<g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
                 {rect.flatMap{s=>s._2}}
