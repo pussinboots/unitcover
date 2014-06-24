@@ -21,7 +21,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
-	/*"POST to /api/<owner>/<project>" should {
+	"POST to /api/<owner>/<project>" should {
 		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/ApplicationSpec.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
@@ -104,7 +104,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			testSuites.count must equalTo(11)
 			testSuites.items.length must equalTo(11)
 		}
-	}*/
+	}
     
     import org.specs2.matcher.XmlMatchers._
     "GET to /api/<owner>/<project>/testsuites/badge" should {
@@ -136,7 +136,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
                 <rect fill="url(#lgr1)" height="18" width="400" y="17" rx="4"/>
          		                                                                                                                                                   
 				<text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="12" x="180.5">testsuite</text>	
-                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="12" x="335.5">error 2</text>
+                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-seri fill="#fff" y="12" x="335.5">error 2</text>
                 <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="29" x="180.5">testsuite</text>
                 <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="29" x="335.5">error 2</text>
 
