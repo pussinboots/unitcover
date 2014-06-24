@@ -86,6 +86,15 @@ Todo and features are mantained with trello now [Trello](https://trello.com/b/tP
 
 ##Usage
 
+Simple setup by download the provided upload script from unitcover and specify the 3 needed parameters.
+* github owner
+* github project
+* target test folder
+
+```bash
+wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash /dev/stdin pussinboots unitcover ./target/test-reports/
+```
+
 There is no build integration yet but with the following script you could upload your sbt and karma junit reports
 ```bash
 #!/bin/bash
