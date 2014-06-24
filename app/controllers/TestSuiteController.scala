@@ -13,6 +13,7 @@ object TestSuiteController extends Controller {
 
   import controllers.ControllerHelpers._
   import DB.dal
+  import dal._
   import DB.dal.profile.simple._
   import model.SlickHelpers._
   import model.JsonHelper._
@@ -90,6 +91,49 @@ def parseTestSuite(owner: String, project: String, testSuiteNode: NodeSeq, build
       val json = query.list()
       val count = query.list.length
       Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")
+    }
+  }
+  
+  def badgeTestSuites(owner: String, project: String) = ActionWithoutToken {request =>
+    DB.db withDynSession  {
+      var query = dal.findBy(owner, project, Builds.findLatestBuildNumber(owner, project).first.getOrElse(0)).sortBy(_.id.desc)
+      val testSuites = query.list()
+      val (rect, text) = testSuites.zipWithIndex.map {(i, testSuite)=>
+        val y=17*i
+        val desc = if(build.errors.getOrElse(0) > 0) "error" else if (build.failures.getOrElse(0) > 0 ) "failed" else "passed"
+        val color = if(build.errors.getOrElse(0) > 0) "red" else if (build.failures.getOrElse(0) > 0 ) "yellow" else "brightgreen"
+        val count = if(build.errors.getOrElse(0) > 0) build.errors.get else if (build.failures.getOrElse(0) > 0 ) build.failures.get else build.tests.getOrElse(0)
+                            
+        val rect = <rect xmlns="http://www.w3.org/2000/svg" rx="4" y="{y}" width="90" height="18" fill="#555"/>
+        <rect xmlns="http://www.w3.org/2000/svg" rx="4" y="{y}" x="37" width="53" height="18" fill="#4c1"/>
+        <rect rx="4" y="{y}" width="90" height="18" fill="url(#lgr1)"/>
+                
+        val text = <text x="19.5" y="{y-4}" fill="#010101" fill-opacity=".3">{testSuite.name}</text>
+                <text x="19.5" y="{y-5}">{testSuite.name}</text>
+                <text x="62.5" y="{y-4}" fill="#010101" fill-opacity=".3">{desc} {count}</text>
+                <text x="62.5" y="{y-5}">{desc} {count}</text>
+        (rect, text)
+      }
+      
+      val svg = <svg xmlns="http://www.w3.org/2000/svg" width="900" height="200">
+                <defs>
+                 <linearGradient id="lgr1"
+                      x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
+                	  <stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
+                	  <stop offset=".9" stop-opacity=".3"/>
+                	  <stop offset="1" stop-opacity=".5"/>
+                    </linearGradient>
+                </defs>
+                
+                {rect}
+                <path fill="#4c1" d="M37 0h4v18h-4z"/>
+                
+                <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+                {text}
+                </g>
+                </svg>
+      Ok(svg).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
     }
   }
 }
