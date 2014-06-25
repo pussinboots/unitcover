@@ -1,8 +1,8 @@
 package model
 
 object SlickHelpers {
-
-  import DB.dal._
+  //not needed at the moment
+  /*import DB.dal._
   import DB.dal.profile.simple._
 
   implicit class QueryExtensionSort[E, T <: Table[E]](val query: Query[T, E]) {
@@ -44,5 +44,5 @@ object SlickHelpers {
           case "desc" => table._1.column[String](sort).desc
         })
     }
-  }
+  }*/
 }
