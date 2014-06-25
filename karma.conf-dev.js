@@ -13,34 +13,18 @@ module.exports = function (config) {
         files: [
             './node_modules/karma-ng-scenario/lib/angular-scenario.js',
             './node_modules/karma-ng-scenario/lib/adapter.js',
-            'public/test/e2e/*.js'
+            'public/test/e2e/*.js',
+            'public/js/bankapp/**.js'
         ],
 
         // list of files to exclude
         exclude: [
         ],
 
-        preprocessors: { 'public/js/bankapp/*.js': ['coverage'],'public/test/e2e/*.js': ['coverage']  },
-
-
         // test results reporter to use
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-        reporters: ['progress', 'dots', 'junit', 'coverage', 'coveralls', 'threshold'],
+        reporters: ['progress', 'dots', 'junit'],
 
-        thresholdEnd2EndTests: true,
-        
-        thresholdReporter: {
-          statements: 90,
-          branches: 60,
-          functions: 85,
-          lines: 90
-        },
-
-        coverageReporter: {
-          reporters:[
-            {type: 'lcov', dir:'coverage/'}
-          ],
-        },
 
         /*coverageReporter: {
             type: 'lcov', 'text', // lcov or lcovonly are required for generating lcov.info files
@@ -55,7 +39,7 @@ module.exports = function (config) {
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.ĹOG_INFO,
+        logLevel: config.LOG_WARN,
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
@@ -80,7 +64,6 @@ module.exports = function (config) {
         singleRun: false,
 
         proxies: {
-            '/js/bankapp': 'http://localhost:9000/js/bankapp/coverage',
             '/': 'http://localhost:9000/'
         },
 
