@@ -138,7 +138,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		}
 
 		"GET to /api/<owner>/<project>/builds" should {
-			"return latest 10 builds" in new WithServer {
+			"return latest 10 builds of a specific project" in new WithServer {
 				insert10Builds()
 				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
 				response.status must equalTo(OK)
@@ -146,6 +146,23 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 				builds.count must equalTo(12)
 				builds.items.length must equalTo(10)
 				builds.items(0).buildNumber must equalTo(12)
+			}
+		}
+
+		"GET to /api/all/all/builds" should {
+			"return latest 10 builds overall" in new WithServer {
+				insert10Builds()
+				val response = await(WS.url(s"http://localhost:$port/api/all/all/builds").get)
+				response.status must equalTo(OK)
+				val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
+				builds.count must equalTo(12)
+				builds.items.length must equalTo(10)
+				builds.items(0).buildNumber must equalTo(1)
+				builds.items(0).project must equalTo("otherproject")
+				builds.items(0).owner must equalTo("otherowner")
+				builds.items(1).buildNumber must equalTo(11)
+				builds.items(1).project must equalTo("bankapp")
+				builds.items(1).owner must equalTo("pussinboots")
 			}
 		}
 	}
