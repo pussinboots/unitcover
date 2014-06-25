@@ -10,5 +10,4 @@ object DateUtil {
     new Timestamp(cal.getTimeInMillis)
   }
   def nowDateTime() : Timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis)
-  def nowDateTimeOpt() : Option[Timestamp] = Some(nowDateTime())
 }

@@ -7,13 +7,12 @@ import play.api.libs.ws._
 import play.api.Play
 import play.api.Play.current
 import play.api.libs.json.Json
-import unit.org.stock.manager.test.DatabaseSetupBefore
+import unit.test.utils.DatabaseSetupBefore
 
 import model.{DB, Build, TestSuite, TestCase}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore {
-	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	implicit val timeout = 10000
 	import DB.dal
@@ -58,8 +57,6 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		}
 
 		// test results contains failures and errors
-
-
 		"with sbt junit xml report one failure return http status 200 and store it in the db" in new WithServer { 
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecFailure.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
@@ -86,7 +83,6 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results-failures.xml")).mkString
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
 			response.status must equalTo(OK)
-			println(response.json)
 			val suiteIds = (response.json \ "testsuites"  \\ "id").map(_.as[Long])
 			DB.db withDynSession {
 				checkKarmaTestSuiteWithFailure(suiteIds)
@@ -105,54 +101,51 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 			testSuites.items.length must equalTo(11)
 		}
 	}
-    
-    import org.specs2.matcher.XmlMatchers._
-    "GET to /api/<owner>/<project>/testsuites/badge" should {
+	
+	import org.specs2.matcher.XmlMatchers._
+	"GET to /api/<owner>/<project>/testsuites/badge" should {
 		"return all test suites" in new WithServer {
 			DB.db withDynSession {
-                Builds.builds.insert(Build(owner="pussinboots", project="bankapp", buildNumber=2, date=now, tests=Some(5),failures = Some(1), errors = Some(2), travisBuildId=Some("2")))	
-                for(i <- 1 to 2)
-                    dal.testSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
-            }
+				Builds.builds.insert(Build(owner="pussinboots", project="bankapp", buildNumber=2, date=now, tests=Some(5),failures = Some(1), errors = Some(2), travisBuildId=Some("2")))	
+				for(i <- 1 to 2)
+				dal.testSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+			}
 			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/testsuites/badge").get)
 			response.status must equalTo(OK)
-            println(response.xml)
-            val printer = new scala.xml.PrettyPrinter(140, 2)
-            printer.format(response.xml) must equalTo(printer.format(<svg height="200" width="400" xmlns="http://www.w3.org/2000/svg">                                                                                                  
-                <defs>                                                                                                                                             
-                 <linearGradient y2="1" x2="0" y1="0" x1="0" id="lgr1">                                                                                            
-                      <stop stop-opacity=".7" stop-color="#fff" offset="0"/>                                                                                       
-                          <stop stop-opacity=".1" stop-color="#aaa" offset=".1"/>                                                                                  
-                          <stop stop-opacity=".3" offset=".9"/>                                                                                                    
-                          <stop stop-opacity=".5" offset="1"/>                                                                                                     
-                    </linearGradient>                                                                                                                              
-                </defs>                                                                                                                                            
-                                                                                                                                                                   
+			val printer = new scala.xml.PrettyPrinter(140, 2)
+			printer.format(response.xml) must equalTo(printer.format(
+				<svg height="200" width="400" xmlns="http://www.w3.org/2000/svg">                                                                                                  
+				<defs>                                                                                                                                             
+				<linearGradient y2="1" x2="0" y1="0" x1="0" id="lgr1">                                                                                            
+				<stop stop-opacity=".7" stop-color="#fff" offset="0"/>                                                                                       
+				<stop stop-opacity=".1" stop-color="#aaa" offset=".1"/>                                                                                  
+				<stop stop-opacity=".3" offset=".9"/>                                                                                                    
+				<stop stop-opacity=".5" offset="1"/>                                                                                                     
+				</linearGradient>                                                                                                                              
+				</defs>                                                                                                                                            
 				<rect fill="#555" height="18" width="330" x="0" y="0" rx="4"/>
-               	<rect fill="red" height="18" width="70" x="330" y="0" rx="4"/>
-                <rect fill="url(#lgr1)" height="18" width="400" y="0" rx="4"/>
-                <rect fill="#555" height="18" width="330" x="0" y="17" rx="4"/>                                                                                                                                                                                                                                                                      
-                <rect fill="red" height="18" width="70" x="330" y="17" rx="4"/>
-                <rect fill="url(#lgr1)" height="18" width="400" y="17" rx="4"/>
-         		                                                                                                                                                   
+				<rect fill="red" height="18" width="70" x="330" y="0" rx="4"/>
+				<rect fill="url(#lgr1)" height="18" width="400" y="0" rx="4"/>
+				<rect fill="#555" height="18" width="330" x="0" y="17" rx="4"/>                                                                                                                                                                                                                                                                      
+				<rect fill="red" height="18" width="70" x="330" y="17" rx="4"/>
+				<rect fill="url(#lgr1)" height="18" width="400" y="17" rx="4"/>
 				<text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="12" x="180.5">testsuite</text>	
-                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="12" x="335.5">error 2</text>
-                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="29" x="180.5">testsuite</text>
-                <text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="29" x="335.5">error 2</text>
-
+				<text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="12" x="335.5">error 2</text>
+				<text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="29" x="180.5">testsuite</text>
+				<text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="29" x="335.5">error 2</text>
 				</svg>))
-		}
-	}
+}
+}
 
-	def insert10TestSuites() {
-		DB.db withDynSession {
-			for(i <- 1 to 10)
-				dal.testSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
-			Builds.builds.insert(Build(owner="pussinboots", project="bankapp", buildNumber=2, date=now, tests=Some(5),failures = Some(1), errors = Some(2), travisBuildId=Some("2")))	
-			for(i <- 1 to 10)
-				dal.testSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
-		}	
-	}
+def insert10TestSuites() {
+	DB.db withDynSession {
+		for(i <- 1 to 10)
+		dal.testSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+		Builds.builds.insert(Build(owner="pussinboots", project="bankapp", buildNumber=2, date=now, tests=Some(5),failures = Some(1), errors = Some(2), travisBuildId=Some("2")))	
+		for(i <- 1 to 10)
+		dal.testSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+	}	
+}
 
 	//then
 
@@ -237,7 +230,6 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		suite.tests must beEqualTo(Some(8))
 		suite.failures must beEqualTo(Some(6))
 		suite.errors must beEqualTo(Some(0))
-		println(suite)
 		suite.duration must beEqualTo(Some(9.67))
 	}
 	def checkKarmaTestCasesWithFailure(suiteIds: Seq[Long]) {

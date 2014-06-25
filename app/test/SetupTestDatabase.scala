@@ -33,8 +33,7 @@ object SetupTestDatabase {
       Builds.builds.insert(Build(buildNumber=i, owner=owner, project=project, tests=i, failures=i/8, errors=i/10, travisBuildId=Some(s"$i")))
     
     Builds.builds.insert(Build(buildNumber=1, owner="otherowner", project="otherproject", tests=20, failures=0, errors=1, travisBuildId=Some(s"1")))
-      
-      
+
     for(i <- 2 to 11)
       dal.testSuites.insert(TestSuite(None, i, owner, project, s"testsuite $i", 8,0,0,1000.0, now))
   }

@@ -1,4 +1,4 @@
-package unit.org.stock.manager
+package unit.model
 
 import scala.slick.driver.H2Driver
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
@@ -6,10 +6,9 @@ import play.api.test.PlaySpecification
 import model.DateUtil
 import scala.Some
 import model.{DB, DAL, TestSuite, TestCase}
-import unit.org.stock.manager.test.DatabaseSetupBefore
+import unit.test.utils.DatabaseSetupBefore
 
 class ModelSpec extends PlaySpecification with DatabaseSetupBefore {
-  sequential
   implicit def toOption[A](value: A) : Option[A] = Some(value)
 
   import DB.dal

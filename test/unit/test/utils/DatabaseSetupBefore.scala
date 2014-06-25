@@ -1,4 +1,4 @@
-package unit.org.stock.manager.test
+package unit.test.utils
 
 import org.specs2.mutable.Before
 import org.specs2.execute.AsResult

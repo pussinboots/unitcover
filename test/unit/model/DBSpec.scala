@@ -1,12 +1,10 @@
-package unit.org.stock.manager
-
+package unit.model
 import play.api.test.PlaySpecification
 import scala.util.Properties
 import model.DB
 
 class DBSpec extends PlaySpecification {
-  sequential
-
+  
   "DB" should {
     "given no jdbc url as CLEARDB_DATABASE_URL property return local jdbc url" in {
       val dburl = DB.parseDbUrl()

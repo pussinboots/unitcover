@@ -6,13 +6,12 @@ import play.api.test.Helpers._
 import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.Play
-import unit.org.stock.manager.test.DatabaseSetupBefore
+import unit.test.utils.DatabaseSetupBefore
 
 import model.{DB, Build}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
-	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	implicit val timeout = 10000
 	import DB.dal._
@@ -76,7 +75,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 					checkBuildTravisCI(buildNumber)
 				}
 			}
-		
+
 
 			"create a new build with travisBuildId parameter" in new WithServer { 
 				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?travisBuildId=123456").post(""))
@@ -86,7 +85,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 					checkBuildTravisBuildId(buildNumber)
 				}
 			}
-		
+
 			"create a new build with trigger and branch parameter" in new WithServer { 
 				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""))
 				response.status must equalTo(OK)
@@ -156,7 +155,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	def insert10Builds() {
 		DB.db withDynSession {
 			for(i <- 1 to 11)
-				Builds.insertAndIncrement("pussinboots", "bankapp")
+			Builds.insertAndIncrement("pussinboots", "bankapp")
 		}	
 	}
 
@@ -206,7 +205,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		build.travisBuildId must beEqualTo(Some("123456"))
 	}
 
-    def checkBuild(buildId: Int) {
+	def checkBuild(buildId: Int) {
 		val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildId).firstOption.get
 		build.buildNumber must beEqualTo(2)
 		build.owner must beEqualTo("pussinboots")
@@ -244,7 +243,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		testCases(2).failureMessage must equalTo(None)
 	}
 
-    def testSuiteExists(buildNumber: Int, project: String) {
+	def testSuiteExists(buildNumber: Int, project: String) {
 		val testCases = findBySuite(2).list()
 		testCases.length must greaterThan(0)
 		val testSuites = findBy("pussinboots", project, buildNumber).list()

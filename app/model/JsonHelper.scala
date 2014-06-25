@@ -14,15 +14,15 @@ object JsonHelper {
 
   implicit def listWrapperFormat[T: Format]: Format[JsonFmtListWrapper[T]] = (
     (__ \ "items").format[List[T]] and
-      (__ \ "count").format[Int]
-    )(JsonFmtListWrapper.apply, unlift(JsonFmtListWrapper.unapply))
+    (__ \ "count").format[Int]
+  )(JsonFmtListWrapper.apply, unlift(JsonFmtListWrapper.unapply))
 
   implicit object TimestampFormatter extends Format[Timestamp] {
     def reads(s: JsValue): JsResult[Timestamp] = JsSuccess(new java.sql.Timestamp(s.as[Long]))
 
     def writes(timestamp: Timestamp) = JsNumber(timestamp.getTime)
   }
-  
+
   implicit val testSuiteWrites = Json.writes[TestSuite]
   implicit val testSuiteReads = Json.reads[TestSuite]
 

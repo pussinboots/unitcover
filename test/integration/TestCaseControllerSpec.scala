@@ -7,13 +7,12 @@ import play.api.libs.ws._
 import play.api.Play
 import play.api.Play.current
 import play.api.libs.json.Json
-import unit.org.stock.manager.test.DatabaseSetupBefore
+import unit.test.utils.DatabaseSetupBefore
 
 import model.{DB, TestCase}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 class TestCaseControllerSpec extends PlaySpecification with DatabaseSetupBefore {
-	sequential
 	implicit def toOption[A](value: A) : Option[A] = Some(value)
 	implicit val timeout = 10000
 	import DB.dal

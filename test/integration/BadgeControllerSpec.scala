@@ -8,7 +8,7 @@ import play.api.libs.ws._
 import play.api.Play
 import play.api.Play.current
 import org.specs2.execute.AsResult
-import unit.org.stock.manager.test.DatabaseSetupBefore
+import unit.test.utils.DatabaseSetupBefore
 import test.E2ETestGlobal
 
 import model.{DB, Build}
@@ -17,7 +17,6 @@ import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import controllers.BadgeController
 
 class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
-	sequential
 	import DB.dal._
 	import DB.dal.profile.simple._
 	def setupTestData[T: AsResult](f: => T) = {
@@ -29,7 +28,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
     }
   }
 
-	"BadgeController" should {
+  "BadgeController" should {
 	"tests passed build return tests passed badge" in {setupTestData{
 	    val build = Builds.findByBuildNumber("pussinboots", "bankapp", 7).firstOption
 	    val badgeUrl = BadgeController.badgeUrl(build)

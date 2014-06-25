@@ -1,4 +1,4 @@
-package unit.org.stock.manager.test
+package unit.test.utils
 
 import org.specs2.mutable.Around
 import co.freeside.betamax.{MatchRule, Recorder, TapeMode}
