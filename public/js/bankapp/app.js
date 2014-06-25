@@ -2,8 +2,9 @@
 
 /* App Module */
 var myModule = angular.module('bankapp', 
-                ['TestData', 'MobileTable', 'angular-loading-bar', 'ngRoute', 'ngSanitize', 'productFilters', 
+                ['highcharts-ng','TestData', 'MobileTable', 'angular-loading-bar', 'ngRoute', 'ngSanitize', 
                 'productServices', 'ngCookies'])
+
 myModule.config(function ($routeProvider) {
     $routeProvider
     .when('/builds/', {  templateUrl: 'partials/bankapp/overview.html',

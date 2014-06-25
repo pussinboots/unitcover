@@ -25,6 +25,13 @@ th.sortable {
     cursor: pointer;
 }
 
+.trend {
+    position: relative;
+    padding-bottom: 40%;
+    text-align: center;
+    width:80%;
+}
+
 .green {
 	background-color: darkgreen;
 	color: white;

@@ -1,13 +1,5 @@
 'use strict';
 
-/* Header CDontroller */
-
-function HeaderController($scope, $location) {
-    $scope.isActive = function (viewLocation) {
-        return viewLocation === $location.path();
-    };
-}
-
 /* Controllers */
 function OverviewCtrl($rootScope, $scope, Builds) {
     initTable($scope, 10, 'date', 'desc')
@@ -35,6 +27,24 @@ function BuildsCtrl($rootScope, $scope, $routeParams, Builds) {
         if(build.tests > 0) return "green"
         return "gray"
     }
+  $scope.chartConfig = {
+        options: {
+          chart: {
+            type: 'areaspline'
+          },
+          plotOptions: {
+            series: {
+              stacking: ''
+            }
+          }
+        },
+        //size:{height: 200, width:1024},
+        credits: {
+          enabled: false
+        },
+        loading: false,
+        xAxis:{type:'category'}
+      }
     $scope.setItems($rootScope, $scope, $routeParams)
 }
 
@@ -46,7 +56,22 @@ function loadLatestBuilds(rootScope, scope, Builds) {
 
 function loadBuilds(rootScope, scope, routeParams, Builds) {
     scope.builds = Builds.get({owner:routeParams.owner, project:routeParams.project}, function (response) {
+        var failures = [];
+        var tests = [];
+        var errors = [];
+        angular.forEach(response.items, function(build) {
+            tests.unshift([build.buildNumber, build.tests]);
+            failures.unshift([build.buildNumber, build.failures]);
+            errors.unshift([build.buildNumber, build.errors]);
+        })
+        var chartSeries = [
+            {"name": "tests", "data": tests, "color":"darkgreen"},
+            {"name": "failures", "data": failures, "color":"darkgoldenrod", connectNulls: true},
+            {"name": "errors", "data": errors, "color":"darkred", connectNulls: true}
+          ];
+        scope.chartConfig.series = chartSeries;
         scope.totalItems = response.count;
+        scope.$broadcast('highchartsng.reflow');
     });
 }
 
