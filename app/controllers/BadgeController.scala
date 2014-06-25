@@ -23,18 +23,20 @@ object BadgeController extends Controller {
 
   def status(owner: String, project: String) = Action {request =>
     DB.db withDynSession  {
-      var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc)
-      Ok(Json.stringify(Json.toJson(query.first))) as ("application/json")
+      var build = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc).firstOption
+      build match {
+        case Some(build) => Ok(Json.stringify(Json.toJson(build))) as ("application/json")
+        case None => NotFound(Json.obj("error" -> 404, "error_message" -> s"For $owner $project there exists no build.")) as ("application/json")
+      }
     }
   }
   
   def badgeUrl(build: Option[Build]) = {
     build match {
       case Some(build) => val desc = if(build.errors.getOrElse(0) > 0) "error" else if (build.failures.getOrElse(0) > 0 ) "failed" else "passed"
-      val color = if(build.errors.getOrElse(0) > 0) "red" else if (build.failures.getOrElse(0) > 0 ) "yellow" else "brightgreen"
-      val count = if(build.errors.getOrElse(0) > 0) build.errors.get else if (build.failures.getOrElse(0) > 0 ) build.failures.get else build.tests.getOrElse(0)
-      s"http://img.shields.io/badge/test-$desc%20$count-$color.svg"
-      
+                          val color = if(build.errors.getOrElse(0) > 0) "red" else if (build.failures.getOrElse(0) > 0 ) "yellow" else "brightgreen"
+                          val count = if(build.errors.getOrElse(0) > 0) build.errors.get else if (build.failures.getOrElse(0) > 0 ) build.failures.get else build.tests.getOrElse(0)
+                          s"http://img.shields.io/badge/test-$desc%20$count-$color.svg"
       case None => "http://img.shields.io/badge/test-unknown-lightgrey.svg"
     }  
   }
