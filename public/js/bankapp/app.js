@@ -2,8 +2,7 @@
 
 /* App Module */
 var myModule = angular.module('bankapp', 
-                ['TestData', 'MobileTable', 'angular-loading-bar', 'ngRoute', 
-                'ui.bootstrap', 'ngSanitize', 'productFilters', 
+                ['TestData', 'MobileTable', 'angular-loading-bar', 'ngRoute', 'ngSanitize', 'productFilters', 
                 'productServices', 'ngCookies'])
 myModule.config(function ($routeProvider) {
     $routeProvider

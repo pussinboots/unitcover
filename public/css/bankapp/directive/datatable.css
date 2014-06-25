@@ -10,7 +10,6 @@
 .row {
     display: table-row;
     padding: .75em;
-    content: "";
 }
 
 .row > span {
