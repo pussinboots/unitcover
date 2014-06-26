@@ -13,9 +13,9 @@
                 <span class="status" ng-class="statusClass(testcase)">{{testcase.name}}</span>
                 <span>{{testcase.className}}</span>
                 <span style="word-break: break-all;">
-                    <p ng-show="{{testcase.failureMessage}}">{{testcase.failureMessage}}
+                    <p ng-show="testcase.failureMessage">{{testcase.failureMessage}}
                     </p>
-                    <p ng-show="{{testcase.errorMessage}}">{{testcase.errorMessage}}
+                    <p ng-show="testcase.errorMessage">{{testcase.errorMessage}}
                     </p>
                 </span>
                 <span>{{testcase.duration}}</span>
@@ -23,7 +23,7 @@
         </div>
      </test-data>
      <br />
-     <p><a ng-model="collapsedErrors" ng-click="collapsedErrors=!collapsedErrors">Click here to <strong>Toggle detailed error messages</strong></a></p>
+     <p><a class="errorToggle" ng-model="collapsedErrors" ng-click="collapsedErrors=!collapsedErrors">Click here to <strong>Toggle detailed error messages</strong></a></p>
 
     <div ng-show="collapsedErrors">
          <div width="100%" style="overflow: auto;">
@@ -48,7 +48,7 @@
              </test-data>
         </div>
     </div>
-    <p><a ng-model="collapsedFailures" ng-click="collapsedFailures=!collapsedFailures">Click here to <strong>Toggle detailed failure messages</strong></a></p>
+    <p><a class="failureToggle" ng-model="collapsedFailures" ng-click="collapsedFailures=!collapsedFailures">Click here to <strong>Toggle detailed failure messages</strong></a></p>
 
     <div ng-show="collapsedFailures">
     <div width="100%" style="overflow: auto"> 

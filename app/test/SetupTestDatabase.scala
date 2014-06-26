@@ -34,15 +34,25 @@ object SetupTestDatabase {
     
     Builds.builds.insert(Build(buildNumber=1, owner="otherowner", project="otherproject", tests=20, failures=0, errors=1, travisBuildId=Some(s"1")))
 
-    for(i <- 2 to 5) {
+    for(i <- 2 to 7) {
       val testSuite = dal.testSuiteForInsert.insert(TestSuite(None, i, owner, project, s"testsuite $i", 8,0,0,1000.0, now))
-      val testCase = dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name}", "testclass",1000.0, Some("failureMessage")))
-      dal.messages.insert(Message(testCase.id.get, s"failure detail message $i", 0))
+      dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name}", "testclass",1000.0))
+      val testCase = dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name} failure", "testclass",1000.0))      
     }
-    for(i <- 6 to 11) {
-      val testSuite = dal.testSuiteForInsert.insert(TestSuite(None, i, owner, project, s"testsuite $i", 8,0,0,1000.0, now))
-      val testCase = dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name}", "testclass",1000.0, errorMessage=Some("errorMessage")))
-      dal.messages.insert(Message(testCase.id.get, s"failure error message $i", 1))
+    for(i <- 8 to 9) {
+      val testSuite = dal.testSuiteForInsert.insert(TestSuite(None, i, owner, project, s"testsuite $i", 8,1,0,1000.0, now))
+      dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name}", "testclass",1000.0))
+      var testCase = dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name} failure", "testclass",1000.0, Some("failureMessage")))
+      dal.messages.insert(Message(testCase.id.get, s"failure message $i", 0))
+    }
+
+    for(i <- 10 to 11) {
+      val testSuite = dal.testSuiteForInsert.insert(TestSuite(None, i, owner, project, s"testsuite $i", 8,1,1,1000.0, now))
+      dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name}", "testclass",1000.0))
+      var testCase = dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name} failure", "testclass",1000.0, Some("failureMessage")))
+      dal.messages.insert(Message(testCase.id.get, s"failure message $i", 0))
+      testCase = dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, "pussinboots", "bankapp", s"testcase $i ${testSuite.name} error", "testclass",1000.0, errorMessage=Some("errorMessage")))
+      dal.messages.insert(Message(testCase.id.get, s"error message $i", 1))
     }
   }
 }

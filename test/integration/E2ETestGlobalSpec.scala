@@ -56,8 +56,9 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
     }
 
     "one test case with detailed failure message exists" in { 
-        "id" | "testSuiteId" |  "owner"         |  "project"   |    "name"          |   "className" |    "failureMessage"       | "detailFailureMessage"                | "typ"   |  "duration" |
-        1    ! 1             !  "pussinboots"  !!  "bankapp"  !!    "testcase"     !!  "testclass" !!   Some("failureMessage")  !! Some("failure detail message")      !! None    !!  1000.0     |> { (id, testSuiteId, owner, project, name, className, failureMessage, detailFailureMessage, typ, duration)=>around{
+        "id" | "testSuiteId" |  "owner"         |  "project"   |    "name"                               |   "className" |    "failureMessage"       | "detailFailureMessage"            | "typ"   |  "duration" |
+        1    ! 1             !  "pussinboots"  !!  "bankapp"  !!    "testcase"                          !!  "testclass" !!   None                    ! None                              ! None    !!  1000.0    |
+        2    ! 2             !  "pussinboots"  !!  "bankapp"  !!    "testcase 2 testsuite 2 failure"    !!  "testclass" !!   Some("failureMessage")  ! Some("failure detail message 2")  ! None    !!  1000.0    |> { (id, testSuiteId, owner, project, name, className, failureMessage, detailFailureMessage, typ, duration)=>around{
             val testCase = findBySuite(testSuiteId).first
             testCase.id must beEqualTo(Some(id))
             testCase.testSuiteId must beEqualTo(testSuiteId)

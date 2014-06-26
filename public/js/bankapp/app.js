@@ -17,5 +17,3 @@ myModule.config(function ($routeProvider) {
                                         controller: TestCasesCtrl })
     .otherwise({ redirectTo: '/builds' });
 })
-
-String.prototype.contains = function(it) { return this.indexOf(it) != -1; };

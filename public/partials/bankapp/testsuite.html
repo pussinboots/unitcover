@@ -11,13 +11,13 @@
             </li>
         </div>
         <div class="body" >
-            <li class="build row table-row" ng-repeat="build in builds.items">
-                <span class="status" ng-class="statusClass(build)"><a ng-href="#/builds/{{owner}}/{{project}}/testcases/{{build.id}}">{{build.name}}</a></span>
-                <span>{{build.tests}}</span>
-                <span>{{build.failures}}</span>
-                <span>{{build.errors}}</span>
-                <span>{{build.duration}}</span>
-                <span>{{build.date | date:dateFormat}}</span>
+            <li class="suite row table-row" ng-repeat="suite in builds.items">
+                <span class="status" ng-class="statusClass(suite)"><a ng-href="#/builds/{{owner}}/{{project}}/testcases/{{suite.id}}">{{suite.name}}</a></span>
+                <span>{{suite.tests}}</span>
+                <span>{{suite.failures}}</span>
+                <span>{{suite.errors}}</span>
+                <span>{{suite.duration}}</span>
+                <span>{{suite.date | date:dateFormat}}</span>
             </li>
         </div>
      </test-data>
