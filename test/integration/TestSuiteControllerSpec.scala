@@ -21,74 +21,66 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	import model.JsonHelper._
 
 	"POST to /api/<owner>/<project>" should {
-		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/ApplicationSpec.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
-			response.status must equalTo(OK)
-			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			DB.db withDynSession {
-				checkTestSuite(suiteId)
-				checkTestCases(suiteId)
+		"sbt unit report" should {
+			"all tests passed return http status 200 and store it in the db" in new WithServer { 
+				val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/ApplicationSpec.xml")).mkString
+				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
+				response.status must equalTo(OK)
+				val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
+				DB.db withDynSession {
+					checkTestSuite(suiteId)
+					checkTestCases(suiteId)
+				}
 			}
-		}
 
-		"with sbt junit xml report all tests passed return http status 200 and store it in the db" in new WithServer  { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/ApplicationSpec.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
-			response.status must equalTo(OK)
-			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			DB.db withDynSession {
-				checkTestSuite(suiteId)
-				checkTestCases(suiteId)
+			// test results contains failures and errors
+			"one test failure return http status 200 and store it in the db" in new WithServer { 
+				val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecFailure.xml")).mkString
+				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
+				response.status must equalTo(OK)
+				val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
+				DB.db withDynSession {
+					checkTestSuiteWithFailure(suiteId)
+					checkTestCasesWithFailure(suiteId)
+				}
 			}
-		}
 
-		"with karma junit xml report from all tests passed return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
-			response.status must equalTo(OK)
-			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int])
-			DB.db withDynSession {
-				checkTestSuiteKarmaOpera(suiteId(0))
-				checkTestCasesKarma(suiteId(0))
-				checkTestSuiteKarmaFireFox(suiteId(1))
-				checkTestCasesKarma(suiteId(1))
+			"one test error return http status 200 and store it in the db" in new WithServer { 
+				val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecError.xml")).mkString
+				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
+				response.status must equalTo(OK)
+				val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
+				DB.db withDynSession {
+					checkTestSuiteWithError(suiteId)
+					checkTestCasesWithError(suiteId)
+				}
 			}
 		}
+		"karma unit report" should {
+			"all tests passed return http status 200 and store it in the db" in new WithServer { 
+				val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results.xml")).mkString
+				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
+				response.status must equalTo(OK)
+				val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int])
+				DB.db withDynSession {
+					checkTestSuiteKarmaOpera(suiteId(0))
+					checkTestCasesKarma(suiteId(0))
+					checkTestSuiteKarmaFireFox(suiteId(1))
+					checkTestCasesKarma(suiteId(1))
+				}
+			}
 
-		// test results contains failures and errors
-		"with sbt junit xml report one failure return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecFailure.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
-			response.status must equalTo(OK)
-			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			DB.db withDynSession {
-				checkTestSuiteWithFailure(suiteId)
-				checkTestCasesWithFailure(suiteId)
+			"one failure return http status 200 and store it in the db" in new WithServer { 
+				val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results-failures.xml")).mkString
+				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
+				response.status must equalTo(OK)
+				val suiteIds = (response.json \ "testsuites"  \\ "id").map(_.as[Long])
+				DB.db withDynSession {
+					checkKarmaTestSuiteWithFailure(suiteIds)
+					checkKarmaTestCasesWithFailure(suiteIds)
+				}
 			}
-		}
-
-		"with sbt junit xml report one error return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecError.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
-			response.status must equalTo(OK)
-			val suiteId = (response.json \ "testsuites"  \\ "id").map(_.as[Int]).head
-			DB.db withDynSession {
-				checkTestSuiteWithError(suiteId)
-				checkTestCasesWithError(suiteId)
-			}
-		}
-
-		"with karma junit xml report one failure return http status 200 and store it in the db" in new WithServer { 
-			val xmlString = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results-failures.xml")).mkString
-			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/1").withHeaders("Content-Type" -> "text/xml").post(xmlString))
-			response.status must equalTo(OK)
-			val suiteIds = (response.json \ "testsuites"  \\ "id").map(_.as[Long])
-			DB.db withDynSession {
-				checkKarmaTestSuiteWithFailure(suiteIds)
-				checkKarmaTestCasesWithFailure(suiteIds)
-			}
-		}
+	    }
 	}
 
 	"GET to /api/<owner>/<project>" should {
@@ -134,18 +126,18 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 				<text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" text-anchor="middle" fill="#fff" y="29" x="180.5">testsuite</text>
 				<text font-size="11" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" fill="#fff" y="29" x="335.5">error 2</text>
 				</svg>))
-}
-}
-
-def insert10TestSuites() {
-	DB.db withDynSession {
-		for(i <- 1 to 10)
-		dal.testSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
-		Builds.builds.insert(Build(owner="pussinboots", project="bankapp", buildNumber=2, date=now, tests=Some(5),failures = Some(1), errors = Some(2), travisBuildId=Some("2")))	
-		for(i <- 1 to 10)
-		dal.testSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+		}
 	}	
-}
+
+	def insert10TestSuites() {
+		DB.db withDynSession {
+			for(i <- 1 to 10)
+			dal.testSuites.insert(TestSuite(None, 1, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+			Builds.builds.insert(Build(owner="pussinboots", project="bankapp", buildNumber=2, date=now, tests=Some(5),failures = Some(1), errors = Some(2), travisBuildId=Some("2")))	
+			for(i <- 1 to 10)
+			dal.testSuites.insert(TestSuite(None, 2, "pussinboots", "bankapp", "testsuite", 5,1,2,1000.0, now))
+		}	
+	}
 
 	//then
 

@@ -18,152 +18,154 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	import DB.dal.profile.simple._
 	import model.JsonHelper._
 
-	"one build exists in database" should {
-		"POST to /api/<owner>/<project>/builds" should {
-			"create a new build and return its buildNumber" in new WithServer { 
-				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
-				response.status must equalTo(OK)
-				val buildNumber = (response.json \ "buildNumber").as[Int]
-				DB.db withDynSession {
-					checkBuild(buildNumber)
-				}
-			}
-
-			"create two new builds and second build should have buildname equal three" in new WithServer { 
-				val response1 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
-				val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
-				response1.status must equalTo(OK)
-				response2.status must equalTo(OK)
-				val buildNumber1 = (response1.json \ "buildNumber").as[Int]
-				val buildNumber2 = (response2.json \ "buildNumber").as[Int]
-				DB.db withDynSession {
-					checkBuild(buildNumber1)
-					checkSecondBuild(buildNumber2)
-				}
-			}
-
-			"upload complete build with two test suite results" in new WithServer {
-				val karmaTestResult = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results.xml")).mkString
-				val sbtTestResultWithError = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecError.xml")).mkString
-				
-				val buildResponse = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
-				buildResponse.status must equalTo(OK)
-				val buildNumber = (buildResponse.json \ "buildNumber").as[Int]
-
-				await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/$buildNumber").withHeaders("Content-Type" -> "text/xml").post(karmaTestResult))
-				await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/$buildNumber").withHeaders("Content-Type" -> "text/xml").post(sbtTestResultWithError))
-				val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/$buildNumber/end").post(""))
-				
-				response2.status must equalTo(OK)
-				DB.db withDynSession {
-					val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildNumber).firstOption.get
-					build.buildNumber must beEqualTo(buildNumber)
-					build.owner must beEqualTo("pussinboots")
-					build.project must beEqualTo("bankapp")
-					build.tests must beEqualTo(Some(9))
-					build.failures must beEqualTo(Some(0))
-					build.errors must beEqualTo(Some(1))
-				}
-			}
-			
-
-			"create a new build with trigger parameter" in new WithServer { 
-				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI").post(""))
-				response.status must equalTo(OK)
-				val buildNumber = (response.json \ "buildNumber").as[Int]
-				DB.db withDynSession {
-					checkBuildTravisCI(buildNumber)
-				}
-			}
-
-
-			"create a new build with travisBuildId parameter" in new WithServer { 
-				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?travisBuildId=123456").post(""))
-				response.status must equalTo(OK)
-				val buildNumber = (response.json \ "buildNumber").as[Int]
-				DB.db withDynSession {
-					checkBuildTravisBuildId(buildNumber)
-				}
-			}
-
-			"create a new build with trigger and branch parameter" in new WithServer { 
-				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""))
-				response.status must equalTo(OK)
-				val buildNumber = (response.json \ "buildNumber").as[Int]
-				DB.db withDynSession {
-					checkBuildTravisCINotMaster(buildNumber)
-				}
-			}
-			
-			"build limit" should {
-				"enabled with value two" should{
-					"create four new builds and delete old once and all it testsuites except the latest two's" in new WithServer(app = FakeApplication(additionalConfiguration=Map("buildslimit" -> "2"))) {
-						uploadBuilds(port, 1, "otherproject")
-						uploadBuilds(port, 4, "bankapp")
-						//check that the three old builds and complete test suites and cases are deleted
-						DB.db withDynSession {
-							//test suite of otherproject
-							testSuiteExists(1, "otherproject")
-							//test suite of bankapp that should be deleted
-							testSuiteNotExists(1,1)
-							testSuiteNotExists(3,2)
-							testSuiteNotExists(4,3)
-						}
-						val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
-						response.status must equalTo(OK)
-						val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
-						builds.count must equalTo(2)
-						builds.items.length must equalTo(2)
-						builds.items(0).buildNumber must equalTo(5)
-						builds.items(1).buildNumber must equalTo(4)
-					}
-				}
-
-				"disabled with value zero" should{
-					"create four new builds and nothing should be deleted five builds should be left" in new WithServer(app = FakeApplication(additionalConfiguration=Map("buildslimit" -> "0"))) {
-						uploadBuilds(port, 4, "bankapp")
-						val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
-						response.status must equalTo(OK)
-						val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
-						builds.count must equalTo(5)
-						builds.items.length must equalTo(5)
-						builds.items(0).buildNumber must equalTo(5)
-						builds.items(1).buildNumber must equalTo(4)
-						builds.items(2).buildNumber must equalTo(3)
-						builds.items(3).buildNumber must equalTo(2)
-						builds.items(4).buildNumber must equalTo(1)
-					}
-				}
+	"POST to /api/<owner>/<project>/builds" should {
+		"create a new build and return its buildNumber" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuild(buildNumber)
 			}
 		}
 
-		"GET to /api/<owner>/<project>/builds" should {
-			"return latest 10 builds of a specific project" in new WithServer {
-				insert10Builds()
-				val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
-				response.status must equalTo(OK)
-				val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
-				builds.count must equalTo(12)
-				builds.items.length must equalTo(10)
-				builds.items(0).buildNumber must equalTo(12)
+		"create two new builds and second build should have buildname equal three" in new WithServer { 
+			val response1 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			response1.status must equalTo(OK)
+			response2.status must equalTo(OK)
+			val buildNumber1 = (response1.json \ "buildNumber").as[Int]
+			val buildNumber2 = (response2.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuild(buildNumber1)
+				checkSecondBuild(buildNumber2)
 			}
 		}
 
-		"GET to /api/all/all/builds" should {
-			"return latest 10 builds overall" in new WithServer {
-				insert10Builds()
-				val response = await(WS.url(s"http://localhost:$port/api/all/all/builds").get)
-				response.status must equalTo(OK)
-				val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
-				builds.count must equalTo(12)
-				builds.items.length must equalTo(10)
-				builds.items(0).buildNumber must equalTo(1)
-				builds.items(0).project must equalTo("otherproject")
-				builds.items(0).owner must equalTo("otherowner")
-				builds.items(1).buildNumber must equalTo(11)
-				builds.items(1).project must equalTo("bankapp")
-				builds.items(1).owner must equalTo("pussinboots")
+		"upload complete build with two test suite results" in new WithServer {
+			val karmaTestResult = scala.io.Source.fromFile(Play.getFile("test/resources/karma/test-results.xml")).mkString
+			val sbtTestResultWithError = scala.io.Source.fromFile(Play.getFile("test/resources/sbt/TestSuiteControllerSpecError.xml")).mkString
+			
+			val buildResponse = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").post(""))
+			buildResponse.status must equalTo(OK)
+			val buildNumber = (buildResponse.json \ "buildNumber").as[Int]
+
+			await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/$buildNumber").withHeaders("Content-Type" -> "text/xml").post(karmaTestResult))
+			await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/$buildNumber").withHeaders("Content-Type" -> "text/xml").post(sbtTestResultWithError))
+			val response2 = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds/$buildNumber/end").post(""))
+			
+			response2.status must equalTo(OK)
+			DB.db withDynSession {
+				val build = Builds.findByBuildNumber("pussinboots", "bankapp", buildNumber).firstOption.get
+				build.buildNumber must beEqualTo(buildNumber)
+				build.owner must beEqualTo("pussinboots")
+				build.project must beEqualTo("bankapp")
+				build.tests must beEqualTo(Some(9))
+				build.failures must beEqualTo(Some(0))
+				build.errors must beEqualTo(Some(1))
 			}
+		}
+		
+
+		"create a new build with trigger parameter" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI").post(""))
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuildTravisCI(buildNumber)
+			}
+		}
+
+
+		"create a new build with travisBuildId parameter" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?travisBuildId=123456").post(""))
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuildTravisBuildId(buildNumber)
+			}
+		}
+
+		"create a new build with trigger and branch parameter" in new WithServer { 
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds?trigger=TravisCI&branch=notMaster").post(""))
+			response.status must equalTo(OK)
+			val buildNumber = (response.json \ "buildNumber").as[Int]
+			DB.db withDynSession {
+				checkBuildTravisCINotMaster(buildNumber)
+			}
+		}
+		
+		"build limit" should {
+			"enabled with value two" should{
+				"create four new builds and delete old once and all it testsuites except the latest two's" in new WithServer(app = FakeApplication(additionalConfiguration=Map("buildslimit" -> "2"))) {
+					uploadBuilds(port, 1, "otherproject")
+					uploadBuilds(port, 4, "bankapp")
+					//check that the three old builds and complete test suites and cases are deleted
+					DB.db withDynSession {
+						//test suite of otherproject
+						testSuiteExists(1, "otherproject")
+						//test suite of bankapp that should be deleted
+						testSuiteNotExists(1,1)
+						testSuiteNotExists(3,2)
+						testSuiteNotExists(4,3)
+					}
+					val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
+					response.status must equalTo(OK)
+					val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
+					builds.count must equalTo(2)
+					builds.items.length must equalTo(2)
+					builds.items(0).buildNumber must equalTo(5)
+					builds.items(1).buildNumber must equalTo(4)
+				}
+			}
+
+			"disabled with value zero" should{
+				"create four new builds and nothing should be deleted five builds should be left" in new WithServer(app = FakeApplication(additionalConfiguration=Map("buildslimit" -> "0"))) {
+					uploadBuilds(port, 4, "bankapp")
+					val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
+					response.status must equalTo(OK)
+					val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
+					builds.count must equalTo(5)
+					builds.items.length must equalTo(5)
+					builds.items(0).buildNumber must equalTo(5)
+					builds.items(1).buildNumber must equalTo(4)
+					builds.items(2).buildNumber must equalTo(3)
+					builds.items(3).buildNumber must equalTo(2)
+					builds.items(4).buildNumber must equalTo(1)
+				}
+			}
+		}
+	}
+
+	"GET to /api/<owner>/<project>/builds" should {
+		"return latest 10 builds of a specific project" in new WithServer {
+			insert10Builds()
+			val response = await(WS.url(s"http://localhost:$port/api/pussinboots/bankapp/builds").get)
+			response.status must equalTo(OK)
+			val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
+			builds.count must equalTo(12)
+			builds.items.length must equalTo(10)
+			builds.items(0).buildNumber must equalTo(12)
+		}
+	}
+
+	"GET to /api/all/all/builds" should {
+		"return latest 10 builds overall" in new WithServer {
+			DB.db withDynSession {
+				for(i <- 1 to 10)
+					Builds.insertAndIncrement("pussinboots", "bankapp")
+				Builds.insertAndIncrement("otherowner", "otherproject")
+			}
+			val response = await(WS.url(s"http://localhost:$port/api/all/all/builds").get)
+			response.status must equalTo(OK)
+			val builds = Json.fromJson[JsonFmtListWrapper[Build]](response.json).get
+			builds.count must equalTo(12)
+			builds.items.length must equalTo(10)
+			builds.items(0).buildNumber must equalTo(1)
+			builds.items(0).project must equalTo("otherproject")
+			builds.items(0).owner must equalTo("otherowner")
+			builds.items(1).buildNumber must equalTo(11)
+			builds.items(1).project must equalTo("bankapp")
+			builds.items(1).owner must equalTo("pussinboots")
 		}
 	}
 
@@ -172,7 +174,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	def insert10Builds() {
 		DB.db withDynSession {
 			for(i <- 1 to 11)
-			Builds.insertAndIncrement("pussinboots", "bankapp")
+				Builds.insertAndIncrement("pussinboots", "bankapp")
 		}	
 	}
 
