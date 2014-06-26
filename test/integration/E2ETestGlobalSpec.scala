@@ -37,10 +37,10 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
         5    ! 5             !  "pussinboots"  !!  "bankapp"  !!    "testsuite 5"   !!    8         ! 0          !  0         !  1000.0     |
         6    ! 6             !  "pussinboots"  !!  "bankapp"  !!    "testsuite 6"   !!    8         ! 0          !  0         !  1000.0     |
         7    ! 7             !  "pussinboots"  !!  "bankapp"  !!    "testsuite 7"   !!    8         ! 0          !  0         !  1000.0     |
-        8    ! 8             !  "pussinboots"  !!  "bankapp"  !!    "testsuite 8"   !!    8         ! 0          !  0         !  1000.0     |
-        9    ! 9             !  "pussinboots"  !!  "bankapp"  !!    "testsuite 9"   !!    8         ! 0          !  0         !  1000.0     |
-        10   ! 10            !  "pussinboots"  !!  "bankapp"  !!    "testsuite 10"  !!    8         ! 0          !  0         !  1000.0     |
-        11   ! 11            !  "pussinboots"  !!  "bankapp"  !!    "testsuite 11"  !!    8         ! 0          !  0         !  1000.0     |> { (id, buildNumber, owner, project, name, tests, failures, errors, duration)=>around{
+        8    ! 8             !  "pussinboots"  !!  "bankapp"  !!    "testsuite 8"   !!    8         ! 1          !  0         !  1000.0     |
+        9    ! 9             !  "pussinboots"  !!  "bankapp"  !!    "testsuite 9"   !!    8         ! 1          !  0         !  1000.0     |
+        10   ! 10            !  "pussinboots"  !!  "bankapp"  !!    "testsuite 10"  !!    8         ! 1          !  1         !  1000.0     |
+        11   ! 11            !  "pussinboots"  !!  "bankapp"  !!    "testsuite 11"  !!    8         ! 1          !  1         !  1000.0     |> { (id, buildNumber, owner, project, name, tests, failures, errors, duration)=>around{
             val testSuite = dal.findById(id).first
             testSuite.id must beEqualTo(Some(id))
             testSuite.buildNumber must beEqualTo(buildNumber)
@@ -58,7 +58,7 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
     "one test case with detailed failure message exists" in { 
         "id" | "testSuiteId" |  "owner"         |  "project"   |    "name"                               |   "className" |    "failureMessage"       | "detailFailureMessage"            | "typ"   |  "duration" |
         1    ! 1             !  "pussinboots"  !!  "bankapp"  !!    "testcase"                          !!  "testclass" !!   None                    ! None                              ! None    !!  1000.0    |
-        2    ! 2             !  "pussinboots"  !!  "bankapp"  !!    "testcase 2 testsuite 2 failure"    !!  "testclass" !!   Some("failureMessage")  ! Some("failure detail message 2")  ! None    !!  1000.0    |> { (id, testSuiteId, owner, project, name, className, failureMessage, detailFailureMessage, typ, duration)=>around{
+        2    ! 2             !  "pussinboots"  !!  "bankapp"  !!    "testcase 2 testsuite 2"            !!  "testclass" !!   None                    ! None                              ! None    !!  1000.0    |> { (id, testSuiteId, owner, project, name, className, failureMessage, detailFailureMessage, typ, duration)=>around{
             val testCase = findBySuite(testSuiteId).first
             testCase.id must beEqualTo(Some(id))
             testCase.testSuiteId must beEqualTo(testSuiteId)
