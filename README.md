@@ -132,10 +132,16 @@ curl -X POST http://$endpoint/api/$owner/$project/builds/$buildnumber/end
 git clone https://github.com/pussinboots/unitcover.git
 cd unitcover
 npm install
-sbt -Dconfig.file=conf/application-e2e.conf run
 ```
-Than the [server](http://localhost:9000/#/builds/pussinboots/banbapp/builds) should be accessible with some dummy data. It use an h2 in memory database.
 
 ###Requirements
 * play 2.3.0
 * nodejs
+
+###Local Server
+```
+sbt -Dconfig.file=conf/application-e2e.conf run
+```
+Than the [server](http://localhost:9000/#/builds/) should be accessible with some dummy data. It use an h2 in memory database.
+
+###
