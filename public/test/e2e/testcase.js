@@ -2,7 +2,7 @@
 
 /* http://docs.angularjs.org/guide/dev_guide.e2e-testing */
 
-describe('overview', function() {
+describe('testcase', function() {
 
   describe('three test cases one passed, one failed and one error', function() {
 

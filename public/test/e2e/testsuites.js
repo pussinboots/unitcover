@@ -51,7 +51,7 @@ describe('testsuites', function() {
     });
   });
 
-  describe('failed testsuite', function() {
+  describe('error testsuite', function() {
 
     beforeEach(function() {
       browser().navigateTo('index.html#/builds/pussinboots/bankapp/testsuites/10');
