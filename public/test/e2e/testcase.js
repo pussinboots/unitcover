@@ -22,7 +22,7 @@ describe('testcase', function() {
     });
 
     it('second test case has failures', function() {
-      expect(repeater('li.testcase:eq(1)').column('testcase.name')).toEqual(["testcase 11 testsuite 12 failure"]);
+      expect(repeater('li.testcase:eq(1)').column('testcase.name')).toEqual(["testcase 11 testsuite 11 failure"]);
       expect(repeater('li.testcase:eq(1)').column('testcase.className')).toEqual(["testclass"]);
       expect(repeater('li.testcase:eq(1)').column('testcase.failureMessage')).toEqual(["failureMessage"]);
       expect(element('li.testcase:eq(1) > span.status').attr('class')).toEqual("status ng-binding yellow");
@@ -32,7 +32,7 @@ describe('testcase', function() {
       expect(repeater('li.testcase:eq(2)').column('testcase.name')).toEqual(["testcase 11 testsuite 11"]);
       expect(repeater('li.testcase:eq(2)').column('testcase.className')).toEqual(["testclass"]);
       expect(repeater('li.testcase:eq(2)').column('testcase.failureMessage')).toEqual([]);
-      expect(repeater('li.testcase:eq(2)').column('testcase.errorMessage')).toEqual(["failureMessage"]);
+      expect(repeater('li.testcase:eq(2)').column('testcase.errorMessage')).toEqual([]);
       expect(element('li.testcase:eq(2) > span.status').attr('class')).toEqual("status ng-binding green");
     });
 
