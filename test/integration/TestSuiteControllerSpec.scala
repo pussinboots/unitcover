@@ -257,12 +257,32 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 	def checkTestCasesWithFailure(suiteId: Long) {
 		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
+
 		testCases.length must equalTo(2)
 		testCases(0).name must equalTo("POST to /api/<owner>/<project> should::with a valid junit xml report return http status 200 and store it in the db")
 		testCases(0).failureMessage must equalTo(Some("'application changed setup will work should::disable db ssl'  is not equal to  'application changed setup will work should::enable DB logging'"))
 		testCases(0).typ must equalTo(Some("java.lang.Exception"))
 		testCases(1).name must equalTo("GET to /api/<owner>/<project> should::return latest 10 test suites")
 		testCases(1).failureMessage must equalTo(None)
+
+		val message = dal.findByCaseId(testCases(0).id.get).firstOption
+		message must beSome 
+		message.get.testCaseId must equalTo(testCases(0).id.get)
+		message.get.typ must equalTo(0) 
+		message.get.message must equalTo("""integration.TestSuiteControllerSpec.checkTestCases(TestSuiteControllerSpec.scala:72)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1$$anonfun$2.apply$mcV$sp(TestSuiteControllerSpec.scala:30)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1$$anonfun$2.apply(TestSuiteControllerSpec.scala:28)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1$$anonfun$2.apply(TestSuiteControllerSpec.scala:28)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1$delayedInit$body.apply(TestSuiteControllerSpec.scala:28)
+play.api.test.WithServer$$anonfun$around$2.apply(Specs.scala:35)
+play.api.test.WithServer$$anonfun$around$2.apply(Specs.scala:35)
+play.api.test.PlayRunners$class.running(Helpers.scala:60)
+play.api.test.Helpers$.running(Helpers.scala:364)
+play.api.test.WithServer.around(Specs.scala:35)
+play.api.test.WithServer.delayedInit(Specs.scala:30)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11$$anon$1.<init>(TestSuiteControllerSpec.scala:23)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11.apply(TestSuiteControllerSpec.scala:23)
+integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11.apply(TestSuiteControllerSpec.scala:23)""").ignoreSpace.ignoreCase
 	}
 
 	def checkTestSuiteWithError(suiteId: Long) {
@@ -287,5 +307,20 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		testCases(1).failureMessage must equalTo(None)
 		testCases(2).name must equalTo("POST to /api/<owner>/<project> should::with junit xml report one failure return http status 200 and store it in the db")
 		testCases(2).failureMessage must equalTo(None)
+
+		val message = dal.findByCaseId(testCases(0).id.get).firstOption
+		message must beSome 
+		message.get.testCaseId must equalTo(testCases(0).id.get)
+		message.get.typ must equalTo(1) 
+		message.get.message must beEqualTo("""integration.TestSuiteControllerSpec$$anonfun$7$$anonfun$apply$18$$anon$1$delayedInit$body.apply(TestSuiteControllerSpec.scala:27)
+play.api.test.WithServer$$anonfun$around$2.apply(Specs.scala:35)
+play.api.test.WithServer$$anonfun$around$2.apply(Specs.scala:35)
+play.api.test.PlayRunners$class.running(Helpers.scala:60)
+play.api.test.Helpers$.running(Helpers.scala:364)
+play.api.test.WithServer.around(Specs.scala:35)
+play.api.test.WithServer.delayedInit(Specs.scala:30)
+integration.TestSuiteControllerSpec$$anonfun$7$$anonfun$apply$18$$anon$1.<init>(TestSuiteControllerSpec.scala:23)
+integration.TestSuiteControllerSpec$$anonfun$7$$anonfun$apply$18.apply(TestSuiteControllerSpec.scala:23)
+integration.TestSuiteControllerSpec$$anonfun$7$$anonfun$apply$18.apply(TestSuiteControllerSpec.scala:23)""").ignoreSpace.ignoreCase
 	}
 }

@@ -15,7 +15,9 @@ object DBMigration extends App {
   import dao._
   import dao.profile.simple._
 
-  update2106()
+  //update2106()
+  update2606()
+
   def create() {
    db withDynSession {
      println("create tables")
@@ -38,6 +40,12 @@ object DBMigration extends App {
     .addColumns(_.travisBuildId)
     db withDynSession {
      migrate()
+   }
+ }
+
+ def update2606() {
+    db withDynSession {
+       messages.ddl.create
    }
  }
 }

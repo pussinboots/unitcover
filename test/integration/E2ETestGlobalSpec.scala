@@ -55,6 +55,39 @@ class E2ETestGlobalSpec extends PlaySpecification with DataTables {
         }
     }
 
+    "one test case with detailed failure message exists" in { 
+        "id" | "testSuiteId" |  "owner"         |  "project"   |    "name"          |   "className" |    "failureMessage"       | "detailFailureMessage"                | "typ"   |  "duration" |
+        1    ! 1             !  "pussinboots"  !!  "bankapp"  !!    "testcase"     !!  "testclass" !!   Some("failureMessage")  !! Some("failure detail message")      !! None    !!  1000.0     |> { (id, testSuiteId, owner, project, name, className, failureMessage, detailFailureMessage, typ, duration)=>around{
+            val testCase = findBySuite(testSuiteId).first
+            testCase.id must beEqualTo(Some(id))
+            testCase.testSuiteId must beEqualTo(testSuiteId)
+            testCase.owner must beEqualTo(owner)
+            testCase.project must beEqualTo(project)
+            testCase.name must beEqualTo(name)
+            testCase.className must beEqualTo(className)
+            testCase.typ must beEqualTo(typ)
+            testCase.failureMessage must beEqualTo(failureMessage)
+            if(failureMessage != None /*|| errorMessage != None*/) {
+                val message = findByCaseId(testCase.id.get).first
+                if(failureMessage != None) {
+                    message.message must beEqualTo(detailFailureMessage.get)
+                    message.typ must beEqualTo(0)
+                }
+                /*if(errorMessage != None) {
+                    message.message must beEqualTo(errorMessage.get)
+                    message.typ must beEqualTo(1)
+                }*/
+            } else {
+                val message = findByCaseId(testCase.id.get).firstOption
+                message must beNone
+            }
+            testCase.duration must beEqualTo(Some(duration))
+
+            
+          }
+        }
+    }
+
     "eleven builds exists" in { 
         "buildNumber" |  "owner"         |  "project"   |        "tests"   | "failures" |  "errors"  | 
         1             !  "pussinboots"  !!  "bankapp"        !!        5         ! 1          !  2         | 

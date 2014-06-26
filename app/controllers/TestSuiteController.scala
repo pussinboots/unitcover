@@ -5,7 +5,7 @@ import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.mvc.Controller
 import play.api.mvc.BodyParsers
-import model.{DB, TestSuite, TestCase}
+import model.{DB, TestSuite, TestCase, Message}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
 
@@ -73,13 +73,20 @@ object TestSuiteController extends Controller {
         if (message1 !=None) message1
         else message2
       }
-      DB.db withDynSession testCasesData.map(testCase=>(
-        dal.testCases.insert(TestCase(None, testSuite.id.get, owner, project, testCase._1, 
-          testCase._2 , testCase._3, getMessage(testCase._4, testCase._8), getMessage(testCase._5, testCase._9), 
-          getType(testCase._6, testCase._7) 
+      DB.db withDynSession testCasesData.map{testCase=>
+          val testCaseDB = dal.testCaseForInsert.insert(TestCase(None, testSuite.id.get, owner, project, testCase._1, 
+            testCase._2 , testCase._3, getMessage(testCase._4, testCase._8), getMessage(testCase._5, testCase._9), 
+            getType(testCase._6, testCase._7) 
+            )
           )
-        )
-        ))
+          if (testCase._8 != None) {
+            val formatedMessage = testCase._8.get.replace(")", s")\n")
+            dal.messages.insert(Message(testCaseDB.id.get, formatedMessage, 0))
+          } else if (testCase._9 != None) {
+            val formatedMessage = testCase._9.get.replace(")", s")\n")
+            dal.messages.insert(Message(testCaseDB.id.get, formatedMessage, 1))
+          }
+        }
       testSuite
     }
 

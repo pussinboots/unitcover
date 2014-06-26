@@ -13,7 +13,7 @@ trait Profile {
 /**
  * The Data Access Layer contains all components and a profile
  */
-class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with TestCaseComponent with BuildComponent with Profile {
+class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with TestCaseComponent with BuildComponent with MessageComponent with Profile  {
 
   import profile.simple._
 
@@ -23,7 +23,7 @@ class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with Test
   }
 
   def create(implicit session: Session) {
-    (testSuites.ddl ++ testCases.ddl ++ Builds.builds.ddl).create //helper method to create all tables
+    (testSuites.ddl ++ testCases.ddl ++ messages.ddl ++ Builds.builds.ddl).create //helper method to create all tables
 /*    if (MTable.getTables(testSuites.tableName).list().isEmpty) {
       (testSuites.ddl).create
     }
@@ -36,7 +36,7 @@ class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with Test
   }
 
   def drop(implicit session: Session) = try {
-    (testSuites.ddl ++ testCases.ddl ++ Builds.builds.ddl).drop
+    (testSuites.ddl ++ testCases.ddl ++ messages.ddl ++ Builds.builds.ddl).drop
   } catch {
     case e: Exception =>
   }
@@ -74,13 +74,40 @@ trait TestSuiteComponent {
   def findResultsBy(owner: String, project: String, buildNumber: Int) = (for {a <- testSuites if a.owner === owner && a.project === project && a.buildNumber === buildNumber} yield (a.tests, a.failures, a.errors))
   def findById(id: Long) = (for {a <- testSuites if a.id === id} yield (a))
 }
+
+//TODO remove code duplication
+/*object TestCaseJson {
+  def apply(testCase: TestCase, message: Option[Message]): TestCaseJson = {
+    message match {
+      case Some(m) => m.typ match {
+        case 0 => TestCaseJson(testCase.id, testCase.testSuiteId, testCase.owner, testCase.project,
+                                testCase.name,testCase.className,testCase.duration,testCase.failureMessage,
+                                Some(m.message),testCase.errorMessage,None,
+                                testCase.typ)  
+        case 1 => TestCaseJson(testCase.id, testCase.testSuiteId, testCase.owner, testCase.project,
+                                testCase.name,testCase.className,testCase.duration,testCase.failureMessage,
+                                None,testCase.errorMessage,Some(m.message),
+                                testCase.typ)  
+      }
+      case None => TestCaseJson(testCase.id, testCase.testSuiteId, testCase.owner, testCase.project,
+                                testCase.name,testCase.className,testCase.duration,testCase.failureMessage,
+                                None,testCase.errorMessage,None,
+                                testCase.typ)  
+    }
+  }
+}*/
+case class TestCaseJson(var id: Option[Long] = None, testSuiteId: Long, owner: String, project: String,
+                     name: String, className: String, duration: Option[Double], 
+                     failureMessage: Option[String] = None, detailFailureMessage: Option[String], errorMessage: Option[String] = None,
+                     detailErrorMessage: Option[String], typ: Option[String] = None, hasErrors: Boolean = false, hasFailures: Boolean = false)
+
 case class TestCase(var id: Option[Long] = None, testSuiteId: Long, owner: String, project: String,
                      name: String, className: String, duration: Option[Double], 
                      failureMessage: Option[String] = None, errorMessage: Option[String] = None,
                      typ: Option[String] = None)
 
 trait TestCaseComponent {
-  this: Profile with TestSuiteComponent =>
+  this: Profile with TestSuiteComponent with MessageComponent =>
   //requires a Profile to be mixed in...
 
   import profile.simple._
@@ -105,6 +132,39 @@ trait TestCaseComponent {
   val testCases = TableQuery[TestCases]
   val testCaseForInsert = testCases returning testCases.map(_.id) into { case (testCase, id) => testCase.copy(id = Some(id)) }
   def findBySuite(testSuiteId: Long) = (for {a <- testCases if a.testSuiteId === testSuiteId} yield (a))  
+  def findBySuiteWithMessages(testSuiteId: Long) = (for {(t, m) <- testCases leftJoin messages on (_.id === _.testCaseId) if t.testSuiteId === testSuiteId} yield (t, m.?))  
+}
+/*import scala.slick.lifted.MappedProjection
+ trait MappingHelpers[E]{
+    implicit def mappingHelpers2  [T <: Product, E]( p:MappedProjection[T, P] ) = new{
+      def mapOption( to:   T => Option[E] ) = mapWith[Option[E]] (to, _ => ???)
+      def mapWith[E]( to: T => E, from: E => Option[T] ) = p <> (to,from)
+    }
+  }*/
+
+case class Message(testCaseId: Long, message: String, typ: Int /*0: failure message 1: error message*/)
+//O.DBType("varchar(4000)"
+trait MessageComponent {
+  this: Profile with TestCaseComponent =>
+  //requires a Profile to be mixed in...
+
+  import profile.simple._
+
+  //...to be able import profile.simple._
+
+  class Messages(tag: Tag) extends Table[Message](tag, "message") {
+        //todo database optimization removed autoinc key and have a other unique identifier also multiple fields supported
+    def testCaseId = column[Long]("testCaseId", O.PrimaryKey)
+    def message = column[String]("message", O.DBType("varchar(4000)"))
+    def typ = column[Int]("typ")
+    def caseFK = foreignKey("case_fk", testCaseId, testCases)(_.id, onDelete=ForeignKeyAction.Cascade)
+    def columns = (testCaseId, message, typ)
+    def * = columns <>(Message.tupled, Message.unapply)
+    def ? = (testCaseId.?, message.?, typ.?)
+  }
+  val messages = TableQuery[Messages]
+  def findByCaseId(testCaseId: Long) = (for {a <- messages if a.testCaseId === testCaseId} yield (a))  
+  //val testCaseForInsert = messages returning messages.map(_.id) into { case (message, id) => testCase.copy(id = Some(id)) }
 }
 
 case class Build(owner: String, project: String,
