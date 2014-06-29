@@ -49,21 +49,7 @@ lazy val stickMigrationApi = RootProject(uri("git://github.com/nafg/slick-migrat
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala).dependsOn(stickMigrationApi)
 
-libraryDependencies ++= Seq(
-    "net.databinder.dispatch" %% "dispatch-core" % "0.10.0"
-)
-
 libraryDependencies += ws
-
-//embedded jetty dependencies
-libraryDependencies ++= Seq(
-  "org.eclipse.jetty.orbit" % "javax.servlet" % "2.5.0.v201103041518" % "test" artifacts Artifact("javax.servlet", "jar", "jar"),
-  "org.eclipse.jetty.orbit" % "javax.security.auth.message" % "1.0.0.v201108011116" % "test" artifacts Artifact("javax.security.auth.message", "jar", "jar"),
-  "org.eclipse.jetty.orbit" % "javax.mail.glassfish" % "1.4.1.v201005082020" % "test" artifacts Artifact("javax.mail.glassfish", "jar", "jar"),
-  "org.eclipse.jetty.orbit" % "javax.activation" % "1.1.0.v201105071233" % "test" artifacts Artifact("javax.activation", "jar", "jar"),
-  "org.eclipse.jetty.orbit" % "javax.annotation" % "1.1.0.v201108011116" % "test" artifacts Artifact("javax.annotation", "jar", "jar"),
-  "org.eclipse.jetty.aggregate" % "jetty-all-server" % "7.6.3.v20120416" % "test"
-)
 
 // test dependencies
 libraryDependencies ++= Seq(
@@ -76,13 +62,4 @@ libraryDependencies ++= Seq(
     "com.typesafe.slick" %% "slick" % "2.0.2",
     "mysql" % "mysql-connector-java" % "5.1.18",
     "c3p0" % "c3p0" % "0.9.1.2"
-)
-
-//needed for database migration scala.slick.migration.api
-libraryDependencies ++= Seq(
-  "org.xerial"          % "sqlite-jdbc"          % "3.7.2"         % "test",
-  "org.apache.derby"    % "derby"                % "10.10.1.1"     % "test",
-  "org.hsqldb"          % "hsqldb"               % "2.2.8"         % "test",
-  "postgresql"          % "postgresql"           % "9.1-901.jdbc4" % "test",
-  "com.h2database"      % "h2"                   % "1.3.170"          
 )
