@@ -5,6 +5,7 @@ import play.api.mvc._
 import scala.concurrent.Future
 import model.DB
 
+
 object Global extends WithFilters(Cors) with GlobalSettings {
   override def onStart(app: Application) {
     val enablePoolLogging = app.configuration.getBoolean("enablePoolLogging").getOrElse(false)
@@ -23,7 +24,7 @@ import play.api.mvc.Results._
 import play.api.http.HeaderNames._
 
 object Cors extends Filter {
-  def apply(next: (RequestHeader) => Future[SimpleResult])(request: RequestHeader): Future[SimpleResult] = {
+  def apply(next: (RequestHeader) => Future[SimpleResult])(request: RequestHeader): Future[Result] = {
     val origin = request.headers.get(ORIGIN).getOrElse("*")
     if (request.method == "OPTIONS") {
       val response = Ok.withHeaders(
