@@ -24,7 +24,7 @@ import play.api.mvc.Results._
 import play.api.http.HeaderNames._
 
 object Cors extends Filter {
-  def apply(next: (RequestHeader) => Future[SimpleResult])(request: RequestHeader): Future[Result] = {
+  def apply(next: (RequestHeader) => Future[Result])(request: RequestHeader): Future[Result] = {
     val origin = request.headers.get(ORIGIN).getOrElse("*")
     if (request.method == "OPTIONS") {
       val response = Ok.withHeaders(
