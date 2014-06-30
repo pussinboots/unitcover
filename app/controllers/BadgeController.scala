@@ -12,6 +12,9 @@ import play.api.Play.current
 import model.{DB, Build, TestSuite}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
+import play.api.cache.Cache
+import cache.CacheProvider
+import scala.concurrent.Future
 
 object BadgeController extends Controller {
 
@@ -42,11 +45,17 @@ object BadgeController extends Controller {
   }
 
   def badge(owner: String, project: String) = Action.async {request =>
-    DB.db withDynSession  {
-      var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc)
-      WS.url(badgeUrl(query.firstOption)).get().map { response =>
-        Ok(response.body).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
-      }
+    val result: Future[String] = CacheProvider.getOrSet(s"/$owner/$project/badge",()=>{
+        val result: Future[String] = DB.db withDynSession{
+          var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc)
+          WS.url(badgeUrl(query.firstOption)).get().map { response =>
+   			response.body
+          }
+        }
+      	result
+    })
+    result.map{value: String=>
+        Ok(value).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
     }
   }
 }

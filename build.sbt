@@ -56,6 +56,16 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).dependsOn(stickM
 libraryDependencies ++= Seq(ws, cache)
 
 // test dependencies
+//embedded jetty dependencies
+libraryDependencies ++= Seq(
+  "org.eclipse.jetty.orbit" % "javax.servlet" % "2.5.0.v201103041518" % "test" artifacts Artifact("javax.servlet", "jar", "jar"),
+  "org.eclipse.jetty.orbit" % "javax.security.auth.message" % "1.0.0.v201108011116" % "test" artifacts Artifact("javax.security.auth.message", "jar", "jar"),
+  "org.eclipse.jetty.orbit" % "javax.mail.glassfish" % "1.4.1.v201005082020" % "test" artifacts Artifact("javax.mail.glassfish", "jar", "jar"),
+  "org.eclipse.jetty.orbit" % "javax.activation" % "1.1.0.v201105071233" % "test" artifacts Artifact("javax.activation", "jar", "jar"),
+  "org.eclipse.jetty.orbit" % "javax.annotation" % "1.1.0.v201108011116" % "test" artifacts Artifact("javax.annotation", "jar", "jar"),
+  "org.eclipse.jetty.aggregate" % "jetty-all-server" % "7.6.3.v20120416" % "test"
+)
+
 libraryDependencies ++= Seq(
     "org.hsqldb" %  "hsqldb" % "[2,)",
     "co.freeside" % "betamax" % "1.1.2" % "test",
