@@ -1,11 +1,14 @@
 package controllers
 
+import play.api.cache.Cache
 import play.api.libs.json._
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.mvc.BodyParsers
 import play.api.mvc.Controller
 import play.api.Play
+import play.api.Play.current
+import play.api.mvc.Action
 import model.{DB, Build, TestSuite}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
@@ -18,7 +21,7 @@ object BuildController extends Controller {
   import model.SlickHelpers._
   import model.JsonHelper._
 
-  def startBuild(owner: String, project: String, trigger: Option[String], branch: Option[String], travisBuildId: Option[String]) = ActionWithoutToken {request =>
+  def startBuild(owner: String, project: String, trigger: Option[String], branch: Option[String], travisBuildId: Option[String]) = Action{request =>
     val build = DB.db withDynSession Builds.insertAndIncrement(Build(owner=owner, project=project, trigger=trigger, 
       buildNumber=0, branch=branch, travisBuildId=travisBuildId))
     DB.db withDynSession Builds.deleteOldestFirstUntil(Play.current.configuration.getInt("buildslimit").get,build)
@@ -33,6 +36,7 @@ object BuildController extends Controller {
       val failures = stats.map(_._2.getOrElse(0)).sum
       val errors = stats.map(_._3.getOrElse(0)).sum
       Builds.updateStats(owner, project, buildNumber, tests, failures, errors)
+      Cache.remove(s"$owner-$project-badge")
     }
     Ok(Json.obj("build" -> "good"))
   }

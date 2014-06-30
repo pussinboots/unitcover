@@ -11,7 +11,7 @@ class IronCacheSpec extends PlaySpecification {
 	"iron cache" should {
 		"get cache" in new WithServer {
             Cache.remove("keyNotExists")
-			Thread.sleep(1000)
+			Thread.sleep(2000)
             val item = Cache.get("keyNotExists")
             item must beNone
 		}
@@ -19,7 +19,7 @@ class IronCacheSpec extends PlaySpecification {
         "put cache" in new WithServer {
             Cache.remove("key")
 			Cache.set("key", "item")
-            Thread.sleep(1000)
+            Thread.sleep(2000)
             val item = Cache.get("key")
             item must beEqualTo(Some("item"))
 		}

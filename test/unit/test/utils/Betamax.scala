@@ -33,6 +33,7 @@ object Betamax {
       import collection.JavaConversions._
       recorder.insertTape(tape, Map("match" -> list))
       recorder.getTape.setMode(mode.getOrElse(recorder.getDefaultMode()))
+      recorder.setIgnoreHosts(Seq("*.iron.io"))
       proxyServer.start()
       try {
         AsResult(t)

@@ -1,0 +1,22 @@
+!tape
+name: shieldsunknow
+interactions:
+- recorded: 2014-06-30T17:11:45.848Z
+  request:
+    method: GET
+    uri: http://img.shields.io/badge/test-unknown-lightgrey.svg
+    headers:
+      Accept: '*/*'
+      Connection: keep-alive
+      Host: img.shields.io
+      Proxy-Connection: keep-alive
+      User-Agent: NING/1.0
+  response:
+    status: 200
+    headers:
+      Cache-Control: public, max-age=86400
+      Content-Type: image/svg+xml;charset=utf-8
+      Date: Mon, 30 Jun 2014 17:11:45 GMT
+      Last-Modified: Sun, 29 Jun 2014 18:08:02 GMT
+    body: !!binary |-
+      PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MiIgaGVpZ2h0PSIxOCI+PGxpbmVhckdyYWRpZW50IGlkPSJhIiB4Mj0iMCIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIuNyIvPjxzdG9wIG9mZnNldD0iLjEiIHN0b3AtY29sb3I9IiNhYWEiIHN0b3Atb3BhY2l0eT0iLjEiLz48c3RvcCBvZmZzZXQ9Ii45IiBzdG9wLW9wYWNpdHk9Ii4zIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLW9wYWNpdHk9Ii41Ii8+PC9saW5lYXJHcmFkaWVudD48cmVjdCByeD0iNCIgd2lkdGg9IjkyIiBoZWlnaHQ9IjE4IiBmaWxsPSIjNTU1Ii8+PHJlY3Qgcng9IjQiIHg9IjMxIiB3aWR0aD0iNjEiIGhlaWdodD0iMTgiIGZpbGw9IiM5ZjlmOWYiLz48cGF0aCBmaWxsPSIjOWY5ZjlmIiBkPSJNMzEgMGg0djE4aC00eiIvPjxyZWN0IHJ4PSI0IiB3aWR0aD0iOTIiIGhlaWdodD0iMTgiIGZpbGw9InVybCgjYSkiLz48ZyBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iRGVqYVZ1IFNhbnMsVmVyZGFuYSxHZW5ldmEsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSI+PHRleHQgeD0iMTYuNSIgeT0iMTMiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPnRlc3Q8L3RleHQ+PHRleHQgeD0iMTYuNSIgeT0iMTIiPnRlc3Q8L3RleHQ+PHRleHQgeD0iNjAuNSIgeT0iMTMiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPnVua25vd248L3RleHQ+PHRleHQgeD0iNjAuNSIgeT0iMTIiPnVua25vd248L3RleHQ+PC9nPjwvc3ZnPg==

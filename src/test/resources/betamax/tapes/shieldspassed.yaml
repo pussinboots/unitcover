@@ -1,0 +1,41 @@
+!tape
+name: shieldspassed
+interactions:
+- recorded: 2014-06-30T19:35:18.359Z
+  request:
+    method: GET
+    uri: http://img.shields.io/badge/test-error%201-red.svg
+    headers:
+      Accept: '*/*'
+      Connection: keep-alive
+      Host: img.shields.io
+      Proxy-Connection: keep-alive
+      User-Agent: NING/1.0
+  response:
+    status: 200
+    headers:
+      Cache-Control: public, max-age=86400
+      Content-Type: image/svg+xml;charset=utf-8
+      Date: Mon, 30 Jun 2014 19:35:17 GMT
+      Last-Modified: Mon, 30 Jun 2014 18:39:37 GMT
+    body: !!binary |-
+      PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MSIgaGVpZ2h0PSIxOCI+PGxpbmVhckdyYWRpZW50IGlkPSJhIiB4Mj0iMCIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIuNyIvPjxzdG9wIG9mZnNldD0iLjEiIHN0b3AtY29sb3I9IiNhYWEiIHN0b3Atb3BhY2l0eT0iLjEiLz48c3RvcCBvZmZzZXQ9Ii45IiBzdG9wLW9wYWNpdHk9Ii4zIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLW9wYWNpdHk9Ii41Ii8+PC9saW5lYXJHcmFkaWVudD48cmVjdCByeD0iNCIgd2lkdGg9IjgxIiBoZWlnaHQ9IjE4IiBmaWxsPSIjNTU1Ii8+PHJlY3Qgcng9IjQiIHg9IjMxIiB3aWR0aD0iNTAiIGhlaWdodD0iMTgiIGZpbGw9IiNlMDVkNDQiLz48cGF0aCBmaWxsPSIjZTA1ZDQ0IiBkPSJNMzEgMGg0djE4aC00eiIvPjxyZWN0IHJ4PSI0IiB3aWR0aD0iODEiIGhlaWdodD0iMTgiIGZpbGw9InVybCgjYSkiLz48ZyBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iRGVqYVZ1IFNhbnMsVmVyZGFuYSxHZW5ldmEsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSI+PHRleHQgeD0iMTYuNSIgeT0iMTMiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPnRlc3Q8L3RleHQ+PHRleHQgeD0iMTYuNSIgeT0iMTIiPnRlc3Q8L3RleHQ+PHRleHQgeD0iNTUiIHk9IjEzIiBmaWxsPSIjMDEwMTAxIiBmaWxsLW9wYWNpdHk9Ii4zIj5lcnJvciAxPC90ZXh0Pjx0ZXh0IHg9IjU1IiB5PSIxMiI+ZXJyb3IgMTwvdGV4dD48L2c+PC9zdmc+
+- recorded: 2014-06-30T19:35:19.247Z
+  request:
+    method: GET
+    uri: http://img.shields.io/badge/test-passed%206-brightgreen.svg
+    headers:
+      Accept: '*/*'
+      Connection: keep-alive
+      Host: img.shields.io
+      Proxy-Connection: keep-alive
+      User-Agent: NING/1.0
+  response:
+    status: 200
+    headers:
+      Cache-Control: public, max-age=86400
+      Content-Type: image/svg+xml;charset=utf-8
+      Date: Mon, 30 Jun 2014 19:35:19 GMT
+      Last-Modified: Mon, 30 Jun 2014 18:39:37 GMT
+    body: !!binary |-
+      PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MiIgaGVpZ2h0PSIxOCI+PGxpbmVhckdyYWRpZW50IGlkPSJhIiB4Mj0iMCIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIuNyIvPjxzdG9wIG9mZnNldD0iLjEiIHN0b3AtY29sb3I9IiNhYWEiIHN0b3Atb3BhY2l0eT0iLjEiLz48c3RvcCBvZmZzZXQ9Ii45IiBzdG9wLW9wYWNpdHk9Ii4zIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLW9wYWNpdHk9Ii41Ii8+PC9saW5lYXJHcmFkaWVudD48cmVjdCByeD0iNCIgd2lkdGg9IjkyIiBoZWlnaHQ9IjE4IiBmaWxsPSIjNTU1Ii8+PHJlY3Qgcng9IjQiIHg9IjMxIiB3aWR0aD0iNjEiIGhlaWdodD0iMTgiIGZpbGw9IiM0YzEiLz48cGF0aCBmaWxsPSIjNGMxIiBkPSJNMzEgMGg0djE4aC00eiIvPjxyZWN0IHJ4PSI0IiB3aWR0aD0iOTIiIGhlaWdodD0iMTgiIGZpbGw9InVybCgjYSkiLz48ZyBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iRGVqYVZ1IFNhbnMsVmVyZGFuYSxHZW5ldmEsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSI+PHRleHQgeD0iMTYuNSIgeT0iMTMiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPnRlc3Q8L3RleHQ+PHRleHQgeD0iMTYuNSIgeT0iMTIiPnRlc3Q8L3RleHQ+PHRleHQgeD0iNjAuNSIgeT0iMTMiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPnBhc3NlZCA2PC90ZXh0Pjx0ZXh0IHg9IjYwLjUiIHk9IjEyIj5wYXNzZWQgNjwvdGV4dD48L2c+PC9zdmc+
