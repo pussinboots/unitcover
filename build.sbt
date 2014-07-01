@@ -25,7 +25,7 @@ lazy val npm = taskKey[Unit]("npm install")
 
 val cmd = Seq("sh", "-c", "npm install")
 
-npm := { cmd  #||  "echo npm is missing and needed for local development to fetch the nodejs and bower dependencies. For install look here https://github.com/npm/npm. Perform npm task manual from your command line." !}
+npm := { cmd  #||  "echo npm is missing and needed for local development to fetch the nodejs and bower dependencies. For install look here https://github.com/npm/npm. Perform npm task manual from your command line. Ignore it during herku deployment npm install will be performed fro the nodejs buildpack." !}
 
 (compile in Compile) <<= (compile in Compile) dependsOn (npm)
 
