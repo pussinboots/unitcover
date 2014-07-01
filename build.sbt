@@ -2,8 +2,6 @@ import sbt._
 import sbt.Keys._
 import play.Play.autoImport._
 import PlayKeys._
-import java.io.File
-import scala.sys.process._
 
 instrumentSettings
 
@@ -23,15 +21,13 @@ parallelExecution in ScoverageTest := true
 
 Keys.fork in Test := true
 
-val logger = ProcessLogger(
-    (o: String) => println("out " + o),
-    (e: String) => println("err " + e))
-
 lazy val npm = taskKey[Unit]("npm install")
 
-npm := scala.sys.process.Process( "npm" :: "install" :: Nil) ! logger
+val cmd = Seq("sh", "-c", "npm2 install")
 
-//(compile in Compile) <<= (compile in Compile) dependsOn (npm)
+npm := { cmd  #||  "echo npm is missing and needed for local development to fetch the nodejs and bower dependencies. For install look here https://github.com/npm/npm. Perform npm task manual from your command line." !}
+
+(compile in Compile) <<= (compile in Compile) dependsOn (npm)
 
 ScoverageKeys.highlighting := true
 
