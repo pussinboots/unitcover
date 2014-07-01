@@ -11,7 +11,7 @@ import Database.dynamicSession
 object DB {
 
   lazy val db = sys.props.get("Database").getOrElse("mysql") match {
-    case "mysql" => DB.getSlickMysqlJdbcConnection()
+    case "mysql" => DB.getSlickMysqlConnection()
     case "h2" => DB.getSlickHSQLDatabase()
   }
   lazy val dal = sys.props.get("Database").getOrElse("mysql") match {
