@@ -5,10 +5,9 @@ unitcover
 [![Dependencies](https://david-dm.org/pussinboots/unitcover.png)](https://david-dm.org/pussinboots/unitcover)
 [![Heroku](http://heroku-badge.heroku.com/?app=unitcover)](https://unitcover.herokuapp.com/products.html#/builds/pussinboots/unitcover/builds)
 [![Unit Tests](https://unitcover.herokuapp.com/api/pussinboots/unitcover/badge?ts=10)](https://unitcover.herokuapp.com/#/builds/pussinboots/unitcover/builds)
+[![Online IDE](https://d2g7ua7d94r3fl.cloudfront.net/assets/images/da4d66c4.codio_logo.png)](https://codio.com/pussinboots/unitcover)
 
 [![Unit Tests](http://unitcover.herokuapp.com/api/pussinboots/unitcover/testsuites/badge)](https://unitcover.herokuapp.com/#/builds/pussinboots/unitcover/builds)
-
-[Online IDE](https://codio.com/pussinboots/unitcover)
 
 Since one or two weeks i search for a service like [coveralls](https://coveralls.io) but only for test results and i didn't found something for free and
 SonarQube seems to complex for me. So i decided to build one similar to coveralls and that is my motivation. It is in aeryl stage now and implemented in one day so there still a lot of work to do but can be used.
