@@ -24,6 +24,11 @@ module.exports = function (config) {
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
         reporters: ['progress', 'dots', 'junit'],
 
+	junitReporter: {
+	      outputFile: 'test-results-live.xml',
+	      suite: 'https://unitcover.herokuapp.com/'
+	},
+
         // web server port
         port: 9876,
 

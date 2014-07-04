@@ -9,7 +9,7 @@ describe('live test', function() {
     expect(browser().location().url()).toBe('/builds/');
   });
 
-  describe('the build page of the unitcover project should', function() {
+  describe('the build page (index.html#/builds/pussinboots/unitcover/builds) of the unitcover project should', function() {
 
     beforeEach(function() {
       browser().navigateTo('index.html#/builds/pussinboots/unitcover/builds');
@@ -23,7 +23,7 @@ describe('live test', function() {
       expect(element('li.build:eq(0) > span.status').attr('class')).toEqual("status green");
     });
   });
-  describe('the testsuite page of the unitcover project should', function() {
+  describe('the testsuite page (index.html#/builds/pussinboots/unitcover/testsuites/(id)) of the unitcover project should', function() {
     
     beforeEach(function() {
       browser().navigateTo('index.html#/builds/pussinboots/unitcover/builds');
@@ -36,7 +36,7 @@ describe('live test', function() {
       expect(element('li.testcase:eq(0) > span.status').attr('class')).toEqual("status ng-binding green");
     });
   });
-  describe('the testcase page of the unitcover project should', function() {
+  describe('the testcase page (index.html#/builds/pussinboots/unitcover/testcases/(id)) of the unitcover project should', function() {
     
     beforeEach(function() {
       browser().navigateTo('index.html#/builds/pussinboots/unitcover/builds');

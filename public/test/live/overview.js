@@ -4,7 +4,7 @@
 
 describe('overview live test', function() {
 
-  describe('the overview page should', function() {
+  describe('the overview page (index.html#/builds/) the unitcover project should', function() {
 
     beforeEach(function() {
       browser().navigateTo('index.html#/builds/');

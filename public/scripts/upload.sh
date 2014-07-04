@@ -6,6 +6,7 @@ project=$2
 #endpoint=localhost:9000
 endpoint=unitcover.herokuapp.com
 FILES="$3/*.xml"
+KARMAFILES="$4"
 trigger="trigger=Travis"
 travisBuildId=""
  if [[ -n ${TRAVIS} ]]
@@ -26,7 +27,10 @@ do
 done
 
 ##should be configurable
-echo "Upload karma file..."
-curl -H "Content-Type:application/xml" -X POST -d @test-results.xml http://$endpoint/api/$owner/$project/$buildnumber
+for f in $KARMAFILES
+do
+  echo "Upload karma file $f..."
+  curl -H "Content-Type:application/xml" -X POST -d @$f http://$endpoint/api/$owner/$project/$buildnumber
+done
 
 curl -X POST http://$endpoint/api/$owner/$project/builds/$buildnumber/end
