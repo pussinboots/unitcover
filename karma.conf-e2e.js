@@ -27,8 +27,6 @@ module.exports = function (config) {
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
         reporters: ['progress', 'dots', 'junit', 'coverage', 'coveralls', 'threshold'],
 
-        thresholdEnd2EndTests: true,
-        
         thresholdReporter: {
           statements: 90,
           branches: 60,
