@@ -1,6 +1,9 @@
 // Karma configuration
 // Generated on Wed Aug 14 2013 22:33:43 GMT+0200 (CEST)
 
+var hostname = require('os').hostname() + '.codio.io';
+var proxyHost = 'http://' + hostname + ':9000/';
+var proxyHostCoverage = proxyHost + 'js/bankapp/coverage';
 module.exports = function (config) {
     config.set({
         // base path, that will be used to resolve files and exclude
@@ -23,16 +26,23 @@ module.exports = function (config) {
 
         // test results reporter to use
         // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-        reporters: ['progress', 'dots', 'junit'],
+        reporters: ['coverage', 'threshold'],
 
-
-        /*coverageReporter: {
-            type: 'lcov', 'text', // lcov or lcovonly are required for generating lcov.info files
-            dir: 'coverage/'
-        },*/
+		/*thresholdReporter: {
+          statements: 90,   
+          branches: 60,     
+          functions: 85,    
+          lines: 90         
+        },*/                                                                                                                                       
+        coverageReporter: { 
+          reporters:[       
+            {type: 'lcov', dir:'coverage/'},    
+            {type: 'text'}                      
+          ],                                    
+        }, 
 
         // web server port
-        port: 9876,
+        port: 9002,
 
         // enable / disable colors in the output (reporters and logs)
         colors: true,
@@ -55,20 +65,19 @@ module.exports = function (config) {
         //browsers: ['Chrome','Firefox','Opera','PhantomJS'],
         browsers: ['PhantomJS'],
         
-        
-
         // If browser does not capture in given timeout [ms], kill it
         captureTimeout: 60000,
         browserNoActivityTimeout: 30000,
 
-        hostname: require('os').hostname() + '.codio.io',
+        hostname: hostname,
         
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
         singleRun: false,
 
         proxies: {
-            '/': 'http://localhost:9000/'
+            '/js/bankapp': proxyHostCoverage,
+            '/': proxyHost
         },
 
         urlRoot: '/'

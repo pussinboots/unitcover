@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-function OverviewCtrl($rootScope, $scope, Builds) {
+/*function OverviewCtrl($rootScope, $scope, Builds) {
     initTable($scope, 10, 'date', 'desc')
     $scope.setItems = function (rootScope, scope) {
         loadLatestBuilds(rootScope, scope, Builds)
@@ -13,7 +13,7 @@ function OverviewCtrl($rootScope, $scope, Builds) {
         return "gray"
     }
     $scope.setItems($rootScope, $scope)
-}
+}*/
 function BuildsCtrl($rootScope, $scope, $routeParams, Builds) {
     initTable($scope, 10, 'date', 'desc')
     $rootScope.owner = $routeParams.owner
@@ -48,11 +48,11 @@ function BuildsCtrl($rootScope, $scope, $routeParams, Builds) {
     $scope.setItems($rootScope, $scope, $routeParams)
 }
 
-function loadLatestBuilds(rootScope, scope, Builds) {
+/*function loadLatestBuilds(rootScope, scope, Builds) {
     scope.builds = Builds.get({owner:'all', project:'all'}, function (response) {
         scope.totalItems = response.count;
     });
-}
+}*/
 
 function loadBuilds(rootScope, scope, routeParams, Builds) {
     scope.builds = Builds.get({owner:routeParams.owner, project:routeParams.project}, function (response) {
