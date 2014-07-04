@@ -1,7 +1,7 @@
 #!/bin/sh
 scripts/bliss scripts/stop_play.sh
-./node_modules/istanbul/lib/cli.js instrument public/js/bankapp/ -o public/js/bankapp/coverage
 ./node_modules/coffee-script/bin/coffee -c -o public/js/bankapp/coffee public/js/bankapp/coffee
+./node_modules/istanbul/lib/cli.js instrument public/js/bankapp/ -o public/js/bankapp/coverage
 sbt stage
 mkdir -p logs
 target/universal/stage/bin/unitcover -Dconfig.resource=application-e2e.conf &>logs/application.log 
