@@ -41,11 +41,6 @@ module.exports = function (config) {
           ],
         },
 
-        /*coverageReporter: {
-            type: 'lcov', 'text', // lcov or lcovonly are required for generating lcov.info files
-            dir: 'coverage/'
-        },*/
-
         // web server port
         port: 9876,
 
