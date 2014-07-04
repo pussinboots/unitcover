@@ -12,7 +12,9 @@ after_failure:
 - scripts/bliss wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash /dev/stdin pussinboots unitcover ./target/test-reports/ "test-results.xml test-results-live.xml"
 before_deploy:
 - scripts/bliss wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash /dev/stdin pussinboots unitcover ./target/test-reports/  "test-results.xml test-results-live.xml"
+- ls -lha ./
 - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+- ls -lha ./
 notifications:
   email:
     on_success: never
@@ -23,7 +25,7 @@ cache:
 deploy:
   provider: heroku
   app: unitcover
-  skip_cleanup: false
+  skip_cleanup: true
   strategy: git
   api_key:
     secure: D1OyD4rxP9TAvmbYtHHFdRJHuNdoaiuEHmex1QRylqYO3nggelDSBbogajAZPlbwHANkCOnHIPEEgP3zSthjKSZd2xWik7bYUSxYn3RmdQydIxq4NKoINoNeYoRSaRpXjcDxL9gr05B4C/qAd1s9UoAE/d01S+Dgdu12tGkH9Xg=
