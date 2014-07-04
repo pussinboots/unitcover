@@ -121,9 +121,9 @@ function loadTestCases(rootScope, scope, routeParams, TestCases) {
 }
 
 //TODO move to data table directive
-function setSort(rootScope, scope, routeParams, sort) {
+/*function setSort(rootScope, scope, routeParams, sort) {
     var oldSort = angular.copy(scope.sortColumn);
     if (scope.multiselect) scope.sortColumn = scope.sortColumn + " " + sort; else scope.sortColumn = sort;
     if (oldSort == sort) scope.sortDirection = scope.sortDirection == 'desc' ? 'asc' : 'desc'; else scope.sortDirection = 'desc';
     scope.setItems(rootScope, scope, routeParams)
-};
+};*/

@@ -2,7 +2,7 @@
 
 /* App Module */
 var myModule = angular.module('bankapp', 
-                ['highcharts-ng','TestData', 'MobileTable', 'angular-loading-bar', 'ngRoute', 'ngSanitize', 
+                ['highcharts-ng','TestData', 'angular-loading-bar', 'ngRoute', 'ngSanitize', 
                 'productServices', 'ngCookies'])
 
 myModule.config(function ($routeProvider) {
