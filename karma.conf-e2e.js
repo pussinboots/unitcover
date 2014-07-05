@@ -9,18 +9,33 @@ module.exports = function (config) {
         // frameworks to use
         frameworks: ['jasmine'],
 
+        preprocessors: {
+	    'public/test/e2e/*.coffee': ['coffee']
+	},
+
         // list of files / patterns to load in the browser
         files: [
-            './node_modules/karma-ng-scenario/lib/angular-scenario.js',
-            './node_modules/karma-ng-scenario/lib/adapter.js',
-            'public/test/e2e/*.js'
+            'node_modules/karma-ng-scenario/lib/angular-scenario.js',
+            'node_modules/karma-ng-scenario/lib/adapter.js',
+            'public/test/e2e/*.coffee'
         ],
+
+	coffeePreprocessor: {
+	   options: {
+	     bare: true,
+	     sourceMap: false
+	   },
+	   // transforming the filenames
+	   transformPath: function(path) {
+	     return path.replace(/\.coffee$/, '.js');
+	   }
+	},
 
         // list of files to exclude
         exclude: [
         ],
 
-        preprocessors: { 'public/js/bankapp/*.js': ['coverage'],'public/test/e2e/*.js': ['coverage']  },
+        preprocessors: { 'public/js/bankapp/*.js': ['coverage'],'public/test/e2e/*.coffee': ['coverage'], 'public/js/bankapp/coffee/*.js': ['coverage']  },
 
 
         // test results reporter to use
