@@ -34,6 +34,7 @@
     "karma-threshold-reporter": "~0.1.9",
     "karma-phantomjs-launcher": "~0.1",
     "karma-cucumberjs": "0.0.2",
+    "karma-coffee-preprocessor" : "~0.2.1",
     "ibrik": "~1.1.1"
   }
 }

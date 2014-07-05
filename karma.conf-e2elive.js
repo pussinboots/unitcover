@@ -9,12 +9,28 @@ module.exports = function (config) {
         // frameworks to use
         frameworks: ['jasmine'],
 
+        preprocessors: {
+	    'public/test/live/*.coffee': ['coffee']
+	},
+
         // list of files / patterns to load in the browser
         files: [
             './node_modules/karma-ng-scenario/lib/angular-scenario.js',
             './node_modules/karma-ng-scenario/lib/adapter.js',
-            'public/test/live/*.js'
+            'public/test/live/*.coffee'
         ],
+
+	coffeePreprocessor: {
+	   // options passed to the coffee compiler
+	   options: {
+	     bare: true,
+	     sourceMap: false
+	   },
+	   // transforming the filenames
+	   transformPath: function(path) {
+	     return path.replace(/\.coffee$/, '.js');
+	   }
+	},
 
         // list of files to exclude
         exclude: [
