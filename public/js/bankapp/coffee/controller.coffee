@@ -1,4 +1,4 @@
-
+"use strict"
 @OverviewCtrl = ['$scope', '$rootScope', 'Builds',($rootScope, $scope, Builds) ->
   initTable($scope, 10, 'date', 'desc')
   $scope.setItems = (rootScope, scope) -> loadLatestBuilds(rootScope, scope, Builds)
