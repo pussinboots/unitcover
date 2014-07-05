@@ -30,5 +30,4 @@ deploy:
   api_key:
     secure: D1OyD4rxP9TAvmbYtHHFdRJHuNdoaiuEHmex1QRylqYO3nggelDSBbogajAZPlbwHANkCOnHIPEEgP3zSthjKSZd2xWik7bYUSxYn3RmdQydIxq4NKoINoNeYoRSaRpXjcDxL9gr05B4C/qAd1s9UoAE/d01S+Dgdu12tGkH9Xg=
 after_deploy:
- - ls -lha ./
- - ./node_modules/.bin/karma start karma.conf-e2elive.js --single-run
+ - scripts/karma.sh e2elive
