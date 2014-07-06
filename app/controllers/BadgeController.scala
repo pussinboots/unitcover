@@ -1,24 +1,21 @@
 package controllers
 
 import play.api.libs.ws._
-import play.api.libs.json._
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, _}
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
-import play.api.mvc.BodyParsers
-import play.api.mvc.Controller
-import play.api.mvc.Action
+import play.api.mvc.{Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.Play.current
 import model.{DB, Build, TestSuite}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 import java.sql.Timestamp
 import play.api.cache.Cache
-import play.api.cache.Cached
 import cache.CacheProvider
 import scala.concurrent.Future
 
 object BadgeController extends Controller {
-
+  val cacheHeaders = Seq("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}")
+      
   import controllers.ControllerHelpers._
   import DB.dal._
   import DB.dal.profile.simple._
@@ -56,17 +53,18 @@ object BadgeController extends Controller {
   }*/
 
   def badge(owner: String, project: String) = Action.async {request =>
-    val result: Future[String] = CacheProvider.getOrSet(s"$owner-$project-badge",()=>{
-        val result: Future[String] = DB.db withDynSession{
-          var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc)
-          WS.url(badgeUrl(query.firstOption)).get().map { response =>
-   			response.body
+    val result: Future[String] = CacheProvider.getOrSet(s"$owner-$project-badge", ()=>{
+      val result: Future[String] = 
+        DB.db withDynSession {
+          var build = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc).firstOption
+          WS.url(badgeUrl(build)).get().map { response =>
+              response.body
           }
         }
-      	result
+      result
     })
     result.map{value: String=>
-        Ok(value).withHeaders("Cache-Control" -> "no-cache, no-store, must-revalidate", "Etag"->s"${scala.compat.Platform.currentTime}") as ("image/svg+xml")
+      Ok(value).withHeaders(cacheHeaders:_*) as ("image/svg+xml")
     }
   }                                                                                         
 }

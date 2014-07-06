@@ -1,8 +1,6 @@
 package controllers
 
-import play.api.libs.json._
-import play.api.libs.json.Json
-import play.api.libs.json.Json.toJsFieldJsValueWrapper
+import play.api.libs.json.{Json, _}
 import play.api.mvc.Controller
 import model.{DB, TestCase, TestCaseJson, Message}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
@@ -43,9 +41,9 @@ implicit class TestCaseToJson(testCase: TestCase) {
     DB.db withDynSession  {
       val suite = dal.findById(testSuiteId).first
       var query = dal.findBySuiteWithMessages(testSuiteId).sortBy(_._1.id.desc)
-      val json = query.list()
+      val testCasesWithMsg = query.list()
       val count = query.list.length
-      val result = json map { case (testCase: TestCase, columns: (Option[Long], Option[String], Option[Int])) =>
+      val result = testCasesWithMsg map { case (testCase: TestCase, columns: (Option[Long], Option[String], Option[Int])) =>
         columns match {
           case (Some(id), Some(message), Some(typ)) => testCase.toJson(Some(Message(id, message, typ)))
           case _ => testCase.toJson(None)
