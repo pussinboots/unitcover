@@ -63,6 +63,24 @@ To increase the supported unit reports from different languages you can send me 
 	<system-err></system-err>
 </testsuite>
 ```
+* mocha test report with [xunit-file](https://github.com/peerigon/xunit-file)
+```xml
+<testsuite name="Mocha Tests" tests="13" failures="0" errors="0" skipped="0" timestamp="Tue, 08 Jul 2014 12:52:49 GMT" time="119.755">
+<testcase classname="api discover" name="should return the json discover response" time="0.022"/>
+<testcase classname="api build" name="should return 200 for /html/pussinboots/book" time="22.718"/>
+<testcase classname="api build" name="should return 200 for /pdf/pussinboots/book" time="10.208"/>
+<testcase classname="api build" name="should return 200 for /epub/pussinboots/book" time="2.904"/>
+<testcase classname="api build" name="should return 200 for /mobi/pussinboots/book" time="25.602"/>
+<testcase classname="api console" name="should return 200 for /html/pussinboots/book" time="15.293"/>
+<testcase classname="api console" name="should return 200 for /pdf/pussinboots/book" time="8.577"/>
+<testcase classname="api console" name="should return 200 for /epub/pussinboots/book" time="2.821"/>
+<testcase classname="api console" name="should return 200 for /mobi/pussinboots/book" time="31.266"/>
+<testcase classname="api content" name="should return an 404 for /html/pussinboots/book" time="0.026"/>
+<testcase classname="api content" name="should return an 404 for /pdf/pussinboots/book" time="0.014"/>
+<testcase classname="api content" name="should return an 404 for /epub/pussinboots/book" time="0.016"/>
+<testcase classname="api content" name="should return an 404 for /mobi/pussinboots/book" time="0.012"/>
+</testsuite>
+```
 
 ##Done
 * max build history is ten

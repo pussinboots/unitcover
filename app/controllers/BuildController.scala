@@ -1,17 +1,12 @@
 package controllers
 
 import play.api.cache.Cache
-import play.api.libs.json._
-import play.api.libs.json.Json
-import play.api.libs.json.Json.toJsFieldJsValueWrapper
-import play.api.mvc.BodyParsers
-import play.api.mvc.Controller
-import play.api.Play
+import play.api.libs.json.{Json, _}
+import play.api.mvc.{Controller, Action} 
 import play.api.Play.current
-import play.api.mvc.Action
-import model.{DB, Build, TestSuite}
+import play.api.Play
+import model.{DB, Build}
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
-import java.sql.Timestamp
 
 object BuildController extends Controller {
 
@@ -21,10 +16,12 @@ object BuildController extends Controller {
   import model.SlickHelpers._
   import model.JsonHelper._
 
+  def buildLimit = Play.current.configuration.getInt("buildslimit").get
+      
   def startBuild(owner: String, project: String, trigger: Option[String], branch: Option[String], travisBuildId: Option[String]) = Action{request =>
     val build = DB.db withDynSession Builds.insertAndIncrement(Build(owner=owner, project=project, trigger=trigger, 
       buildNumber=0, branch=branch, travisBuildId=travisBuildId))
-    DB.db withDynSession Builds.deleteOldestFirstUntil(Play.current.configuration.getInt("buildslimit").get,build)
+    DB.db withDynSession Builds.deleteOldestFirstUntil(buildLimit, build)
     Ok(Json.obj("buildNumber" -> build.buildNumber))
   }
 
@@ -44,18 +41,20 @@ object BuildController extends Controller {
   def latestBuilds(owner: String, project: String) = ActionWithoutToken {request =>
     DB.db withDynSession  {
       var query = Builds.findByOwnerAndProject(owner, project).sortBy(_.buildNumber.desc)
-      val json = query.take(10).list()
-      val count = query.list.length
-      Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")
+      Ok(toJson(query)) as ("application/json")
     }
   }
   
   def latests() = ActionWithoutToken {request =>
-    DB.db withDynSession  {
+    DB.db withDynSession {
       var query = Builds.findLatestBuilds()
-      val json = query.take(10).list()
-      val count = query.list.length
-      Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")
+      Ok(toJson(query)) as ("application/json")
     }
+  }
+  
+  def toJson(query: Query[model.DB.dal.Builds,model.Build]) = {
+    val json = query.take(10).list()
+    val count = query.list.length
+    Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))    
   }
 }
