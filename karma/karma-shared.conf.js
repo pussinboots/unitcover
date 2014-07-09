@@ -7,25 +7,17 @@ module.exports = function (config) {
         files: [
             'node_modules/karma-ng-scenario/lib/angular-scenario.js',
             'node_modules/karma-ng-scenario/lib/adapter.js',
+            'public/test/live/scenario.coffee',
         ],
 
-	coffeePreprocessor: {
-	   options: {
-	     bare: true,
-	     sourceMap: false
-	   },
-	   // transforming the filenames
-	   transformPath: function(path) {
-	     return path.replace(/\.coffee$/, '.js');
-	   }
-	},
 
         exclude: [
         ],
 
         preprocessors: { 'public/js/bankapp/*.js': ['coverage'],
 			 'public/test/e2e/*.coffee': ['coffee'],
-			 'public/test/live/*.coffee': ['coffee'],  
+			 'public/test/live/*.coffee': ['coffee'],
+			 //'public/test/live/*.litcoffee': ['coffee'],    
 			 'public/js/bankapp/coffee/*.js': ['coverage']  },
 
 

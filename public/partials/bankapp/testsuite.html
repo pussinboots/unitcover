@@ -11,7 +11,7 @@
             </li>
         </div>
         <div class="body" >
-            <li class="suite row table-row" ng-repeat="suite in builds.items">
+            <li class="suite row" ng-repeat="suite in builds.items">
                 <span class="status" ng-class="statusClass(suite)"><a ng-href="#/builds/{{owner}}/{{project}}/testcases/{{suite.id}}">{{suite.name}}</a></span>
                 <span>{{suite.tests}}</span>
                 <span>{{suite.failures}}</span>
