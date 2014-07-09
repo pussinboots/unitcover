@@ -23,7 +23,7 @@ describe "live test", ->
       expect(repeater("li.build").count()).toBe 10
 
     it "display the latest build with properly status", ->
-      expectStatus repeater("li.build").row(0), "li.build:eq(0)", (array)-> {errors:array[5], failures:[4], tests:array[3]}
+      expectStatus repeater("li.build").row(0), "li.build:eq(0)", (array)-> {errors:array[4], failures:array[3], tests:array[2]}
 
   describe "the testsuite page (index.html#/builds/pussinboots/unitcover/testsuites/(id)) of the unitcover project should", ->
     beforeEach -> 
@@ -31,7 +31,7 @@ describe "live test", ->
       element("li.build:eq(0) > span:eq(1) > a").click()
 
     it "display the first testsuite with status green", ->
-      expectStatus repeater("li.suite").row(0), "li.suite:eq(0)", (array)-> {errors:array[3], failures:[2], tests:array[1]}
+      expectStatus repeater("li.suite").row(0), "li.suite:eq(0)", (array)-> {errors:array[3], failures:array[2], tests:array[1]}
 
   describe "the testcase page (index.html#/builds/pussinboots/unitcover/testcases/(id)) of the unitcover project should", ->
     beforeEach -> 
