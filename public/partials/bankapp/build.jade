@@ -1,0 +1,23 @@
+div(ng-controller='TableCtrl')
+    test-data
+        .header
+          li.row
+            span Status \n
+            span Build
+            span Date
+            span Passed
+            span Failures
+            span Errors
+            span Trigger
+        .body
+          li.build.row(ng-repeat='build in builds.items')
+            span.status(ng-class='statusClass(build)')
+            span
+              a(ng-href='#/builds/{{build.owner}}/{{build.project}}/testsuites/{{build.buildNumber}}') {{build.buildNumber}}
+            span {{build.date | date:dateFormat}}
+            span {{build.tests}}
+            span {{build.failures}}
+            span {{build.errors}}
+            span
+              a(ng-show='build.trigger ==\'Travis\'', ng-href='http://travis-ci.org/{{owner}}/{{project}}/builds/{{build.travisBuildId}}') {{build.trigger}}
+      highchart#chart1(config='chartConfig')

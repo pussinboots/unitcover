@@ -1,0 +1,57 @@
+.table-responsive(ng-controller='TableCtrl')
+    test-data
+        .header
+          li.row
+            span Name
+            span className
+            span Message
+            span Duration
+        .body
+          li.testcase.row.table-row(ng-repeat='testcase in testsuite.items')
+            span.status(ng-class='statusClass(testcase)') {{testcase.name}}
+            span {{testcase.className}}
+            span(style='word-break: break-all;')
+              p(ng-show='testcase.failureMessage')
+                | {{testcase.failureMessage}}
+              p(ng-show='testcase.errorMessage')
+                | {{testcase.errorMessage}}
+            span {{testcase.duration}}
+      p
+        a.errorToggle(ng-model='collapsedErrors', ng-click='collapsedErrors=!collapsedErrors')
+          | Click here to
+          strong Toggle detailed error messages
+      div(ng-show='collapsedErrors')
+        div(width='100%', style='overflow: auto;')
+          br
+          h3 error details
+          test-data
+            .header
+              li.row
+                span Name
+                span Detail Message
+            .body
+              li.testcase.row.table-row(ng-repeat='testcase in testsuite.items', ng-if='testcase.errorMessage')
+                span.status(ng-class='statusClass(testcase)') {{testcase.name}}
+                span(style='word-break: break-all;')
+                  pre(ng-show='{{testcase.detailErrorMessage}}').
+                    \n{{testcase.detailErrorMessage}}
+                                                                    
+      p
+        a.failureToggle(ng-model='collapsedFailures', ng-click='collapsedFailures=!collapsedFailures')
+          | Click here to
+          strong Toggle detailed failure messages
+      div(ng-show='collapsedFailures')
+        div(width='100%', style='overflow: auto;')
+          br
+          h3 failure details
+          test-data
+            .header
+              li.row
+                span Name
+                span Detail Message
+            .body
+              li.testcase.row.table-row(ng-repeat='testcase in testsuite.items', ng-if='testcase.failureMessage')
+                span.status(ng-class='statusClass(testcase)') {{testcase.name}}
+                span(style='word-break: break-all;')
+                  pre(ng-show='{{testcase.detailFailureMessage}}').
+                    \n{{testcase.detailFailureMessage}}

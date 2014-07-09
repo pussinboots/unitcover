@@ -1,0 +1,28 @@
+div(ng-controller='TableCtrl')
+    test-data
+        .header
+          li.row
+            span Owner
+            span Repo
+            span Status
+            span Build
+            span Date
+            span Passed
+            span Failures
+            span Errors
+            span Trigger
+        .body
+          li.build.row(ng-repeat='build in builds.items')
+            span
+              a(ng-href='https://{{build.owner}}.github.io') {{build.owner}}
+            span
+              a(ng-href='https://github.com/{{build.owner}}/{{build.project}}') {{build.project}}
+            span.status(ng-class='statusClass(build)')
+            span
+              a(ng-href='#/builds/{{build.owner}}/{{build.project}}/testsuites/{{build.buildNumber}}') {{build.buildNumber}}
+            span {{build.date | date:dateFormat}}
+            span {{build.tests}}
+            span {{build.failures}}
+            span {{build.errors}}
+            span
+              a(ng-show='build.trigger ==\'Travis\'', ng-href='http://travis-ci.org/{{owner}}/{{project}}/builds/{{build.travisBuildId}}') {{build.trigger}}

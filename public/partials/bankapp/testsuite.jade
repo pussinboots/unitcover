@@ -1,0 +1,19 @@
+.table-responsive(ng-controller='TableCtrl')
+    test-data
+        .header
+          li.row
+            span Name
+            span Passed
+            span Failure
+            span Error
+            span Duration
+            span Date
+        .body
+          li.suite.row(ng-repeat='suite in builds.items')
+            span.status(ng-class='statusClass(suite)')
+              a(ng-href='#/builds/{{owner}}/{{project}}/testcases/{{suite.id}}') {{suite.name}}
+            span {{suite.tests}}
+            span {{suite.failures}}
+            span {{suite.errors}}
+            span {{suite.duration}}
+            span {{suite.date | date:dateFormat}}

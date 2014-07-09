@@ -11,7 +11,7 @@ var fileTypes= {js:
 		  detect: {js: /-\s(.+js)/gi},
 		  replace: {js:'\'{{filePath}}\','}
 		}
-	       }
+}
 
 var args = [
   { short: 'h', full: 'help' },

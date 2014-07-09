@@ -1,0 +1,147 @@
+html(lang='de', ng-app='bankapp')
+head
+    meta(charset='utf-8')
+    meta(name='fragment', content='#')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Unitcover Api Doc
+    link(rel='stylesheet', href='css/bankapp/app.css')
+    //
+       Optional theme 
+    link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css')
+  body
+    .container-fluid
+      .footerWrap
+        .footerPad
+          #header
+            .site-wrapper
+              a.logo(href='https://github.com/pussinboots/unitcover') Unitcover
+              nav
+                ul
+                  li
+                    a(href='https://github.com/pussinboots/unitcover/blob/master/conf/routes')
+                      | Routes
+                  li
+                    a(href='https://github.com/pussinboots/unitcover/blob/master/app/controllers/BuildController.scala')
+                      | Build
+                  li
+                    a(href='https://github.com/pussinboots/unitcover/blob/master/app/controllers/TestSuiteController.scala')
+                      | TestSuite
+                  li
+                    a(href='https://github.com/pussinboots/unitcover/blob/master/app/controllers/TestCaseController.scala')
+                      | TestCase
+                  li
+                    a(href='https://github.com/pussinboots/unitcover/blob/master/test/integration/BuildControllerSpec.scala')
+                      | ClientExample
+          h1 Api Doc
+          b The unitcover frontend is completly based on that api.
+          h2 Clients
+          li
+            a(href='https://github.com/pussinboots/unitcover/blob/master/scripts/upload_junitreport.sh') Curl based script
+          h2 Parameters
+          | All path parameters are mandatory.
+          | All query parameter optional.
+          ul
+            li
+              | :owner       - means the github owner for éxample here it is pussinboots https://github.com/pussinboots/unitcover
+            li
+              | :project     - means the github project for éxample here it is unitcover https://github.com/pussinboots/unitcover
+            li
+              | :buildNumber - will be generated server side an has to be request with the start build method, is needed to upload test reports
+          h2 Resources
+          ul
+            li Build
+            li TestSuite
+            li TestCase
+          h2 Build Resource
+          p offers three methods two write methods (POST) and one read (GET).
+          li Start Build
+          p
+            | POST        http://unitcover.herokuapp.com/api/:owner/:project/builds?trigger&branch&travisBuildId
+          p
+            | use this method to register a new build it will return an json response contains the new buildNumber
+            pre.
+              {'buildNumber':45}            
+              
+            | Than you have to use this build number to upload test reports for them.
+          li End Build
+          p
+            | POST        http://unitcover.herokuapp.com/api/:owner/:project/builds/:buildNumber/end
+          p
+            | Call this method if all test reports are uploaded it marks the build as complete and calculate some stats for it. if this method is not called than you will missing the aggregatted number test resports numbers in the build view for example.
+          li Get Builds
+          p GET         http://unitcover.herokuapp.com/api/:owner/:project/builds 
+          p
+            | Return the latest 10 builds as json response.
+            pre.
+              {"items":[
+              {"owner":"pussinboots","project":"bankapp","buildNumber":11,"date":1403369714526,"tests":11,"failures":1,"errors":1,"travisBuildId":"11"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":10,"date":1403369714524,"tests":10,"failures":1,"errors":1,"travisBuildId":"10"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":9,"date":1403369714521,"tests":9,"failures":1,"errors":0,"travisBuildId":"9"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":8,"date":1403369714519,"tests":8,"failures":1,"errors":0,"travisBuildId":"8"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":7,"date":1403369714517,"tests":7,"failures":0,"errors":0,"travisBuildId":"7"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":6,"date":1403369714514,"tests":6,"failures":0,"errors":0,"travisBuildId":"6"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":5,"date":1403369714512,"tests":5,"failures":0,"errors":0,"travisBuildId":"5"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":4,"date":1403369714510,"tests":4,"failures":0,"errors":0,"travisBuildId":"4"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":3,"date":1403369714507,"tests":3,"failures":0,"errors":0,"travisBuildId":"3"},
+              {"owner":"pussinboots","project":"bankapp","buildNumber":2,"date":1403369714505,"tests":2,"failures":0,"errors":0,"travisBuildId":"2"}
+              ],
+              "count":11}
+              
+          h2 TestSuite Resource
+          li Upload TestSuite
+          p POST        http://unitcover.herokuapp.com/api/:owner/:project/:buildNumber
+          p
+            | Request Body as xml
+            | for example you can post complete test-results.xml files like
+            pre.
+              &lt;testsuite hostname=&quot;vagrant-VirtualBox&quot; name=&quot;integration.ApplicationSpec&quot; tests=&quot;7&quot; errors=&quot;0&quot; failures=&quot;0&quot; skipped=&quot;0&quot; time=&quot;1.975&quot;&gt;
+              &lt;testcase name=&quot;application changed setup will work should::disable db ssl&quot; classname=&quot;integration.ApplicationSpec&quot; time=&quot;0.066&quot;&gt;
+              &lt;/testcase&gt;&lt;testcase name=&quot;application changed setup will work should::enable DB logging&quot; classname=&quot;integration.ApplicationSpec&quot; time=&quot;0.039&quot;&gt;
+              &lt;/testcase&gt;&lt;testcase name=&quot;application setup should should::configured with custom keystore is enabled&quot; classname=&quot;integration.ApplicationSpec&quot; time=&quot;0.046&quot;&gt;
+              &lt;/testcase&gt;&lt;testcase name=&quot;application setup should should::check reditect to products.html work&quot; classname=&quot;integration.ApplicationSpec&quot; time=&quot;1.469&quot;&gt;
+              &lt;/testcase&gt;&lt;testcase name=&quot;application setup should should::configured to redirect all http request to https on heroku&quot; classname=&quot;integration.ApplicationSpec&quot; time=&quot;0.222&quot;&gt;
+              &lt;/testcase&gt;&lt;testcase name=&quot;application setup should should::configured with custom truststore is enabled&quot; classname=&quot;integration.ApplicationSpec&quot; time=&quot;0.046&quot;&gt;
+              &lt;/testcase&gt;&lt;testcase name=&quot;application setup should should::configured with DB logging deactivate&quot; classname=&quot;integration.ApplicationSpec&quot; time=&quot;0.078&quot;&gt;
+              &lt;/testcase&gt;
+              &lt;system-out&gt;&lt;/system-out&gt;
+              &lt;system-err&gt;&lt;/system-err&gt;
+              &lt;/testsuite&gt;          
+              
+            | The response is json contains the testsuite ids that were created from your test suite post request before.
+            pre.
+              {"testsuites":[[{"id":12},{"id":13}]]}
+              
+          li Get TestSuite
+          p GET         http://unitcover.herokuapp.com/api/:owner/:project/:buildnumber 
+          p
+            | returns all test suites for the specified buildNumber
+            pre.
+              {"items":[
+              {"id":2411,"buildNumber":38,"owner":"pussinboots","project":"unitcover","name":"Firefox 19.0.0 (Linux)","tests":8,"failures":0,"errors":0,"duration":8.751,"date":1403367114000},
+              {"id":2401,"buildNumber":38,"owner":"pussinboots","project":"unitcover","name":"integration.TestSuiteControllerSpec","tests":7,"failures":0,"errors":1,"duration":2.791,"date":1403367114000},
+              {"id":2391,"buildNumber":38,"owner":"pussinboots","project":"unitcover","name":"integration.TestCaseControllerSpec","tests":1,"failures":0,"errors":0,"duration":3.757,"date":1403367114000},
+              {"id":2381,"buildNumber":38,"owner":"pussinboots","project":"unitcover","name":"unit.org.stock.manager.ModelSpec","tests":2,"failures":0,"errors":0,"duration":0.167,"date":1403367113000},
+              {"id":2371,"buildNumber":38,"owner":"pussinboots","project":"unitcover","name":"integration.E2ETestGlobalSpec","tests":2,"failures":0,"errors":0,"duration":2.735,"date":1403367113000},
+              {"id":2361,"buildNumber":38,"owner":"pussinboots","project":"unitcover","name":"unit.org.stock.manager.DBSpec","tests":3,"failures":0,"errors":0,"duration":0.477,"date":1403367113000},
+              {"id":2351,"buildNumber":38,"owner":"pussinboots","project":"unitcover","name":"integration.BuildControllerSpec","tests":7,"failures":0,"errors":1,"duration":1.628,"date":1403367113000},
+              {"id":2341,"buildNumber":38,"owner":"pussinboots","project":"unitcover","name":"integration.ApplicationSpec","tests":4,"failures":0,"errors":0,"duration":0.319,"date":1403367112000}
+              ],
+              "count":8}
+              
+          h2 TestCase Resource
+          li Get TestCases
+          p
+            | GET         http://unitcover.herokuapp.com/api/:owner/:project/testcases/:testSuiteId
+          p
+            | returns all test cases that belong to the requested test suite (testSuiteId)
+            pre.
+              {&quot;items&quot;:[
+              {&quot;id&quot;:8141,&quot;testSuiteId&quot;:2401,&quot;owner&quot;:&quot;pussinboots&quot;,&quot;project&quot;:&quot;unitcover&quot;,&quot;name&quot;:&quot;POST to /api/&lt;owner&gt;/&lt;project&gt; should::with sbt junit xml report all tests passed return http status 200 and store it in the db&quot;,&quot;className&quot;:&quot;integration.TestSuiteControllerSpec&quot;,&quot;duration&quot;:0.437},
+              {&quot;id&quot;:8131,&quot;testSuiteId&quot;:2401,&quot;owner&quot;:&quot;pussinboots&quot;,&quot;project&quot;:&quot;unitcover&quot;,&quot;name&quot;:&quot;POST to /api/&lt;owner&gt;/&lt;project&gt; should::with karma junit xml report one failure return http status 200 and store it in the db&quot;,&quot;className&quot;:&quot;integration.TestSuiteControllerSpec&quot;,&quot;duration&quot;:0.414},
+              {&quot;id&quot;:8121,&quot;testSuiteId&quot;:2401,&quot;owner&quot;:&quot;pussinboots&quot;,&quot;project&quot;:&quot;unitcover&quot;,&quot;name&quot;:&quot;POST to /api/&lt;owner&gt;/&lt;project&gt; should::with sbt junit xml report one error return http status 200 and store it in the db&quot;,&quot;className&quot;:&quot;integration.TestSuiteControllerSpec&quot;,&quot;duration&quot;:0.372},
+              {&quot;id&quot;:8111,&quot;testSuiteId&quot;:2401,&quot;owner&quot;:&quot;pussinboots&quot;,&quot;project&quot;:&quot;unitcover&quot;,&quot;name&quot;:&quot;POST to /api/&lt;owner&gt;/&lt;project&gt; should::with sbt junit xml report all tests passed return http status 200 and store it in the db&quot;,&quot;className&quot;:&quot;integration.TestSuiteControllerSpec&quot;,&quot;duration&quot;:0.535},
+              {&quot;id&quot;:8101,&quot;testSuiteId&quot;:2401,&quot;owner&quot;:&quot;pussinboots&quot;,&quot;project&quot;:&quot;unitcover&quot;,&quot;name&quot;:&quot;GET to /api/&lt;owner&gt;/&lt;project&gt; should::return latest 10 test suites&quot;,&quot;className&quot;:&quot;integration.TestSuiteControllerSpec&quot;,&quot;duration&quot;:0.446},
+              {&quot;id&quot;:8091,&quot;testSuiteId&quot;:2401,&quot;owner&quot;:&quot;pussinboots&quot;,&quot;project&quot;:&quot;unitcover&quot;,&quot;name&quot;:&quot;POST to /api/&lt;owner&gt;/&lt;project&gt; should::with sbt junit xml report one failure return http status 200 and store it in the db&quot;,&quot;className&quot;:&quot;integration.TestSuiteControllerSpec&quot;,&quot;duration&quot;:0.386},
+              {&quot;id&quot;:8081,&quot;testSuiteId&quot;:2401,&quot;owner&quot;:&quot;pussinboots&quot;,&quot;project&quot;:&quot;unitcover&quot;,&quot;name&quot;:&quot;POST to /api/&lt;owner&gt;/&lt;project&gt; should::with karma junit xml report from all tests passed return http status 200 and store it in the db&quot;,&quot;className&quot;:&quot;integration.TestSuiteControllerSpec&quot;,&quot;duration&quot;:0.193,&quot;errorMessage&quot;:&quot;./test/resources/karma/test-results.xml (No such file or directory)&quot;,&quot;typ&quot;:&quot;java.io.FileNotFoundException&quot;}
+              ],&quot;
+              count&quot;:7}
