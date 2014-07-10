@@ -9,4 +9,4 @@ target/universal/stage/bin/unitcover -Dconfig.resource=application-e2e.conf &>lo
 wget -O/dev/null --retry-connrefused --tries=8 http://localhost:9000/ 
 scripts/karma.sh e2e 
 scripts/stop_play.sh
-scripts/karma.sh e2elive
+#scripts/karma.sh e2elive
