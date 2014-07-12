@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": "scripts/e2etest.sh",
-    "postinstall": "./node_modules/bower/bin/bower install && ./node_modules/coffee-script/bin/coffee -c -o public/js/bankapp/coffee public/js/bankapp/coffee"
+    "postinstall": "scripts/npm/postinstall.sh"
   },
   "devDependencies": {
     "karma": "^0.12.16",
