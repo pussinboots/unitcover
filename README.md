@@ -109,7 +109,7 @@ Todo and features are mantained with trello now [Trello](https://trello.com/b/tP
 
 Example for [Travis Ci](https://travis-ci.org/)
 
-Put that in the .travis.yml file and adapt the git owner and repository. 
+Put that in the .travis.yml file and adapt the git owner, repository, trf and lrf parameter. 
 ```yaml
 after_failure:
 - wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash /dev/stdin <owner> <repository> <strf> <lrf>
@@ -123,6 +123,14 @@ owner | git owner used for identification, has not to be a valid github owner on
 repository | git repository used for identification, has not to be a valid github repository only a string for identification vould also be used as project name| unitcover
 strf | sbt unit test result folder or an empty string " | ./target/test-reports
 lrf | list of report files (is optional than put an empty string "") | xunit.xml
+
+Example for Scale Tests with SBT
+```yaml
+after_failure:
+- wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash /dev/stdin pussinboots unitcover ./target/test-reports/ ""
+after_success:
+wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash /dev/stdin pussinboots unitcover ./target/test-reports/ ""
+```
 
 Example Integratgion
 * [Mocha Tests](https://github.com/pussinboots/heroku-softcover/blob/master/.travis.yml )
