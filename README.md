@@ -105,6 +105,30 @@ Todo and features are mantained with trello now [Trello](https://trello.com/b/tP
 
 ##Usage
 
+###CI Integration
+
+Example for [Travis Ci](https://travis-ci.org/)
+
+Put that in the .travis.yml file and adapt the git owner and repository. 
+```yaml
+after_failure:
+- wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash /dev/stdin <owner> <repository> <strf> <lrf>
+after_success:
+- wget -O - https://unitcover.herokuapp.com/scripts/upload.sh | bash /dev/stdin <owner> <repository> <strf> <lrf>
+```
+
+Parameter | Description | Example Value 
+--- | --- | ---
+owner | git owner used for identification, has not to be a valid github owner only a string for identification | pussinboots
+repository | git repository used for identification, has not to be a valid github repository only a string for identification vould also be used as project name| unitcover
+strf | sbt unit test result folder or an empty string " | ./target/test-reports
+lrf | list of report files (is optional than put an empty string "") | xunit.xml
+
+Example Integratgion
+* [Mocha Tests](https://github.com/pussinboots/heroku-softcover/blob/master/.travis.yml )
+* [SBT And Karma Tests](https://github.com/pussinboots/unitcover/blob/master/.travis.yml)
+
+###Manual
 Simple setup by download the provided upload script from unitcover and specify the 3 needed parameters.
 * github owner
 * github project
