@@ -7,5 +7,5 @@ deps:
 - sbt
 - nvm
 - nodejs
-- idea
-- play
+- idea13
+- play223
