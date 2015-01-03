@@ -1,5 +1,5 @@
 language: node_js
-script: sbt coveralls && npm test
+script: sbt test && npm test
 node_js:
 - 0.1
 before_script:
