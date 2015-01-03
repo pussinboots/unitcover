@@ -4,7 +4,6 @@ import scala.slick.driver.{JdbcDriver, H2Driver, MySQLDriver}
 import java.sql.{Timestamp, Date}
 import java.util.{Date, Calendar}
 import scala.slick.jdbc.meta.MTable
-import scala.slick.model.ForeignKeyAction
 
 trait Profile {
   val profile: JdbcDriver
@@ -24,13 +23,13 @@ class DAL(override val profile: JdbcDriver) extends TestSuiteComponent with Test
 
   def create(implicit session: Session) {
     (testSuites.ddl ++ testCases.ddl ++ messages.ddl ++ Builds.builds.ddl).create //helper method to create all tables
-/*    if (MTable.getTables(testSuites.tableName).list().isEmpty) {
+/*    if (MTable.getTables(testSuites.tableName).list.isEmpty) {
       (testSuites.ddl).create
     }
-    if (MTable.getTables(testCases.tableName).list().isEmpty) {
+    if (MTable.getTables(testCases.tableName).list.isEmpty) {
       (testCases.ddl).create
     }
-    if (MTable.getTables(builds.tableName).list().isEmpty) {
+    if (MTable.getTables(builds.tableName).list.isEmpty) {
       (builds.ddl).create
     }*/
   }

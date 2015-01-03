@@ -93,7 +93,7 @@ object TestSuiteController extends Controller {
     def latestTestSuites(owner: String, project: String, buildNumber: Int) = ActionWithoutToken {request =>
       DB.db withDynSession  {
         var query = dal.findBy(owner, project, buildNumber).sortBy(_.id.desc)
-        val json = query.list()
+        val json = query.list
         val count = query.list.length
         Ok(Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))) as ("application/json")
       }
@@ -102,7 +102,7 @@ object TestSuiteController extends Controller {
     def badgeTestSuites(owner: String, project: String) = ActionWithoutToken {request =>
       DB.db withDynSession  {
         var query = dal.findBy(owner, project, Builds.findLatestBuildNumber(owner, project).first.getOrElse(0)).sortBy(_.id.desc)
-        val testSuites = query.list()
+        val testSuites = query.list
         import scala.xml.NodeSeq     
         val rect = testSuites.zipWithIndex.map {entry=>
           val testSuite = entry._1

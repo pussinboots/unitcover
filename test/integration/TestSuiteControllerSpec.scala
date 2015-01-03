@@ -168,7 +168,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def checkTestCasesKarma(suiteId: Long) {
-		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list
 		testCases.length must equalTo(3)
 		testCases(0).name must equalTo("ten test suites are display")
 		testCases(1).name must equalTo("the latest ten test suites should be display started with the eleven test suite")
@@ -189,7 +189,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 	}
 
 	def checkTestCases(suiteId: Long) {
-		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list
 		testCases.length must equalTo(7)
 		testCases(0).name must equalTo("application changed setup will work should::disable db ssl")
 		testCases(1).name must equalTo("application changed setup will work should::enable DB logging")
@@ -225,9 +225,9 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		suite.duration must beEqualTo(Some(9.67))
 	}
 	def checkKarmaTestCasesWithFailure(suiteIds: Seq[Long]) {
-		var testCases = dal.findBySuite(suiteIds(0)).sortBy(_.id.asc).list()
+		var testCases = dal.findBySuite(suiteIds(0)).sortBy(_.id.asc).list
 		testCases.length must equalTo(0)
-		testCases = dal.findBySuite(suiteIds(1)).sortBy(_.id.asc).list()
+		testCases = dal.findBySuite(suiteIds(1)).sortBy(_.id.asc).list
 		testCases.length must equalTo(4)
 		testCases(0).name must equalTo("ten builds are display")
 		testCases(1).name must equalTo("the latest build with buildNumber 11 show as first")
@@ -256,7 +256,7 @@ class TestSuiteControllerSpec extends PlaySpecification with DatabaseSetupBefore
 		suite.duration must beEqualTo(Some(10.470))
 	}
 	def checkTestCasesWithFailure(suiteId: Long) {
-		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list
 
 		testCases.length must equalTo(2)
 		testCases(0).name must equalTo("POST to /api/<owner>/<project> should::with a valid junit xml report return http status 200 and store it in the db")
@@ -298,7 +298,7 @@ integration.TestSuiteControllerSpec$$anonfun$5$$anonfun$apply$11.apply(TestSuite
 		suite.duration must beEqualTo(Some(14.179))
 	}
 	def checkTestCasesWithError(suiteId: Long) {
-		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = dal.findBySuite(suiteId).sortBy(_.id.asc).list
 		testCases.length must equalTo(3)
 		testCases(0).name must equalTo("POST to /api/<owner>/<project> should::with junit xml report all tests passed return http status 200 and store it in the db")
 		testCases(0).typ must equalTo(Some("java.lang.Exception"))

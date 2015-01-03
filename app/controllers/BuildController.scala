@@ -52,8 +52,8 @@ object BuildController extends Controller {
     }
   }
   
-  def toJson(query: Query[model.DB.dal.Builds,model.Build]) = {
-    val json = query.take(10).list()
+  def toJson(query: Query[model.DB.dal.Builds,model.Build, Seq]) = {
+    val json = query.take(10).list
     val count = query.list.length
     Json.stringify(Json.toJson(JsonFmtListWrapper(json, count)))    
   }

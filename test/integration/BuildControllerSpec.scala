@@ -251,7 +251,7 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		suite.duration must beEqualTo(Some(14.179))
 	}
 	def checkTestCasesWithError(suiteId: Long) {
-		val testCases = findBySuite(suiteId).sortBy(_.id.asc).list()
+		val testCases = findBySuite(suiteId).sortBy(_.id.asc).list
 		testCases.length must equalTo(3)
 		testCases(0).name must equalTo("POST to /api/<owner>/<project> should::with junit xml report all tests passed return http status 200 and store it in the db")
 		testCases(0).typ must equalTo(Some("java.lang.Exception"))
@@ -263,15 +263,15 @@ class BuildControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 	}
 
 	def testSuiteExists(buildNumber: Int, project: String) {
-		val testCases = findBySuite(2).list()
+		val testCases = findBySuite(2).list
 		testCases.length must greaterThan(0)
-		val testSuites = findBy("pussinboots", project, buildNumber).list()
+		val testSuites = findBy("pussinboots", project, buildNumber).list
 		testSuites.length must equalTo(1)
 		testSuites(0).project must equalTo(project)
 	}
 	def testSuiteNotExists(testSuiteId: Int, buildNumber: Int) {
-		val deletedTestSuites = findBy("pussinboots", "bankapp", buildNumber).list()
-		val deletedTestCases = findBySuite(testSuiteId).list()
+		val deletedTestSuites = findBy("pussinboots", "bankapp", buildNumber).list
+		val deletedTestCases = findBySuite(testSuiteId).list
 		deletedTestSuites.length must equalTo(0)
 		deletedTestCases.length must equalTo(0)
 	}

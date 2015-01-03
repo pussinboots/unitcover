@@ -1,6 +1,7 @@
 package integration
 
 import org.specs2.mutable.Specification
+import play.api.cache.Cache
 import play.api.test._
 import play.api.test.Helpers._
 import play.api.libs.json.Json
@@ -96,6 +97,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
         
         "return passed badge from shields.io" in Betamax(tape="shields", mode=Some(TapeMode.READ_ONLY)) {
             setupTestData { 
+            	Cache.remove("pussinboots-bankapp-badge")
                 val fakeRequest = FakeRequest()
                 val badgeSvg = BadgeController.badge("pussinboots", "bankapp")(fakeRequest)
                 contentAsString(badgeSvg) must beEqualTo("""<svg xmlns="http://www.w3.org/2000/svg" width="81" height="18"><linearGradient id="a" x2="0" y2="100%"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset=".1" stop-color="#aaa" stop-opacity=".1"/><stop offset=".9" stop-opacity=".3"/><stop offset="1" stop-opacity=".5"/></linearGradient><rect rx="4" width="81" height="18" fill="#555"/><rect rx="4" x="31" width="50" height="18" fill="#e05d44"/><path fill="#e05d44" d="M31 0h4v18h-4z"/><rect rx="4" width="81" height="18" fill="url(#a)"/><g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"><text x="16.5" y="13" fill="#010101" fill-opacity=".3">test</text><text x="16.5" y="12">test</text><text x="55" y="13" fill="#010101" fill-opacity=".3">error 1</text><text x="55" y="12">error 1</text></g></svg>""")

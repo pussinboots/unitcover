@@ -41,7 +41,7 @@ implicit class TestCaseToJson(testCase: TestCase) {
     DB.db withDynSession  {
       val suite = dal.findById(testSuiteId).first
       var query = dal.findBySuiteWithMessages(testSuiteId).sortBy(_._1.id.desc)
-      val testCasesWithMsg = query.list()
+      val testCasesWithMsg = query.list
       val count = query.list.length
       val result = testCasesWithMsg map { case (testCase: TestCase, columns: (Option[Long], Option[String], Option[Int])) =>
         columns match {

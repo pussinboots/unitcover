@@ -4,7 +4,7 @@ import java.net.URI
 import scala.util.Properties
 import com.mchange.v2.c3p0.ComboPooledDataSource
 import scala.slick.jdbc.JdbcBackend.Database
-import scala.slick.driver.{ExtendedProfile, H2Driver, MySQLDriver}
+import scala.slick.driver.{H2Driver, MySQLDriver}
 import com.mchange.v2.log._
 import Database.dynamicSession
 

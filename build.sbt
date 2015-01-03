@@ -5,7 +5,7 @@ import PlayKeys._
 
 instrumentSettings
 
-CoverallsPlugin.coverallsSettings
+//CoverallsPlugin.coverallsSettings
 
 name := "UnitCover"
 
@@ -33,9 +33,7 @@ ScoverageKeys.failOnMinimumCoverage := true
 
 ScoverageKeys.excludedPackages in ScoverageCompile := "controllers.javascript;controllers.ref;tools.imports;Routes;controllers.ReverseAssets;controllers.ReverseApplication;controllers.ReverseBuildController;controllers.ReverseTestCaseController;controllers.ReverseTestSuiteController;controllers.ReverseBadgeController;scala.slick.migration.api..*"
 
-envVars := Map("aes_key" -> "16rdKQfqN3L4TY7YktgxBw==", "sparkasse_username"->"username", "sparkasse_password"->"password") // setted for EasyCryptSpec
-
-javaOptions ++= Seq("-Xmx2G", "-Xms1G", "-XX:MaxPermSize=256M", "-XX:+CMSClassUnloadingEnabled"/*, "-verbose:gc", "-XX:+PrintGCDetails", "-XX:+PrintGCTimeStamps"*/, "-XX:+UseConcMarkSweepGC", "-XX:ReservedCodeCacheSize=128M")
+javaOptions ++= Seq("-Xmx2G", "-Xms1G", "-XX:+CMSClassUnloadingEnabled"/*, "-verbose:gc", "-XX:+PrintGCDetails", "-XX:+PrintGCTimeStamps"*/, "-XX:+UseConcMarkSweepGC", "-XX:ReservedCodeCacheSize=128M")
 
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
