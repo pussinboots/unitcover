@@ -1,0 +1,10 @@
+repo:
+- pussinboots/vagrant-devel
+folder: /vagrant/project/unitcover
+deps:
+- java8
+- sublime3
+- sbt
+- nvm
+- nodejs
+- idea
