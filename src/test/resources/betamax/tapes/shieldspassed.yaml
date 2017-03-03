@@ -4,7 +4,7 @@ interactions:
 - recorded: 2014-06-30T19:35:18.359Z
   request:
     method: GET
-    uri: http://img.shields.io/badge/test-error%201-red.svg
+    uri: https://img.shields.io/badge/test-error%201-red.svg
     headers:
       Accept: '*/*'
       Connection: keep-alive
@@ -23,7 +23,7 @@ interactions:
 - recorded: 2014-06-30T19:35:19.247Z
   request:
     method: GET
-    uri: http://img.shields.io/badge/test-passed%206-brightgreen.svg
+    uri: https://img.shields.io/badge/test-passed%206-brightgreen.svg
     headers:
       Accept: '*/*'
       Connection: keep-alive
