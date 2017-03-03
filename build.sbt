@@ -37,7 +37,7 @@ javaOptions ++= Seq("-Xmx2G", "-Xms1G", "-XX:+CMSClassUnloadingEnabled"/*, "-ver
 
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
-resolvers += Resolver.jcenterRepo
+resolvers += "JCenter" at "http://jcenter.bintray.com/"
 
 lazy val ironCachePlugin = ProjectRef(uri("git://github.com/pussinboots/iron-cache-plugin.git"),"iron-cache-plugin")
 
