@@ -64,7 +64,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		    val desc = "passed"
 		    val count = 7
 		    val color = "brightgreen"
-		    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc%20$count-$color.svg")
+		    badgeUrl must equalTo(s"https://img.shields.io/badge/test-$desc%20$count-$color.svg")
 		  }	
 		}
 		
@@ -74,7 +74,7 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		    val desc = "failed"
 		    val count = 1
 		    val color = "yellow"
-		    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc%20$count-$color.svg")
+		    badgeUrl must equalTo(s"https://img.shields.io/badge/test-$desc%20$count-$color.svg")
 		  }	
 		}
 		
@@ -84,14 +84,14 @@ class BadgeControllerSpec extends PlaySpecification with DatabaseSetupBefore {
 		    val desc = "error"
 		    val count = 1
 		    val color = "red"
-		    badgeUrl must equalTo(s"http://img.shields.io/badge/test-$desc%20$count-$color.svg")
+		    badgeUrl must equalTo(s"https://img.shields.io/badge/test-$desc%20$count-$color.svg")
 		  }	
 		}
 		
 		"build not exists return tests unknown" in {setupTestData{ 
 		    val build = Builds.findByBuildNumber("pussinboots", "bankapp", 200).firstOption
 		    val badgeUrl = BadgeController.badgeUrl(build)
-		    badgeUrl must equalTo("http://img.shields.io/badge/test-unknown-lightgrey.svg")
+		    badgeUrl must equalTo("https://img.shields.io/badge/test-unknown-lightgrey.svg")
 		  }	
 		}
         
