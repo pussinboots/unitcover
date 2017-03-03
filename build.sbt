@@ -37,11 +37,13 @@ javaOptions ++= Seq("-Xmx2G", "-Xms1G", "-XX:+CMSClassUnloadingEnabled"/*, "-ver
 
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
+resolvers += Resolver.jcenterRepo
+
 lazy val ironCachePlugin = ProjectRef(uri("git://github.com/pussinboots/iron-cache-plugin.git"),"iron-cache-plugin")
 
-lazy val stickMigrationApi = RootProject(uri("git://github.com/nafg/slick-migration-api.git"))
+//lazy val stickMigrationApi = RootProject(uri("git://github.com/nafg/slick-migration-api.git"))
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala).dependsOn(stickMigrationApi).dependsOn(ironCachePlugin)
+lazy val root = (project in file(".")).enablePlugins(PlayScala)/*.dependsOn(stickMigrationApi)*/.dependsOn(ironCachePlugin)
 
 libraryDependencies ++= Seq(ws, cache)
 
@@ -65,5 +67,6 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
     "com.typesafe.slick" %% "slick" % "2.0.2",
     "mysql" % "mysql-connector-java" % "5.1.18",
-    "c3p0" % "c3p0" % "0.9.1.2"
+    "c3p0" % "c3p0" % "0.9.1.2",
+    "io.github.nafg" %% "slick-migration-api" % "0.1.1"
 )
